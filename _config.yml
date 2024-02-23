@@ -1,0 +1,8 @@
+title: ~kjiwa
+email: kjiwa@crimsonglow.ca
+baseurl: "/~kjiwa"
+url: "https://crimsonglow.ca"
+permalink: /:year/:month/:title:output_ext
+
+plugins:
+  - jekyll-sitemap
