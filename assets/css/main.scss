@@ -94,13 +94,16 @@ a:hover {
 }
 
 .software-job-search-div {
+  overflow-x: auto;
   text-align: center;
 }
 
 .software-job-search-iframe {
   border: none;
-  height: 64vh;
-  width: 75%;
+  display: flex;
+  height: 100%;
+  min-height: 64vh;
+  width: 100%;
 }
 
 .dos-boot-sector-table {
