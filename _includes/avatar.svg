@@ -1,4 +1,5 @@
-<svg viewBox="0 0 70 55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+<svg viewBox="0 0 70 55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" role="img" aria-labelledby="avatar-title">
+  <title id="avatar-title">kjiwa</title>
   <defs>
     <path id="mouth" d="M-30 -2.5 L-25 0 L25 0 L30 -2.5"></path>
     <path id="tooth" d="M-5 0 L5 0 L0 5 Z"></path>

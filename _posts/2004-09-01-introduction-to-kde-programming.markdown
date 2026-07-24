@@ -114,7 +114,7 @@ Our user interface (UI) will be implemented as a widget and therefore inherits f
 {% highlight cpp %}
 #include <qwidget.h>
 
-public Widget : public QWidget { };
+class Widget : public QWidget { };
 {% endhighlight %}
 
 We can load the widget by creating a new instance of the widget and displaying it from anywhere within the code.
@@ -156,7 +156,7 @@ The example settings shown in figure 6 define one option, stored as a string, ca
 
 The .kcfgc file is an ini file containing code generation options. Values for File and ClassName are required. These options tell the settings compiler which file the settings data has been defined in and what the name of the generated class will be, e.g. settings.kcfgc.
 
-<div class="caption">settings.kcfg</div>
+<div class="caption">settings.kcfgc</div>
 
 {% highlight cfg %}
 File=application.kcfg
@@ -294,7 +294,7 @@ Typically applications use dialogs as their main widget. KDE provides the KMainW
 {% highlight cpp %}
 #include <kmainwindow.h>
 
-public Widget : public KMainWindow { };
+class Widget : public KMainWindow { };
 {% endhighlight %}
 
 ## QLabel
@@ -307,7 +307,7 @@ Applets do not typically use dialogs as their main widget. Instead buttons, labe
 #include <kicontheme.h>
 #include <qlabel.h>
 
-public Widget : public QLabel {
+class Widget : public QLabel {
 public:
   Widget(QWidget* parent=0, const char* name=0) : QLabel(parent, name) {
     setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -386,7 +386,7 @@ The KHelpMenu object may be of interest. It provides a standard KDE help menu wi
 {% highlight cpp %}
 {
   ...
-  KAboutData about("application", I18N_NOOP("Application"), "0.1", I18N_NOOP("Application"), KaboutData::License_GPL_V2);
+  KAboutData about("application", I18N_NOOP("Application"), "0.1", I18N_NOOP("Application"), KAboutData::License_GPL_V2);
   KHelpMenu* pHelp = new KHelpMenu(this, &about, false);
   menu.insertItem(i18n("&Help"), pHelp->menu());
   ...

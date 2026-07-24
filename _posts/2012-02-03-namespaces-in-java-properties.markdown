@@ -94,7 +94,7 @@ public class OptifyProperties extends Properties {
   }
 
   public synchronized Object setProperty(String key, String value) {
-    String parts = key.split("\\.");
+    String[] parts = key.split("\\.");
     if (parts.length < 2)
       return null;
 

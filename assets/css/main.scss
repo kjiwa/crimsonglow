@@ -1,7 +1,7 @@
 ---
 ---
-@import "avatar.css";
-@import "highlight.css";
+@use "avatar";
+@use "highlight";
 
 body {
   font-family: "Noto Sans", sans-serif;

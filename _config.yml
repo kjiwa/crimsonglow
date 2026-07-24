@@ -1,8 +1,28 @@
 title: ~kjiwa
+description: Notes on programming, systems, and security research.
+author: Kamil Jiwa
 email: kjiwa@crimsonglow.ca
+lang: en
+timezone: America/Vancouver
 baseurl: "/~kjiwa"
 url: "https://crimsonglow.ca"
 permalink: /:year/:month/:title:output_ext
 
+sass:
+  style: compressed
+
+defaults:
+  - scope:
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
+
 plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
   - jekyll-sitemap

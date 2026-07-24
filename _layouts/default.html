@@ -1,22 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ site.lang | default: 'en' }}">
   <head>
     <title>{{ site.title }}: {{ page.title }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto Sans">
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto Sans Mono">
+    <link rel="icon" type="image/svg+xml" href="{{ site.baseurl }}/assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=Noto+Sans+Mono&display=swap">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{{ site.baseurl}}/assets/css/main.css">
+    {% seo title=false %}
+    {% feed_meta %}
   </head>
   <body>
     <header>
       <a href="{{ site.baseurl }}/">{{ site.title }}</a>
       <figure>{% include avatar.svg %}</figure>
     </header>
-    <article>
-      <h1>{{ page.title }}</h1>
-      <div class="content">{{ content }}</div>
-    </article>
+    <main>
+      <article>
+        <h1>{{ page.title }}</h1>
+        <div class="content">{{ content }}</div>
+      </article>
+    </main>
   </body>
 </html>
