@@ -1,31 +1,23 @@
-<svg viewBox="0 0 70 55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" role="img" aria-labelledby="favicon-title">
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" role="img" aria-labelledby="favicon-title">
   <title id="favicon-title">kjiwa</title>
+
   <defs>
-    <path id="mouth" d="M-30 -2.5 L-25 0 L25 0 L30 -2.5"></path>
-    <path id="tooth" d="M-5 0 L5 0 L0 5 Z"></path>
     <path id="eyebrow" d="M-5 -2.5 Q 0 2.5 5 2.5"></path>
-    <g id="eyes">
-      <circle r="1" transform="translate(-8.75 0)"></circle>
-      <circle r="1" transform="translate(8.75 0)"></circle>
-    </g>
     <g id="glasses">
       <rect x="-16.25" y="-3.75" width="12.5" height="7.5" rx="1" ry="1"></rect>
       <rect x="3.75" y="-3.75" width="12.5" height="7.5" rx="1" ry="1"></rect>
-      <path d="M-3.75 0 Q 0 -0.625 3.75 0"></path>
+      <path d="M-3.75 0 L3.75 0"></path>
     </g>
     <path id="head" d="M-20 -20 C -60 40 60 40 20 -20"></path>
   </defs>
 
-  <rect x="0" y="0" width="70" height="55" rx="10" ry="10" fill="#fff"></rect>
+  <rect x="0" y="0" width="64" height="64" rx="12" ry="12" fill="#007"></rect>
 
-  <g fill="none" stroke="#007" stroke-width="3px" transform="translate(5 5)">
-    <use xlink:href="#head" transform="translate(30 20)"></use>
-    <use xlink:href="#mouth" transform="translate(30 30) scale(0.75 1)"></use>
-    <use xlink:href="#tooth" transform="translate(20 30)"></use>
-    <use xlink:href="#tooth" transform="translate(40 30)"></use>
-    <use xlink:href="#eyes" transform="translate(30 22.8125)"></use>
-    <use xlink:href="#glasses" transform="translate(30 22.5)"></use>
-    <use xlink:href="#eyebrow" transform="translate(20 12.5)"></use>
-    <use xlink:href="#eyebrow" transform="translate(40 12.5) scale(-1 1)"></use>
+  <g fill="none" stroke="#fff" stroke-width="4.14" stroke-linecap="round" stroke-linejoin="round"
+     transform="translate(32 30.5) scale(0.845) translate(-35 -25)">
+    <use xlink:href="#head" transform="translate(35 25)"></use>
+    <use xlink:href="#glasses" transform="translate(35 27.5)"></use>
+    <use xlink:href="#eyebrow" transform="translate(25 17.5)"></use>
+    <use xlink:href="#eyebrow" transform="translate(45 17.5) scale(-1 1)"></use>
   </g>
 </svg>
