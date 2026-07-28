@@ -16,9 +16,9 @@
     <path id="head" d="M-20 -20 C -60 40 60 40 20 -20"></path>
   </defs>
 
-  <rect x="0" y="0" width="70" height="55" rx="10" ry="10" fill="#007"></rect>
+  <rect x="0" y="0" width="70" height="55" rx="10" ry="10" fill="#fff"></rect>
 
-  <g fill="none" stroke="#fff" stroke-width="2px" transform="translate(5 5)">
+  <g fill="none" stroke="#007" stroke-width="3px" transform="translate(5 5)">
     <use xlink:href="#head" transform="translate(30 20)"></use>
     <use xlink:href="#mouth" transform="translate(30 30) scale(0.75 1)"></use>
     <use xlink:href="#tooth" transform="translate(20 30)"></use>
