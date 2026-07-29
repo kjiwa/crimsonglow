@@ -44,6 +44,7 @@ include:
 
 exclude:
   - README.md
+  - Makefile
   - tools
 
 plugins:

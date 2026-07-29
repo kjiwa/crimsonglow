@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          # Reads .ruby-version (currently 4.0.6). If ruby-build has no
+          # prebuilt binary yet for this exact patch release, setup-ruby
+          # falls back to compiling from source, which is slower but still
+          # correct -- no action needed unless the build step itself fails.
+          bundler-cache: true
+
+      - name: Build and check
+        run: make check

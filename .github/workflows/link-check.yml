@@ -1,0 +1,77 @@
+name: Link check
+
+# Weekly scan for external link rot. Kept separate from CI because it checks
+# links out on the 2004-era posts, which will fail intermittently for reasons
+# that have nothing to do with the state of this repo -- it must never block
+# a build. Failures are reported as a single tracking issue instead.
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Mondays, 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Build
+        run: make build
+
+      - name: Ensure link-rot label exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create link-rot --color d73a4a \
+            --description "External link rot found by the weekly link-check workflow" \
+            --force
+
+      - name: Check external links
+        id: check
+        continue-on-error: true
+        run: |
+          bundle exec htmlproofer ./_site \
+            --no-enforce-https \
+            --swap-urls '^https\://crimsonglow\.ca:' \
+            --ignore-urls '/^\/$/' \
+            --ignore-status-codes "429" \
+            | tee link-check-output.txt
+
+      - name: File or update tracking issue
+        if: steps.check.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="Weekly link check found broken external links as of $(date -u +%Y-%m-%d).
+
+          \`\`\`
+          $(cat link-check-output.txt)
+          \`\`\`
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          existing=$(gh issue list --label link-rot --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "Link check: broken external links" \
+              --label link-rot --body "$body"
+          fi
+
+      - name: Close stale tracking issue
+        if: steps.check.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --label link-rot --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Link check passed on $(date -u +%Y-%m-%d) -- closing."
+            gh issue close "$existing"
+          fi

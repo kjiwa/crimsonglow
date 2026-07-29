@@ -50,16 +50,23 @@ root because Jekyll requires them there.
   sudo pacman -S imagemagick ttf-liberation
   ```
 
+- To deploy: [`lftp`](https://lftp.yar.ru/) (`brew install lftp` / `apt install
+  lftp` / `dnf install lftp` / `pacman -S lftp`).
+
 ## Build
 
 ```sh
-bundle exec jekyll build
+make build   # bundle exec jekyll build
+make check   # build, then validate internal links/images with html-proofer
 ```
+
+`make check` is exactly what [CI](.github/workflows/ci.yml) runs on every push
+and pull request, so a green `make check` locally means CI will be green too.
 
 To regenerate the social share card (`~kjiwa/assets/og-card.png`):
 
 ```sh
-tools/og-card.sh
+make og-card   # tools/og-card.sh
 ```
 
 To preview, don't use `bundle exec jekyll serve` — Jekyll's own dev server
@@ -72,15 +79,43 @@ ending in `~`, not `"~*"`) but there's no CLI flag to override it. Serve the
 built output with a plain static server instead:
 
 ```sh
-python3 -m http.server -d _site 8000   # http://localhost:8000/~kjiwa/
+make serve   # python3 -m http.server -d _site 8000, http://localhost:8000/~kjiwa/
 ```
 
 ## Deploy
 
-Upload the contents of `_site/` to the **document root** of the hosting
-account — not into `~kjiwa/`. Make sure `.htaccess` actually transfers; many
-FTP/SFTP clients hide dotfiles by default and will silently skip it.
+Deploying is manual, on purpose: ICDSoft only allows key-based SFTP for the
+main Control Panel user, so automating this from CI would mean putting a
+full-hosting-account credential in a GitHub secret. Instead,
+[`tools/deploy.sh`](tools/deploy.sh) automates the upload itself — you just run
+it locally.
+
+One-time setup — add a `Host` block to `~/.ssh/config` (no credentials live in
+this repo):
+
+```
+Host crimsonglow
+  HostName <your-icdsoft-host>
+  User <your-icdsoft-username>
+  IdentityFile ~/.ssh/<your-key>
+```
+
+Then:
+
+```sh
+make deploy-dry-run   # see what would transfer, without changing anything remote
+make deploy           # build, validate, and upload _site/ to the document root
+```
+
+`tools/deploy.sh` uses `lftp mirror --reverse`, which transfers dotfiles by
+default — this is what makes sure `.htaccess` actually reaches the server;
+many FTP/SFTP GUI clients hide dotfiles and silently skip it. It also refuses
+to run against an uncommitted or unpushed working tree (skip with `--force`),
+and never deletes remote-only files unless you pass `--delete` — see the
+script's header comment for details and overrides
+(`CRIMSONGLOW_SSH_HOST`, `CRIMSONGLOW_DOCROOT`).
 
 Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
 — a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a
-relative path.
+relative path. `tools/deploy.sh` already handles this; it only matters if
+you're poking around `_site/` by hand.
