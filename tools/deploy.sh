@@ -12,6 +12,12 @@
 # Override the alias or the remote document root with CRIMSONGLOW_SSH_HOST /
 # CRIMSONGLOW_DOCROOT if you'd rather not add a Host block.
 #
+# Auth is key-based only: lftp reaches SFTP by shelling out to `ssh -a -x` and
+# has no way to hand that process a password (--password / LFTP_PASSWORD are
+# FTP/HTTP-only). Load the key into ssh-agent before deploying -- --parallel=4
+# below opens several ssh connections, and each one prompts separately for a
+# passphrase otherwise.
+#
 # Usage: tools/deploy.sh [--dry-run] [--delete] [--force]
 #
 #   --dry-run  Show what would transfer without changing anything remote.

@@ -54,6 +54,14 @@ resolve_font() {
   return 1
 }
 
+# $1 = weight label for the message, $2 = override variable to suggest.
+font_error() {
+  echo "og-card: no Arial-metric $1 font found. Install Liberation Sans" >&2
+  echo "  (apt install fonts-liberation / dnf install liberation-sans-fonts /" >&2
+  echo "   pacman -S ttf-liberation) or set $2 to a font file." >&2
+  exit 1
+}
+
 FONT_BOLD=${OG_FONT_BOLD:-}
 if [ -z "$FONT_BOLD" ] && ! FONT_BOLD=$(resolve_font \
   "/System/Library/Fonts/Supplemental/Arial Bold.ttf" \
@@ -64,10 +72,7 @@ if [ -z "$FONT_BOLD" ] && ! FONT_BOLD=$(resolve_font \
   "fc:Arial:style=Bold" \
   "fc:Liberation Sans:style=Bold" \
   "fc:Arimo:style=Bold"); then
-  echo "og-card: no Arial-metric bold font found. Install Liberation Sans" >&2
-  echo "  (apt install fonts-liberation / dnf install liberation-sans-fonts /" >&2
-  echo "   pacman -S ttf-liberation) or set OG_FONT_BOLD to a font file." >&2
-  exit 1
+  font_error bold OG_FONT_BOLD
 fi
 
 FONT_REGULAR=${OG_FONT_REGULAR:-}
@@ -80,10 +85,7 @@ if [ -z "$FONT_REGULAR" ] && ! FONT_REGULAR=$(resolve_font \
   "fc:Arial:style=Regular" \
   "fc:Liberation Sans:style=Regular" \
   "fc:Arimo:style=Regular"); then
-  echo "og-card: no Arial-metric regular font found. Install Liberation Sans" >&2
-  echo "  (apt install fonts-liberation / dnf install liberation-sans-fonts /" >&2
-  echo "   pacman -S ttf-liberation) or set OG_FONT_REGULAR to a font file." >&2
-  exit 1
+  font_error regular OG_FONT_REGULAR
 fi
 
 echo "og-card: bold font:    $FONT_BOLD" >&2

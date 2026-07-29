@@ -61,7 +61,7 @@ make check   # build, then validate internal links/images with html-proofer
 ```
 
 `make check` is exactly what [CI](.github/workflows/ci.yml) runs on every push
-and pull request, so a green `make check` locally means CI will be green too.
+and pull request.
 
 To regenerate the social share card (`~kjiwa/assets/og-card.png`):
 
@@ -100,6 +100,14 @@ Host crimsonglow
   IdentityFile ~/.ssh/<your-key>
 ```
 
+A key is required, not optional: `tools/deploy.sh` transfers over `lftp`, which
+reaches SFTP by shelling out to `ssh` and has no way to pass it a password. Load
+the key into ssh-agent before deploying (`ssh-add ~/.ssh/<your-key>`) — the
+script opens several SSH connections in parallel, and an agent-less passphrased
+key prompts once per connection. This composes fine with enabling SSH access in
+the Control Panel only for the deploy window and disabling it again after: a
+loaded key keeps that window short rather than stretching it across prompts.
+
 Then:
 
 ```sh
@@ -117,5 +125,4 @@ script's header comment for details and overrides
 
 Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
 — a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a
-relative path. `tools/deploy.sh` already handles this; it only matters if
-you're poking around `_site/` by hand.
+relative path. This only matters if you're poking around `_site/` by hand.
