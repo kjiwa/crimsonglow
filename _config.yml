@@ -4,9 +4,10 @@ author: Kamil Jiwa
 email: kjiwa@crimsonglow.ca
 lang: en
 timezone: America/Vancouver
-baseurl: "/~kjiwa"
+baseurl: ""
+home: "/~kjiwa"
 url: "https://crimsonglow.ca"
-permalink: /:year/:month/:title:output_ext
+permalink: /~kjiwa/:year/:month/:title:output_ext
 
 sass:
   style: compressed
@@ -21,6 +22,16 @@ defaults:
       type: pages
     values:
       layout: page
+
+feed:
+  path: ~kjiwa/feed.xml
+
+include:
+  - ".htaccess"
+  - "~kjiwa"
+
+exclude:
+  - README.md
 
 plugins:
   - jekyll-feed

@@ -4,17 +4,17 @@
     <title>{{ site.title }}: {{ page.title }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="{{ site.baseurl }}/assets/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="{{ site.home }}/assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=Noto+Sans+Mono&display=swap">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ site.baseurl}}/assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="{{ site.home }}/assets/css/main.css">
     {% seo title=false %}
     {% feed_meta %}
   </head>
   <body>
     <header>
-      <a href="{{ site.baseurl }}/">{{ site.title }}</a>
+      <a href="{{ site.home }}/">{{ site.title }}</a>
       <figure>{% include avatar.svg %}</figure>
     </header>
     <main>

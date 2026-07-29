@@ -4,7 +4,7 @@ title: Home
 ---
 
 {%- for post in site.posts %}
-* {{ post.date | date: "%Y-%m" }} [{{ post.title }}]({{ site.baseurl}}{{ post.url }})
+* {{ post.date | date: "%Y-%m" }} [{{ post.title }}]({{ post.url }})
 {%- endfor %}
 
 Reach me at [kjiwa@crimsonglow.ca](mailto:kjiwa@crimsonglow.ca).
