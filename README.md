@@ -24,6 +24,32 @@ Source mirrors this: page/asset content lives under [`~kjiwa/`](~kjiwa/), while
 `_posts/`, `_layouts/`, `_includes/`, `_data/`, and `_sass/` stay at the repo
 root because Jekyll requires them there.
 
+## Prerequisites
+
+- Ruby, matching [`.ruby-version`](.ruby-version), and Bundler. `Gemfile.lock`
+  is checked in for `arm64-darwin`, `x86_64-linux`, and `aarch64-linux`, so
+  `bundle install` works on Apple Silicon Macs and mainstream glibc Linux
+  (Debian/Ubuntu/Fedora/Arch) without a `bundle lock --add-platform` step.
+  musl-based distros (e.g. Alpine) aren't covered.
+- To regenerate the social share card only: ImageMagick 6 or 7, `python3`, and
+  a bold + regular Arial-metric-compatible font (Arial itself, or Liberation
+  Sans / Arimo — see [tools/og-card.sh](tools/og-card.sh) for details and
+  override variables).
+
+  ```sh
+  # macOS
+  brew install imagemagick
+
+  # Debian / Ubuntu
+  sudo apt install imagemagick fonts-liberation
+
+  # Fedora / RHEL
+  sudo dnf install ImageMagick liberation-sans-fonts
+
+  # Arch
+  sudo pacman -S imagemagick ttf-liberation
+  ```
+
 ## Build
 
 ```sh
