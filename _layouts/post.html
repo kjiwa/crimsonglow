@@ -1,6 +1,6 @@
 ---
 layout: default
 ---
-{{ page.date | date: "%B %Y" }}
+<p class="byline">{{ site.title }} · <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %Y" }}</time></p>
 
 {{ content }}

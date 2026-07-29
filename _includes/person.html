@@ -1,0 +1,20 @@
+{%- comment -%}
+sameAs is what binds the ~kjiwa handle to a person in the entity graph. It works best
+when the linked profiles link back, which is why the same list also renders as visible
+rel="me" links on the home page (see home.html).
+
+Five properties, deliberately. jobTitle/worksFor/address and the like do nothing for a
+name query and are only PII surface — don't add them back.
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": {{ "/~kjiwa/#person" | absolute_url | jsonify }},
+  "name": {{ site.title | jsonify }},
+  "url": {{ "/~kjiwa/" | absolute_url | jsonify }},
+  "image": {{ "/~kjiwa/assets/og-card.png" | absolute_url | jsonify }},
+  "description": {{ site.description | strip | jsonify }},
+  "sameAs": {{ site.data.profiles | map: "url" | jsonify }}
+}
+</script>

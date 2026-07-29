@@ -9,29 +9,31 @@ content directory:
 
 ```
 _site/
-├── .htaccess          # ErrorDocument + www/root redirects
-├── robots.txt          # must live at the host root to be honoured by crawlers
-├── sitemap.xml          # same
-└── ~kjiwa/              # everything else — the actual site content
+├── .htaccess        # ErrorDocument + www/root redirects
+├── robots.txt       # must live at the host root to be honoured by crawlers
+├── sitemap.xml      # same
+└── ~kjiwa/          # everything else — the actual site content
     ├── index.html
     ├── 404.html
     ├── feed.xml
     ├── assets/
-    └── YYYY/MM/*.html    # posts
+    └── YYYY/MM/*.html   # posts
 ```
 
 Source mirrors this: page/asset content lives under [`~kjiwa/`](~kjiwa/), while
-`_posts/`, `_layouts/`, `_includes/`, and `_sass/` stay at the repo root because
-Jekyll requires them there (none of them are emitted directly).
-
-`site.baseurl` is intentionally empty — `page.url` already includes `/~kjiwa/`
-via the `permalink` in [`_config.yml`](_config.yml). Templates that need to link
-to the site root use `site.home` (`/~kjiwa`) instead.
+`_posts/`, `_layouts/`, `_includes/`, `_data/`, and `_sass/` stay at the repo
+root because Jekyll requires them there.
 
 ## Build
 
 ```sh
 bundle exec jekyll build
+```
+
+To regenerate the social share card (`~kjiwa/assets/og-card.png`):
+
+```sh
+tools/og-card.sh
 ```
 
 To preview, don't use `bundle exec jekyll serve` — Jekyll's own dev server

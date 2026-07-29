@@ -1,7 +1,5 @@
 ---
-layout: post
 title: Software Job Search
-date: 2016-11-08
 ---
 This is a presentation I delivered to students at South Seattle College on November 8, 2016. I described the application and interview processes at technology companies, introduced sample interview questions, and provided advice based on my own experiences.
 

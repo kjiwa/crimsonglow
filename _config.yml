@@ -1,6 +1,10 @@
-title: ~kjiwa
-description: Notes on programming, systems, and security research.
-author: Kamil Jiwa
+title: Kamil Jiwa
+handle: "~kjiwa"
+description: >-
+  Kamil Jiwa's notes on programming, systems, and security research.
+author:
+  name: Kamil Jiwa
+  url: https://crimsonglow.ca/~kjiwa/
 email: kjiwa@crimsonglow.ca
 lang: en
 timezone: America/Vancouver
@@ -21,7 +25,15 @@ defaults:
       path: ""
       type: pages
     values:
-      layout: page
+      layout: default
+  - scope:
+      path: ""
+    values:
+      image:
+        path: /~kjiwa/assets/og-card.png
+        width: 1200
+        height: 630
+        alt: Kamil Jiwa
 
 feed:
   path: ~kjiwa/feed.xml
@@ -32,6 +44,7 @@ include:
 
 exclude:
   - README.md
+  - tools
 
 plugins:
   - jekyll-feed

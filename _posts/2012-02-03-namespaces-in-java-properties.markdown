@@ -1,7 +1,5 @@
 ---
-layout: post
 title: Namespaces in Java Properties
-date: 2012-02-03
 ---
 *This post originally appeared on [Optify's Lead Generation Blog](http://www.optify.net/marketing-technology/adding-namespaces-to-java-properties) on February 3, 2012.*
 

@@ -1,23 +1,21 @@
 ---
-layout: post
 title: Introduction to KDE Programming
-date: 2004-09-01
 ---
-# Introduction
+## Introduction
 
-## Motivation
+### Motivation
 
 The information presented within stems from my experiences developing for the KDE platform. I've found that it is difficult to find relevant documentation for KDE components such as DCOP, KConfig, and icon themes. The situation becomes increasingly dire for less common uses of these components. Often one must resort to source code for other KDE projects to see how some of these components are to be used. I hope to address this and guide a new KDE developer through the different components available to them.
 
-## Applications vs Applets
+### Applications vs Applets
 
 A KDE application conventionally consists of a main window with a menu bar and toolbars, for example, Konqueror and JuK. A user may explicitly invoke it by executing the associated binary. A KDE panel applet is similar in structure to a KDE application but it is implicitly invoked through the Kicker, the KDE panel, and runs from within it.
 
 Very simply, the technical distinction between an application and an applet is in the use of KApplication versus KPanelApplet as a base class for your program. Simply substituting one base class for the other, however, will not transform your program into the other. There are differences in the project structure affecting things such as the build process and entry points. The technical aspects will be covered in subsequent sections.
 
-# Requirements
+## Requirements
 
-## Prerequisites
+### Prerequisites
 
 In order to compile and run the programs used herein you must have a working GNU/Linux environment with the following packages:
 
@@ -25,13 +23,13 @@ In order to compile and run the programs used herein you must have a working GNU
 * gcc, g++, make
 * autoconf, automake, libtool
 
-## Expected Background
+### Expected Background
 
 The reader ought to have experience developing with C++ in a Linux environment. Basic knowledge of Qt and KDE is beneficial.
 
-# The Basics
+## The Basics
 
-## Application
+### Application
 
 The basic structure for a KDE application contains the application class, subclassed from KApplication, and an entry point.
 
@@ -62,7 +60,7 @@ $ g++ -I/usr/include/qt3 -I/usr/include/kde -c -o application.o ./application.cp
 $ g++ -L/usr/lib/kde -lkdeui -o application application.o
 {% endhighlight %}
 
-## Applet
+### Applet
 
 The basic structure for a KDE applet is similar to that for applications. The code base contains the applet class, subclassed from KPanelApplet, and an entry point.
 
@@ -105,7 +103,7 @@ Tip: Use the Panel Applet Proxy to run the applet from a console to view debuggi
 $ appletproxy /usr/share/apps/kicker/applets/applet.desktop
 {% endhighlight %}
 
-## User Interface
+### User Interface
 
 Our user interface (UI) will be implemented as a widget and therefore inherits from QWidget. Within the widget is also where the program logic should be implemented. Placing the UI within the widget increases code reusability, although it is not incorrect to directly implement it within the application or applet.
 
@@ -130,7 +128,7 @@ We can load the widget by creating a new instance of the widget and displaying i
 }
  {% endhighlight %}
 
-# Settings
+## Settings
 
 With the release of KDE 3.2, KConfig XT has been adopted as the official configuration framework for KDE and KDE programs. For each configuration file, two files are required: a .kcfg file containing the configuration structure and a .kcfgc file containing code generation options.
 
@@ -192,7 +190,7 @@ protected:
 
 Note that we need not explicitly load or save the settings; KConfig XT takes care of this for us and stores them in $KDE_HOME/.kde/share/config.
 
-# Interprocess Communication
+## Interprocess Communication
 
 The Desktop Communication Protocol (DCOP) was designed to achieve interprocess communication (IPC) between KDE programs. To use DCOP, an interface needs to be defined for the program. Doing so exposes a set of functions to the DCOP server.
 
@@ -283,9 +281,9 @@ A DCOP interface is also an effective debugging tool. Tools such as dcop and kdc
 $ dcop application WidgetInterface icon
 {% endhighlight %}
 
-# Widgets
+## Widgets
 
-## KMainWindow
+### KMainWindow
 
 Typically applications use dialogs as their main widget. KDE provides the KMainWindow widget to build a main window from.
 
@@ -297,7 +295,7 @@ Typically applications use dialogs as their main widget. KDE provides the KMainW
 class Widget : public KMainWindow { };
 {% endhighlight %}
 
-## QLabel
+### QLabel
 
 Applets do not typically use dialogs as their main widget. Instead buttons, labels, sliders, and many others are commonly used.
 
@@ -317,7 +315,7 @@ public:
 };
 {% endhighlight %}
 
-## KConfigDialog
+### KConfigDialog
 
 KConfigDialog is a type of dialog that has been customized for displaying settings. If the KConfig XT framework is being used, then our generated class to be defined as a singleton. A widget with the widget names corresponding to the names of the settings, prefixed with kcfg_, must be designed for use with the dialog. For example, a QLabel for the icon setting would be named kcfg_icon.
 
@@ -345,9 +343,9 @@ public:
 };
 {% endhighlight %}
 
-# Event Handlers
+## Event Handlers
 
-## Context Menu
+### Context Menu
 
 A context menu event is received when the right mouse button is pressed on the widget. By default, this event is ignored. To display a menu, a QPopupMenu or a KPopupMenu must be implemented within the contextMenuEvent event handler.
 
@@ -393,7 +391,7 @@ The KHelpMenu object may be of interest. It provides a standard KDE help menu wi
 }
 {% endhighlight %}
 
-## Mouse Press
+### Mouse Press
 
 Mouse press events are received whenever the widget is clicked upon, whether it be with the left, middle, or right mouse buttons. These events may be captured from within the mousePressEvent event handler. Note that there is an overlap between the mouse press event and the context menu event when the right mouse button is pressed.
 
@@ -412,7 +410,7 @@ protected:
 };
 {% endhighlight %}
 
-## Resize
+### Resize
 
 As with the context menu and mouse press events, the resize event is handled by the resizeEvent() function. If an icon is displayed it may be resized by using the KDE icon theme functions.
 
@@ -437,13 +435,13 @@ protected:
 };
 {% endhighlight %}
 
-# References
+## References
 
 * Qt 3.3.3 API Reference. Trolltech AS. 10 September 2004 ([http://doc.trolltech.com/3.3/index.html](http://doc.trolltech.com/3.3/index.html)).
 * KDE 3.3.0 API Reference. KDE e.V. 8 September 2004 (<http://developer.kde.org/documentation/library/3.3-api/index.html>).
 * Using KConfig XT. KDE e.V and Zack Rusin. 17 September 2004 (<http://developer.kde.org/documentation/tutorials/kconfigxt/kconfigxt.html>).
 
-# Acknowledgements
+## Acknowledgements
 
 I would like to express my gratitude to Jeff Tranter (<jefft@xandros.com>) and the Xandros Corporation for introducing me to the world of KDE development. Without them this document would not have been possible.
 

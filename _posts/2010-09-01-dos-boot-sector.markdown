@@ -1,7 +1,5 @@
 ---
-layout: post
 title: DOS Boot Sector
-date: 2010-09-01
 ---
 I've been interested in writing an OS for a long time now. An OS consists of many components with one of the most fundamental being its booting mechanism. Had I been writing a production OS, I would have made use of a package such as GNU GRUB or LILO. However, as a hobbyist I was interested to know exactly what my PC was doing during the boot process. I decided that a good way to start would be to study a simple operating system -- MS-DOS. An MS-DOS boot sector has a very simple job: load the first 3 sectors of IO.SYS into memory and execute it.
 
