@@ -1,5 +1,16 @@
+# Jekyll build output and caches
 _site
 .sass-cache
 .jekyll-cache
 .jekyll-metadata
+
+# Ruby / Bundler
 vendor
+.bundle
+
+# Python tooling (tools/*.py)
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store

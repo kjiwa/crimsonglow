@@ -1,14 +1,11 @@
 #!/bin/sh
 # Regenerates ~kjiwa/assets/og-card.png, the site's social share image.
 #
-# The face glyph reuses the exact path/rect definitions from
-# _includes/avatar.svg (the full header logo, including eyes/mouth/teeth —
-# ~kjiwa/assets/favicon.svg's reduced subset is for icon sizes, not this),
-# transformed by hand (translate + uniform scale, matching avatar.svg's
-# nested SVG transforms) into absolute ImageMagick "-draw" coordinates. This
-# is necessary because the installed ImageMagick only has the MSVG renderer,
-# which silently drops <defs>/<use> — rendering avatar.svg directly produces
-# a blank glyph.
+# The face glyph can't be rendered from _includes/avatar.svg directly: the
+# installed ImageMagick only has the MSVG renderer, which silently drops
+# <defs>/<use> and produces a blank glyph. Instead tools/og-card-glyph.py
+# transforms avatar.svg's shapes by hand into the absolute "-draw" coordinates
+# used below (see that file for the coordinate math).
 #
 # Requires: ImageMagick (`magick`), and Arial / Arial Bold from
 # /System/Library/Fonts/Supplemental (macOS). Edit ARIAL/ARIAL_BOLD below to
