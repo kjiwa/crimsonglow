@@ -9,6 +9,7 @@ collected here since 2004.
 {%- for post in site.posts %}
 * {{ post.date | date: "%Y-%m" }} [{{ post.title }}]({{ post.url }})
 {%- endfor %}
+{:.posts}
 
 Reach me at [kjiwa@crimsonglow.ca](mailto:kjiwa@crimsonglow.ca).
 

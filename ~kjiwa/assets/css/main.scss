@@ -99,6 +99,12 @@ a:hover {
   padding: 8px;
 }
 
+.posts {
+  // Dates are fixed-shape (YYYY-MM), so tabular figures are enough to line the
+  // titles up -- no fixed-width date column needed.
+  font-variant-numeric: tabular-nums;
+}
+
 .home-links {
   display: flex;
   gap: 16px;
