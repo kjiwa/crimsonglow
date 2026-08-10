@@ -441,8 +441,8 @@ protected:
 ## References
 
 * Qt 3.3.3 API Reference. Trolltech AS. 10 September 2004 ([http://doc.trolltech.com/3.3/index.html](http://doc.trolltech.com/3.3/index.html)).
-* KDE 3.3.0 API Reference. KDE e.V. 8 September 2004 (<http://developer.kde.org/documentation/library/3.3-api/index.html>).
-* Using KConfig XT. KDE e.V and Zack Rusin. 17 September 2004 (<http://developer.kde.org/documentation/tutorials/kconfigxt/kconfigxt.html>).
+* KDE 3.3.0 API Reference. KDE e.V. 8 September 2004 (<https://web.archive.org/web/20041027202124/http://developer.kde.org/documentation/library/3.3-api/index.html>).
+* Using KConfig XT. KDE e.V and Zack Rusin. 17 September 2004 (<https://web.archive.org/web/20041012050157/http://developer.kde.org/documentation/tutorials/kconfigxt/kconfigxt.html>).
 
 ## Acknowledgements
 

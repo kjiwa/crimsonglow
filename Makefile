@@ -4,7 +4,7 @@ build:
 	JEKYLL_ENV=$(JEKYLL_ENV) bundle exec jekyll build
 
 # Shared with the weekly link-check workflow, which also needs --disable-external
-# off and --ignore-status-codes 429 on top -- see link-check below.
+# off and --ignore-status-codes 429,999 on top -- see link-check below.
 PROOFER_FLAGS = --no-enforce-https \
   --swap-urls '^https\://crimsonglow\.ca:' \
   --ignore-urls '/^\/$$/'
@@ -19,12 +19,13 @@ check: build
 	bundle exec htmlproofer ./_site --disable-external $(PROOFER_FLAGS)
 
 # Companion to check: same flags, but external links are live-checked instead
-# of skipped, and 429 (rate-limited) responses are ignored rather than failed.
-# Used by the weekly link-check workflow; kept separate from check because it
-# hits 2004-era posts' external links, which fail intermittently for reasons
-# unrelated to this repo and must never block a build.
+# of skipped, and 429 (rate-limited) / 999 (LinkedIn's anti-bot response, not
+# real rot) are ignored rather than failed. Used by the weekly link-check
+# workflow; kept separate from check because it hits 2004-era posts' external
+# links, which fail intermittently for reasons unrelated to this repo and must
+# never block a build.
 link-check: build
-	bundle exec htmlproofer ./_site $(PROOFER_FLAGS) --ignore-status-codes "429"
+	bundle exec htmlproofer ./_site $(PROOFER_FLAGS) --ignore-status-codes "429,999"
 
 deploy: check
 	tools/deploy.sh
