@@ -9,7 +9,12 @@ on:
     - cron: "0 9 * * 1" # Mondays, 09:00 UTC
   workflow_dispatch:
 
+# permissions: is an exhaustive declaration -- any scope not named here is set
+# to none, overriding the repository default. contents: read is required for
+# actions/checkout to clone this private repo; without it the clone fails with
+# a misleading "Repository not found".
 permissions:
+  contents: read
   issues: write
 
 jobs:
