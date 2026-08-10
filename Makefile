@@ -15,6 +15,7 @@ PROOFER_FLAGS = --no-enforce-https \
 # content call, not a build break. External reachability (including scheme
 # redirects) is covered separately by the weekly link-check workflow.
 check: build
+	tools/check-redirects.sh
 	bundle exec htmlproofer ./_site --disable-external $(PROOFER_FLAGS)
 
 # Companion to check: same flags, but external links are live-checked instead

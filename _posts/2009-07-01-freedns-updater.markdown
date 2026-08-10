@@ -1,5 +1,8 @@
 ---
 title: FreeDNS Updater
+description: >-
+  A Perl script that updates a FreeDNS dynamic DNS A record when it no longer
+  matches the caller's public IP, with nameserver and force-update flags.
 ---
 As its name suggests, FreeDNS is a free Internet DNS service. If you manage your domains with them, you can use this script to update your DNS records whenever your IP changes. It acts by querying the A record for your domain and for your public IP. If there is a mismatch between them, an update is invoked. The script is written in Perl and accepts the following options:
 

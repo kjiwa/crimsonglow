@@ -9,7 +9,7 @@ content directory:
 
 ```
 _site/
-├── .htaccess        # ErrorDocument + www/root redirects
+├── .htaccess        # ErrorDocument + www/root + legacy-URL redirects
 ├── robots.txt       # must live at the host root to be honoured by crawlers
 ├── sitemap.xml      # same
 └── ~kjiwa/          # everything else — the actual site content
@@ -57,7 +57,7 @@ root because Jekyll requires them there.
 
 ```sh
 make build   # bundle exec jekyll build
-make check   # build, then validate internal links/images with html-proofer
+make check   # build, then validate .htaccess redirects and internal links/images
 ```
 
 `make check` is exactly what [CI](.github/workflows/ci.yml) runs on every push

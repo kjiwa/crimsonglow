@@ -1,5 +1,8 @@
 ---
 title: Namespaces in Java Properties
+description: >-
+  Extending Java's java.util.Properties with namespaced keys and a '*' default
+  to merge per-environment config files, illustrated with a log4j example.
 ---
 *This post originally appeared on [Optify's Lead Generation Blog](http://www.optify.net/marketing-technology/adding-namespaces-to-java-properties) on February 3, 2012.*
 

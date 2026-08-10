@@ -1,5 +1,8 @@
 ---
 title: Introduction to KDE Programming
+description: >-
+  Developing KDE 3.2 applications and Kicker panel applets in C++: KConfig XT
+  settings, DCOP interprocess communication, and Qt-based event handling.
 ---
 ## Introduction
 
