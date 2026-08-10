@@ -10,7 +10,8 @@
 #     IdentityFile ~/.ssh/<your-key>
 #
 # Override the alias or the remote document root with CRIMSONGLOW_SSH_HOST /
-# CRIMSONGLOW_DOCROOT if you'd rather not add a Host block.
+# CRIMSONGLOW_DOCROOT if you'd rather not add a Host block. CRIMSONGLOW_DOCROOT
+# defaults to www/www, ICDSoft's document root for the primary domain.
 #
 # Auth is key-based only: lftp reaches SFTP by shelling out to `ssh -a -x` and
 # has no way to hand that process a password (--password / LFTP_PASSWORD are
@@ -81,10 +82,27 @@ fi
   exit 1
 }
 
-# --- transfer -------------------------------------------------------------
-
 SSH_HOST=${CRIMSONGLOW_SSH_HOST:-crimsonglow}
-DOCROOT=${CRIMSONGLOW_DOCROOT:-.}
+DOCROOT=${CRIMSONGLOW_DOCROOT:-www/www}
+
+# ssh resolves an unconfigured alias to itself, so `open sftp://crimsonglow`
+# degrades into a DNS lookup for the literal string "crimsonglow" and fails
+# inside lftp's retry loop below, where the real error is easy to miss under
+# --verbose --parallel=4 output. Catch it here instead, with no network call.
+ssh_target=${SSH_HOST#*@}
+resolved_host=$(ssh -G "$ssh_target" 2>/dev/null | awk '/^hostname /{print $2; exit}')
+if [ "$resolved_host" = "$ssh_target" ] && ! echo "$ssh_target" | grep -q '\.'; then
+  echo "deploy: '$ssh_target' is not a configured ssh host alias." >&2
+  echo "  Add this to ~/.ssh/config:" >&2
+  echo "    Host $ssh_target" >&2
+  echo "      HostName <your-icdsoft-host>" >&2
+  echo "      User <your-icdsoft-username>" >&2
+  echo "      IdentityFile ~/.ssh/<your-key>" >&2
+  echo "  Or set CRIMSONGLOW_SSH_HOST to a real hostname." >&2
+  exit 1
+fi
+
+# --- transfer -------------------------------------------------------------
 
 echo "deploy: mirroring ./_site/ to $SSH_HOST:$DOCROOT" >&2
 [ -n "$DRY_RUN" ] && echo "deploy: --dry-run, nothing will actually transfer" >&2
@@ -100,6 +118,8 @@ echo "deploy: mirroring ./_site/ to $SSH_HOST:$DOCROOT" >&2
 lftp -c "
   set net:max-retries 3;
   set net:timeout 15;
+  set net:reconnect-interval-base 5;
+  set net:reconnect-interval-max 10;
   open sftp://$SSH_HOST;
   mirror --reverse --verbose --parallel=4 $DRY_RUN $DELETE \
     --exclude-glob .well-known/ \

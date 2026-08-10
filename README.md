@@ -98,15 +98,22 @@ Host crimsonglow
   HostName <your-icdsoft-host>
   User <your-icdsoft-username>
   IdentityFile ~/.ssh/<your-key>
+  IdentitiesOnly yes
 ```
 
+`IdentitiesOnly yes` matters if you have other keys (e.g. a GitHub key) loaded
+or listed above this one in `~/.ssh/config` — without it, ssh offers those
+first, and shared hosts commonly disconnect after too many failed auth
+attempts.
+
 A key is required, not optional: `tools/deploy.sh` transfers over `lftp`, which
-reaches SFTP by shelling out to `ssh` and has no way to pass it a password. Load
-the key into ssh-agent before deploying (`ssh-add ~/.ssh/<your-key>`) — the
-script opens several SSH connections in parallel, and an agent-less passphrased
-key prompts once per connection. This composes fine with enabling SSH access in
-the Control Panel only for the deploy window and disabling it again after: a
-loaded key keeps that window short rather than stretching it across prompts.
+reaches SFTP by shelling out to `ssh` and has no way to pass it a password. If
+your key has a passphrase, load it into ssh-agent before deploying (`ssh-add
+~/.ssh/<your-key>`) — the script opens several SSH connections in parallel, and
+an agent-less passphrased key prompts once per connection. This composes fine
+with enabling SSH access in the Control Panel only for the deploy window and
+disabling it again after: a loaded key keeps that window short rather than
+stretching it across prompts.
 
 Then:
 
@@ -121,7 +128,9 @@ many FTP/SFTP GUI clients hide dotfiles and silently skip it. It also refuses
 to run against an uncommitted or unpushed working tree (skip with `--force`),
 and never deletes remote-only files unless you pass `--delete` — see the
 script's header comment for details and overrides
-(`CRIMSONGLOW_SSH_HOST`, `CRIMSONGLOW_DOCROOT`).
+(`CRIMSONGLOW_SSH_HOST`, defaulting to the `crimsonglow` alias;
+`CRIMSONGLOW_DOCROOT`, defaulting to `www/www`, ICDSoft's document root for the
+primary domain).
 
 Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
 — a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a
