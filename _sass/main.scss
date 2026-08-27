@@ -1,21 +1,50 @@
 @use "avatar";
 @use "highlight";
 
+:root {
+  --color-accent: #007;
+  --color-accent-hover: #339;
+  --color-accent-mid: #99f;
+  --color-accent-light: #ddf;
+  --color-caption: #f8f8ff;
+  --color-muted: #667;
+  --color-white: #fff;
+
+  --font-size-xs: 8pt;
+  --font-size-sm: 10pt;
+  --font-size-md: 11pt;
+  --font-size-lg: 12pt;
+  --font-size-xl: 16pt;
+
+  --line-height: 1.5;
+
+  --space-1: 8px;
+  --space-2: 16px;
+
+  --measure: 40rem;
+}
+
 body {
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 10pt;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height);
+}
+
+header,
+article {
+  padding-inline: max(var(--space-2), (100% - var(--measure)) / 2);
 }
 
 header {
-  background-color: #007;
-  color: #fff;
-  font-size: 16pt;
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  font-size: var(--font-size-xl);
   font-weight: normal;
-  padding: 16px;
+  padding-block: var(--space-2);
 }
 
 header a {
-  color: #fff;
+  color: var(--color-white);
 }
 
 header figure {
@@ -27,18 +56,18 @@ header figure {
 
 article {
   margin: 0;
-  padding: 0 16px;
+  padding-block: 0;
 }
 
 article h1 {
-  font-size: 12pt;
+  font-size: var(--font-size-lg);
   font-weight: bold;
   margin-bottom: 0;
   text-decoration: underline;
 }
 
 a {
-  color: #007;
+  color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -46,44 +75,48 @@ a:hover {
   text-decoration: underline;
 }
 
+.content {
+  overflow-wrap: break-word;
+}
+
 .content h2 {
-  font-size: 12pt;
+  font-size: var(--font-size-lg);
   font-weight: bold;
   text-decoration: underline;
 }
 
 .content h3 {
-  font-size: 11pt;
+  font-size: var(--font-size-md);
   font-weight: bold;
 }
 
 .content h4 {
-  font-size: 10pt;
+  font-size: var(--font-size-sm);
   font-weight: bold;
   text-decoration: underline;
 }
 
 .content h5 {
-  font-size: 10pt;
+  font-size: var(--font-size-sm);
   font-style: italic;
   font-weight: normal;
 }
 
 .byline {
-  color: #667;
-  font-size: 8pt;
-  margin-bottom: 16px;
+  color: var(--color-muted);
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--space-2);
 }
 
 .content .caption {
-  background-color: #f8f8ff;
+  background-color: var(--color-caption);
   font-weight: bold;
-  padding: 8px;
+  padding: var(--space-1);
 }
 
 .content code {
   font-family: ui-monospace, "SF Mono", Consolas, monospace;
-  font-size: 8pt;
+  font-size: var(--font-size-xs);
 }
 
 .content figure {
@@ -91,10 +124,10 @@ a:hover {
 }
 
 .content pre {
-  background-color: #ddf;
+  background-color: var(--color-accent-light);
   margin-top: 0;
   overflow-x: auto;
-  padding: 8px;
+  padding: var(--space-1);
 }
 
 .posts {
@@ -105,18 +138,18 @@ a:hover {
 
 .home-links {
   display: flex;
-  gap: 16px;
-  padding: 0 8px;
+  gap: var(--space-2);
+  padding: 0 var(--space-1);
 }
 
 .home-links svg {
-  fill: #007;
+  fill: var(--color-accent);
   height: 32px;
   width: 32px;
 }
 
 .home-links a:hover svg {
-  fill: #339;
+  fill: var(--color-accent-hover);
 }
 
 .software-job-search-div {
@@ -133,17 +166,18 @@ a:hover {
 }
 
 .dos-boot-sector-table {
+  overflow-x: auto;
   text-align: center;
 }
 
 .dos-boot-sector-table table {
   border-collapse: collapse;
-  margin: 8px auto;
+  margin: var(--space-1) auto;
   width: 640px;
 }
 
 .dos-boot-sector-table td {
-  border: 1px solid #007;
+  border: 1px solid var(--color-accent);
   height: 20px;
   margin: 0;
   padding: 0;
@@ -151,11 +185,11 @@ a:hover {
 }
 
 .dos-boot-sector-table-partially-reserved-byte {
-  background-color: #99f;
+  background-color: var(--color-accent-mid);
 }
 
 .dos-boot-sector-table-reserved-byte {
-  background-color: #339;
+  background-color: var(--color-accent-hover);
 }
 
 .dos-boot-sector-table caption {
@@ -168,8 +202,8 @@ a:hover {
 }
 
 .dos-boot-sector-parameters + table thead {
-  background-color: #007;
-  color: #fff;
+  background-color: var(--color-accent);
+  color: var(--color-white);
   font-weight: bold;
 }
 
@@ -181,3 +215,4 @@ a:hover {
 .dos-boot-sector-parameters + table tbody tr td:first-child {
   text-align: center;
 }
+
