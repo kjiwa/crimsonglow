@@ -114,7 +114,7 @@ $IM_CONVERT -size 1200x630 xc:"#000077" \
   -gravity NorthWest -annotate +520+230 "Kamil Jiwa" \
   -fill "#ccccee" -font "$FONT_REGULAR" -pointsize 34 \
   -gravity NorthWest -annotate +523+345 "crimsonglow.ca/~kjiwa" \
-  -depth 8 -define png:color-type=2 \
+  -colors 128 -define png:color-type=3 \
   "$out"
 
 # Deliberately unquoted: on ImageMagick 7, IM_IDENTIFY is "magick identify"
