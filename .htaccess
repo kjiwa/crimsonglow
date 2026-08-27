@@ -38,3 +38,26 @@ ErrorDocument 404 /~kjiwa/404.html
   RewriteRule ^~kjiwa/kde_programming\.html$ /~kjiwa/2004/09/introduction-to-kde-programming.html [R=301,L]
   RewriteRule ^~kjiwa/2016/11/technical-job-search\.html$ /~kjiwa/2016/11/software-job-search.html [R=301,L]
 </IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml \
+    application/xml application/atom+xml application/ld+json image/svg+xml
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/xml \
+    application/xml application/atom+xml application/ld+json image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  # HTML carries the stylesheet inline, so it must stay short-lived.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=600"
+  </FilesMatch>
+
+  # Asset filenames are unversioned, so max-age is also the propagation delay
+  # for a regenerated card or favicon. 30 days, not a year, for that reason.
+  <FilesMatch "\.(png|svg)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
