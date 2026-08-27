@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{{ site.home }}/assets/favicon.svg">
-    <link rel="stylesheet" type="text/css" href="{{ site.home }}/assets/css/main.css">
+    <style>{{ '@use "main";' | scssify }}</style>
     {% seo title=false %}
     {% feed_meta %}
     {% include person.html %}

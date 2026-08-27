@@ -1,7 +1,7 @@
 # Progress: my-claude-md-has-changed-resilient-heron.md
 
 - [x] 1. `.htaccess`: compression + cache headers
-- [ ] 2. Inline the CSS, drop the sourcemap
+- [x] 2. Inline the CSS, drop the sourcemap
 - [ ] 3. CSS: fix three overflow bugs, add tokens, cap the measure
 - [ ] 4. `og-card.png`: palette PNG
 - [ ] 5. Docs: de-duplicate deploy.sh/README and Makefile/link-check.yml
