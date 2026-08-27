@@ -1,32 +1,7 @@
 #!/bin/sh
-# Uploads ./_site/ to the ICDSoft document root over SFTP.
-#
-# No hosting credentials live in this repo. Configure access via an SSH host
-# alias in ~/.ssh/config:
-#
-#   Host crimsonglow
-#     HostName <your-icdsoft-host>
-#     User <your-icdsoft-username>
-#     IdentityFile ~/.ssh/<your-key>
-#
-# Override the alias or the remote document root with CRIMSONGLOW_SSH_HOST /
-# CRIMSONGLOW_DOCROOT if you'd rather not add a Host block. CRIMSONGLOW_DOCROOT
-# defaults to www/www, ICDSoft's document root for the primary domain.
-#
-# Auth is key-based only: lftp reaches SFTP by shelling out to `ssh -a -x` and
-# has no way to hand that process a password (--password / LFTP_PASSWORD are
-# FTP/HTTP-only). Load the key into ssh-agent before deploying -- --parallel=4
-# below opens several ssh connections, and each one prompts separately for a
-# passphrase otherwise.
+# Uploads ./_site/ to the ICDSoft document root over SFTP. See README.md.
 #
 # Usage: tools/deploy.sh [--dry-run] [--delete] [--force]
-#
-#   --dry-run  Show what would transfer without changing anything remote.
-#   --delete   Also remove remote files not present in ./_site/. Off by
-#              default: on shared hosting the document root can contain
-#              server-managed paths (see .well-known/ exclude below), so this
-#              should only be enabled after auditing the docroot by hand.
-#   --force    Skip the local working-tree guards (see below).
 
 set -eu
 

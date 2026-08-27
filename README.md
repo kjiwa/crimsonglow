@@ -126,11 +126,9 @@ make deploy           # build, validate, and upload _site/ to the document root
 default — this is what makes sure `.htaccess` actually reaches the server;
 many FTP/SFTP GUI clients hide dotfiles and silently skip it. It also refuses
 to run against an uncommitted or unpushed working tree (skip with `--force`),
-and never deletes remote-only files unless you pass `--delete` — see the
-script's header comment for details and overrides
-(`CRIMSONGLOW_SSH_HOST`, defaulting to the `crimsonglow` alias;
-`CRIMSONGLOW_DOCROOT`, defaulting to `www/www`, ICDSoft's document root for the
-primary domain).
+and never deletes remote-only files unless you pass `--delete`. Override the
+SSH host alias or remote document root with `CRIMSONGLOW_SSH_HOST` (default:
+`crimsonglow`) and `CRIMSONGLOW_DOCROOT` (default: `www/www`).
 
 Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
 — a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a

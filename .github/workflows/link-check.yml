@@ -1,9 +1,5 @@
 name: Link check
 
-# Weekly scan for external link rot. Kept separate from CI because it checks
-# links out on the 2004-era posts, which will fail intermittently for reasons
-# that have nothing to do with the state of this repo -- it must never block
-# a build. Failures are reported as a single tracking issue instead.
 on:
   schedule:
     - cron: "0 9 * * 1" # Mondays, 09:00 UTC
