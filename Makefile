@@ -18,6 +18,9 @@ check: build
 	tools/check-redirects.sh
 	bundle exec htmlproofer ./_site --disable-external $(PROOFER_FLAGS)
 
+check-live:
+	tools/check-headers.sh
+
 # Companion to check: same flags, but external links are live-checked instead
 # of skipped, and 429 (rate-limited) / 999 (LinkedIn's anti-bot response, not
 # real rot) are ignored rather than failed. Used by the weekly link-check
@@ -39,4 +42,4 @@ serve: build
 og-card:
 	tools/og-card.sh
 
-.PHONY: build check link-check deploy deploy-dry-run serve og-card
+.PHONY: build check check-live link-check deploy deploy-dry-run serve og-card
