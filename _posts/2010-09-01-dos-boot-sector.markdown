@@ -28,8 +28,8 @@ MS-DOS expects the disk to be formatted with the FAT file system and will popula
     {% endfor %}
     </tbody>
   </table>
-  <div class="caption">Free and reserved bytes in an MS-DOS boot sector (1 B per square)</div>
 </div>
+<div class="caption">Free and reserved bytes in an MS-DOS boot sector (1 B per square)</div>
 
 The BIOS parameter block contains important information about the layout of the filesystem. Here is a table describing its layout:
 
@@ -80,8 +80,8 @@ Some parts of conventional memory are reserved by the system. The first 1 024 B 
     {% endfor %}
     </tbody>
   </table>
-  <div class="caption">Free, partial, and reserved bytes in conventional memory (1 KiB per square)</div>
 </div>
+<div class="caption">Free, partial, and reserved bytes in conventional memory (1 KiB per square)</div>
 
 In my boot sector implementation, I use 5 B in [0x07E00, 0x07E05) to store the number of sectors on the disk and the logical block address of the root directory and IO.SYS. I use 29.75 KiB in [0x00500, 0x07C00) for the root directory index. Each root directory entry is 32 B, meaning that IO.SYS must be one of the first 952 entries. (MS-DOS 4.0 expects IO.SYS to be the first record in the root directory.) Here is a table describing the layout of each root directory entry:
 
