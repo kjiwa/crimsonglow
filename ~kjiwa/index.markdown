@@ -16,7 +16,7 @@ Reach me at [kjiwa@crimsonglow.ca](mailto:kjiwa@crimsonglow.ca).
 <div class="home-links">
   {%- for profile in site.data.profiles %}
   <a href="{{ profile.url }}" rel="me" aria-label="{{ profile.name }}">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="{{ profile.icon }}"></path></svg>
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="{{ profile.icon }}"></path></svg>
   </a>
   {%- endfor %}
 </div>
