@@ -1,8 +1,8 @@
 #!/bin/sh
-# Asserts compression and cache headers on the live site. Nothing else checks
-# what the server returns -- `make check` validates the build and stays
-# offline-clean, so missing server-side compression and caching can go unnoticed.
-# This script closes that gap.
+# Asserts compression, cache, and security headers on the live site. Nothing
+# else checks what the server returns -- `make check` validates the build and
+# stays offline-clean, so missing server-side compression, caching, or security
+# headers can go unnoticed. This script closes that gap.
 
 set -eu
 
@@ -18,6 +18,29 @@ fi
 
 if ! echo "$html_headers" | grep -qi '^cache-control:.*max-age=600'; then
   echo "check-headers: $html_url missing cache-control max-age=600" >&2
+  status=1
+fi
+
+if ! echo "$html_headers" | grep -qi '^x-content-type-options:.*nosniff'; then
+  echo "check-headers: $html_url missing x-content-type-options nosniff" >&2
+  status=1
+fi
+
+if ! echo "$html_headers" | grep -qi '^referrer-policy:.*strict-origin-when-cross-origin'; then
+  echo "check-headers: $html_url missing referrer-policy strict-origin-when-cross-origin" >&2
+  status=1
+fi
+
+if ! echo "$html_headers" | grep -qi '^x-frame-options:.*sameorigin'; then
+  echo "check-headers: $html_url missing x-frame-options sameorigin" >&2
+  status=1
+fi
+
+feed_url="https://crimsonglow.ca/~kjiwa/feed.xml"
+feed_headers=$(curl -sSI "$feed_url")
+
+if ! echo "$feed_headers" | grep -qi '^cache-control:.*max-age=600'; then
+  echo "check-headers: $feed_url missing cache-control max-age=600" >&2
   status=1
 fi
 
