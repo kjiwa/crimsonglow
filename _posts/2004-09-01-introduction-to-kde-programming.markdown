@@ -81,7 +81,8 @@ extern "C" {
     int actions = 0;
     KGlobal::locale()->insertCatalogue("applet");
     return new Applet(configFile, KPanelApplet::Normal, actions, parent, "applet");
-  }}
+  }
+}
 {% endhighlight %}
 
 Notice that while the main class has a similar structure to the application, the entry point differs significantly. The applet is not compiled to a binary program and it cannot be invoked with main(). Instead, the applet is compiled to a shared object with init() as an entry point.
@@ -129,7 +130,7 @@ We can load the widget by creating a new instance of the widget and displaying i
   pWidget->show();
   ...
 }
- {% endhighlight %}
+{% endhighlight %}
 
 ## Settings
 

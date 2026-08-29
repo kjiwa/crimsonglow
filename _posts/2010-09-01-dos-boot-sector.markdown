@@ -58,7 +58,7 @@ Length | Name
 
 The CPU will be in real mode when the boot sector is loaded. This means we can only use 16-bit opcodes and address up to 1 MiB of memory. The first 640 KiB are available to our program while the remaining 384 KiB are used for assorted system-specific purposes. These memory areas are known as conventional memory and the upper memory area, respectively.
 
-Some parts of conventional memory are reserved by the system. The first 1 024 B are used for the interrupt vector table and the next 256 B are used for the BIOS data area. Also, recall that the boot sector is loaded in 512 B in [0x07C00, 0x07E00). We can safely use 29.75 KiB B in [0x00500, 0x07C00) and 480.5 KiB in [0x07E00, 0x80000) for a total of 510.25 KiB. There are also 128 KiB in [0x80000, 0xA0000), but some systems consume part of this region for the extended BIOS data area.
+Some parts of conventional memory are reserved by the system. The first 1 024 B are used for the interrupt vector table and the next 256 B are used for the BIOS data area. Also, recall that the boot sector is loaded in 512 B in [0x07C00, 0x07E00). We can safely use 29.75 KiB in [0x00500, 0x07C00) and 480.5 KiB in [0x07E00, 0x80000) for a total of 510.25 KiB. There are also 128 KiB in [0x80000, 0xA0000), but some systems consume part of this region for the extended BIOS data area.
 
 <div class="dos-boot-sector-table">
   <table>

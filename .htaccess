@@ -55,11 +55,7 @@ ErrorDocument 404 /~kjiwa/404.html
   Header always set X-Frame-Options "SAMEORIGIN"
 
   # HTML carries the stylesheet inline, so it must stay short-lived.
-  <FilesMatch "\.html$">
-    Header set Cache-Control "public, max-age=600"
-  </FilesMatch>
-
-  <FilesMatch "\.(xml|txt)$">
+  <FilesMatch "\.(html|xml|txt)$">
     Header set Cache-Control "public, max-age=600"
   </FilesMatch>
 
