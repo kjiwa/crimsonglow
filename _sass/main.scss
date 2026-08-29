@@ -2,13 +2,12 @@
 @use "highlight";
 
 :root {
-  --color-accent: #007;
-  --color-accent-hover: #339;
-  --color-accent-mid: #99f;
-  --color-accent-light: #ddf;
-  --color-caption: #f8f8ff;
-  --color-muted: #667;
-  --color-white: #fff;
+  --color-blue-900: #007;
+  --color-blue-700: #339;
+  --color-blue-400: #99f;
+  --color-blue-100: #ddf;
+  --color-blue-050: #f8f8ff;
+  --color-text-muted: #667;
 
   --font-size-xs: 8pt;
   --font-size-sm: 10pt;
@@ -29,15 +28,15 @@ body {
 }
 
 header {
-  background-color: var(--color-accent);
-  color: var(--color-white);
+  background-color: var(--color-blue-900);
+  color: #fff;
   font-size: var(--font-size-xl);
   font-weight: normal;
   padding: var(--space-2);
 }
 
 header a {
-  color: var(--color-white);
+  color: #fff;
 }
 
 header figure {
@@ -60,7 +59,7 @@ article h1 {
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--color-blue-900);
   text-decoration: none;
 }
 
@@ -96,13 +95,13 @@ a:hover {
 }
 
 .byline {
-  color: var(--color-muted);
+  color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   margin-bottom: var(--space-2);
 }
 
 .content .caption {
-  background-color: var(--color-caption);
+  background-color: var(--color-blue-050);
   font-weight: bold;
   padding: var(--space-1);
 }
@@ -117,7 +116,7 @@ a:hover {
 }
 
 .content pre {
-  background-color: var(--color-accent-light);
+  background-color: var(--color-blue-100);
   margin-top: 0;
   overflow-x: auto;
   padding: var(--space-1);
@@ -136,13 +135,13 @@ a:hover {
 }
 
 .home-links svg {
-  fill: var(--color-accent);
+  fill: var(--color-blue-900);
   height: 32px;
   width: 32px;
 }
 
 .home-links a:hover svg {
-  fill: var(--color-accent-hover);
+  fill: var(--color-blue-700);
 }
 
 .software-job-search-div {
@@ -169,7 +168,7 @@ a:hover {
 }
 
 .dos-boot-sector-table td {
-  border: 1px solid var(--color-accent);
+  border: 1px solid var(--color-blue-900);
   height: 20px;
   margin: 0;
   padding: 0;
@@ -177,11 +176,11 @@ a:hover {
 }
 
 .dos-boot-sector-table-partially-reserved-byte {
-  background-color: var(--color-accent-mid);
+  background-color: var(--color-blue-400);
 }
 
 .dos-boot-sector-table-reserved-byte {
-  background-color: var(--color-accent-hover);
+  background-color: var(--color-blue-700);
 }
 
 .dos-boot-sector-table caption {
@@ -194,8 +193,8 @@ a:hover {
 }
 
 .dos-boot-sector-parameters + table thead {
-  background-color: var(--color-accent);
-  color: var(--color-white);
+  background-color: var(--color-blue-900);
+  color: #fff;
   font-weight: bold;
 }
 
@@ -207,4 +206,3 @@ a:hover {
 .dos-boot-sector-parameters + table tbody tr td:first-child {
   text-align: center;
 }
-
