@@ -16,38 +16,29 @@
 
 set -eu
 
-cd "$(dirname "$0")/.."
-out="~kjiwa/assets/og-card.png"
+# 2.0 SVG units (matching _sass/avatar.scss's 2px stroke in the 70-unit
+# header viewBox), scaled by the same SCALE * FAV_SCALE factor the glyph
+# coordinates use.
+STROKE=10.14
+readonly STROKE
 
-# ImageMagick 7 ships `magick`; ImageMagick 6 -- still the default on Debian 12
-# and Ubuntu 22.04/24.04 -- ships only `convert`/`identify`. The MVG `-draw`
-# syntax and `png:` define used below are identical across both.
-if command -v magick >/dev/null 2>&1; then
-  IM_CONVERT=magick
-  IM_IDENTIFY="magick identify"
-elif command -v convert >/dev/null 2>&1 && command -v identify >/dev/null 2>&1; then
-  IM_CONVERT=convert
-  IM_IDENTIFY=identify
-else
-  echo "og-card: ImageMagick not found. Install it (apt install imagemagick /" >&2
-  echo "  dnf install ImageMagick / pacman -S imagemagick / brew install imagemagick)." >&2
-  exit 1
-fi
+OUT_FILE="~kjiwa/assets/og-card.png"
+readonly OUT_FILE
 
 # Tries each candidate in order, printing the first that resolves. "fc:"
 # entries are fontconfig patterns; plain entries are literal paths. fc-list is
 # used rather than fc-match because fc-match always falls back to *some* font,
 # which would silently substitute a non-metric-compatible face.
 resolve_font() {
-  for c in "$@"; do
-    case $c in
+  for _resolve_font_candidate in "$@"; do
+    case "$_resolve_font_candidate" in
       fc:*)
         command -v fc-list >/dev/null 2>&1 || continue
-        m=$(fc-list -f '%{file}\n' "${c#fc:}" file 2>/dev/null | head -n 1)
-        [ -n "$m" ] && { printf '%s\n' "$m"; return 0; }
+        _resolve_font_match=$(fc-list -f '%{file}\n' "${_resolve_font_candidate#fc:}" file 2>/dev/null | head -n 1)
+        [ -n "$_resolve_font_match" ] && { printf '%s\n' "$_resolve_font_match"; return 0; }
         ;;
       *)
-        [ -f "$c" ] && { printf '%s\n' "$c"; return 0; }
+        [ -f "$_resolve_font_candidate" ] && { printf '%s\n' "$_resolve_font_candidate"; return 0; }
         ;;
     esac
   done
@@ -56,67 +47,88 @@ resolve_font() {
 
 # $1 = weight label for the message, $2 = override variable to suggest.
 font_error() {
-  echo "og-card: no Arial-metric $1 font found. Install Liberation Sans" >&2
+  _font_error_weight="$1"
+  _font_error_override="$2"
+
+  echo "og-card: no Arial-metric $_font_error_weight font found. Install Liberation Sans" >&2
   echo "  (apt install fonts-liberation / dnf install liberation-sans-fonts /" >&2
-  echo "   pacman -S ttf-liberation) or set $2 to a font file." >&2
+  echo "   pacman -S ttf-liberation) or set $_font_error_override to a font file." >&2
   exit 1
 }
 
-FONT_BOLD=${OG_FONT_BOLD:-}
-if [ -z "$FONT_BOLD" ] && ! FONT_BOLD=$(resolve_font \
-  "/System/Library/Fonts/Supplemental/Arial Bold.ttf" \
-  "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf" \
-  "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" \
-  "/usr/share/fonts/liberation-sans/LiberationSans-Bold.ttf" \
-  "/usr/share/fonts/TTF/LiberationSans-Bold.ttf" \
-  "fc:Arial:style=Bold" \
-  "fc:Liberation Sans:style=Bold" \
-  "fc:Arimo:style=Bold"); then
-  font_error bold OG_FONT_BOLD
-fi
+main() {
+  _main_dir="$(dirname "$0")/.."
+  cd "$_main_dir"
 
-FONT_REGULAR=${OG_FONT_REGULAR:-}
-if [ -z "$FONT_REGULAR" ] && ! FONT_REGULAR=$(resolve_font \
-  "/System/Library/Fonts/Supplemental/Arial.ttf" \
-  "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf" \
-  "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf" \
-  "/usr/share/fonts/liberation-sans/LiberationSans-Regular.ttf" \
-  "/usr/share/fonts/TTF/LiberationSans-Regular.ttf" \
-  "fc:Arial:style=Regular" \
-  "fc:Liberation Sans:style=Regular" \
-  "fc:Arimo:style=Regular"); then
-  font_error regular OG_FONT_REGULAR
-fi
+  # ImageMagick 7 ships `magick`; ImageMagick 6 -- still the default on Debian 12
+  # and Ubuntu 22.04/24.04 -- ships only `convert`/`identify`. The MVG `-draw`
+  # syntax and `png:` define used below are identical across both.
+  if command -v magick >/dev/null 2>&1; then
+    _main_im_convert="magick"
+    _main_im_identify="magick identify"
+  elif command -v convert >/dev/null 2>&1 && command -v identify >/dev/null 2>&1; then
+    _main_im_convert="convert"
+    _main_im_identify="identify"
+  else
+    echo "og-card: ImageMagick not found. Install it (apt install imagemagick /" >&2
+    echo "  dnf install ImageMagick / pacman -S imagemagick / brew install imagemagick)." >&2
+    return 1
+  fi
 
-echo "og-card: bold font:    $FONT_BOLD" >&2
-echo "og-card: regular font: $FONT_REGULAR" >&2
+  _main_font_bold="${OG_FONT_BOLD:-}"
+  if [ -z "$_main_font_bold" ] && ! _main_font_bold=$(resolve_font \
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf" \
+    "/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf" \
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" \
+    "/usr/share/fonts/liberation-sans/LiberationSans-Bold.ttf" \
+    "/usr/share/fonts/TTF/LiberationSans-Bold.ttf" \
+    "fc:Arial:style=Bold" \
+    "fc:Liberation Sans:style=Bold" \
+    "fc:Arimo:style=Bold"); then
+    font_error bold OG_FONT_BOLD
+  fi
 
-# 2.0 SVG units (matching _sass/avatar.scss's 2px stroke in the 70-unit
-# header viewBox), scaled by the same SCALE * FAV_SCALE factor the glyph
-# coordinates use.
-STROKE=10.14
+  _main_font_regular="${OG_FONT_REGULAR:-}"
+  if [ -z "$_main_font_regular" ] && ! _main_font_regular=$(resolve_font \
+    "/System/Library/Fonts/Supplemental/Arial.ttf" \
+    "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf" \
+    "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf" \
+    "/usr/share/fonts/liberation-sans/LiberationSans-Regular.ttf" \
+    "/usr/share/fonts/TTF/LiberationSans-Regular.ttf" \
+    "fc:Arial:style=Regular" \
+    "fc:Liberation Sans:style=Regular" \
+    "fc:Arimo:style=Regular"); then
+    font_error regular OG_FONT_REGULAR
+  fi
 
-# Absolute coordinates for the face glyph, computed by tools/og-card-glyph.py
-# from the shapes in avatar.svg.
-STROKES=$(python3 tools/og-card-glyph.py strokes)
-LENSES=$(python3 tools/og-card-glyph.py lenses)
-EYES=$(python3 tools/og-card-glyph.py eyes)
+  echo "og-card: bold font:    $_main_font_bold" >&2
+  echo "og-card: regular font: $_main_font_regular" >&2
 
-$IM_CONVERT -size 1200x630 xc:"#000077" \
-  -fill none -stroke white -strokewidth "$STROKE" \
-  -draw "stroke-linecap round stroke-linejoin round $STROKES" \
-  -fill "#000077" -stroke white -strokewidth "$STROKE" \
-  -draw "$LENSES" \
-  -fill none -stroke white -strokewidth "$STROKE" \
-  -draw "$EYES" \
-  -stroke none \
-  -fill white -font "$FONT_BOLD" -pointsize 84 \
-  -gravity NorthWest -annotate +520+230 "Kamil Jiwa" \
-  -fill "#ccccee" -font "$FONT_REGULAR" -pointsize 34 \
-  -gravity NorthWest -annotate +523+345 "crimsonglow.ca/~kjiwa" \
-  -colors 128 -define png:color-type=3 \
-  "$out"
+  # Absolute coordinates for the face glyph, computed by tools/og-card-glyph.py
+  # from the shapes in avatar.svg.
+  _main_strokes=$(python3 tools/og-card-glyph.py strokes)
+  _main_lenses=$(python3 tools/og-card-glyph.py lenses)
+  _main_eyes=$(python3 tools/og-card-glyph.py eyes)
 
-# Deliberately unquoted: on ImageMagick 7, IM_IDENTIFY is "magick identify"
-# and must word-split into two arguments.
-$IM_IDENTIFY "$out"
+  $_main_im_convert -size 1200x630 xc:"#000077" \
+    -fill none -stroke white -strokewidth "$STROKE" \
+    -draw "stroke-linecap round stroke-linejoin round $_main_strokes" \
+    -fill "#000077" -stroke white -strokewidth "$STROKE" \
+    -draw "$_main_lenses" \
+    -fill none -stroke white -strokewidth "$STROKE" \
+    -draw "$_main_eyes" \
+    -stroke none \
+    -fill white -font "$_main_font_bold" -pointsize 84 \
+    -gravity NorthWest -annotate +520+230 "Kamil Jiwa" \
+    -fill "#ccccee" -font "$_main_font_regular" -pointsize 34 \
+    -gravity NorthWest -annotate +523+345 "crimsonglow.ca/~kjiwa" \
+    -colors 128 -define png:color-type=3 \
+    "$OUT_FILE"
+
+  # Deliberately unquoted: on ImageMagick 7, _main_im_identify is "magick identify"
+  # and must word-split into two arguments.
+  $_main_im_identify "$OUT_FILE"
+}
+
+main "$@"
+

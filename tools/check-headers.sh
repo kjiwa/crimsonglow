@@ -6,51 +6,42 @@
 
 set -eu
 
-status=0
+assert_header() {
+  _assert_header_url="$1"
+  _assert_header_headers="$2"
+  _assert_header_pattern="$3"
+  _assert_header_label="$4"
 
-html_url="https://crimsonglow.ca/~kjiwa/2010/09/dos-boot-sector.html"
-html_headers=$(curl -sSI -H "Accept-Encoding: gzip, deflate, br, zstd" "$html_url")
+  if ! printf '%s\n' "$_assert_header_headers" | grep -qi "$_assert_header_pattern"; then
+    echo "check-headers: $_assert_header_url missing $_assert_header_label" >&2
+    return 1
+  fi
+  return 0
+}
 
-if ! echo "$html_headers" | grep -qi '^content-encoding:'; then
-  echo "check-headers: $html_url missing content-encoding header" >&2
-  status=1
-fi
+main() {
+  _main_status=0
 
-if ! echo "$html_headers" | grep -qi '^cache-control:.*max-age=600'; then
-  echo "check-headers: $html_url missing cache-control max-age=600" >&2
-  status=1
-fi
+  _main_html_url="https://crimsonglow.ca/~kjiwa/2010/09/dos-boot-sector.html"
+  _main_html_headers=$(curl -sSI -H "Accept-Encoding: gzip, deflate, br, zstd" "$_main_html_url")
 
-if ! echo "$html_headers" | grep -qi '^x-content-type-options:.*nosniff'; then
-  echo "check-headers: $html_url missing x-content-type-options nosniff" >&2
-  status=1
-fi
+  assert_header "$_main_html_url" "$_main_html_headers" '^content-encoding:' "content-encoding header" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^x-content-type-options:.*nosniff' "x-content-type-options nosniff" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^referrer-policy:.*strict-origin-when-cross-origin' "referrer-policy strict-origin-when-cross-origin" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^x-frame-options:.*sameorigin' "x-frame-options sameorigin" || _main_status=1
 
-if ! echo "$html_headers" | grep -qi '^referrer-policy:.*strict-origin-when-cross-origin'; then
-  echo "check-headers: $html_url missing referrer-policy strict-origin-when-cross-origin" >&2
-  status=1
-fi
+  _main_feed_url="https://crimsonglow.ca/~kjiwa/feed.xml"
+  _main_feed_headers=$(curl -sSI "$_main_feed_url")
+  assert_header "$_main_feed_url" "$_main_feed_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
 
-if ! echo "$html_headers" | grep -qi '^x-frame-options:.*sameorigin'; then
-  echo "check-headers: $html_url missing x-frame-options sameorigin" >&2
-  status=1
-fi
+  _main_asset_url="https://crimsonglow.ca/~kjiwa/assets/og-card.png"
+  _main_asset_headers=$(curl -sSI "$_main_asset_url")
+  assert_header "$_main_asset_url" "$_main_asset_headers" '^cache-control:.*max-age=2592000' "cache-control max-age=2592000" || _main_status=1
 
-feed_url="https://crimsonglow.ca/~kjiwa/feed.xml"
-feed_headers=$(curl -sSI "$feed_url")
+  return "$_main_status"
+}
 
-if ! echo "$feed_headers" | grep -qi '^cache-control:.*max-age=600'; then
-  echo "check-headers: $feed_url missing cache-control max-age=600" >&2
-  status=1
-fi
+main "$@"
 
-asset_url="https://crimsonglow.ca/~kjiwa/assets/og-card.png"
-asset_headers=$(curl -sSI "$asset_url")
-
-if ! echo "$asset_headers" | grep -qi '^cache-control:.*max-age=2592000'; then
-  echo "check-headers: $asset_url missing cache-control max-age=2592000" >&2
-  status=1
-fi
-
-exit "$status"
 
