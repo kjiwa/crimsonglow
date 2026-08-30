@@ -10,8 +10,8 @@ After your BIOS completes its POST, an IBM PC compatible computer will read the 
 
 MS-DOS expects the disk to be formatted with the FAT file system and will populate the boot sector with an 8 B OEM name and a 51 B data structure known as the BIOS parameter block. The first 3 B are expected to contain a jump instruction. This finally leaves us with 448 B for code. Had I been writing a production DOS boot sector, I would have written the code in an assembly language under such extreme constraints. However, as a philocalist and masochist I felt compelled to write legible code and decided to use C.
 
-<div class="dos-boot-sector-table">
-  <table>
+<div class="dos-boot-sector-table" role="region" aria-label="MS-DOS boot sector byte grid">
+  <table role="presentation">
     <tbody>
     {% assign x = 0 %}
     {% for r in (0..15) %}

@@ -13,11 +13,12 @@
     {% include person.html %}
   </head>
   <body>
+    <a href="#main" class="skip-link">Skip to content</a>
     <header>
       <a href="{{ site.home }}/">{{ site.handle }}</a>
-      <div class="header-avatar">{% include avatar.svg %}</div>
+      <a href="{{ site.home }}/" class="header-avatar" aria-label="{{ site.handle }}">{% include avatar.svg %}</a>
     </header>
-    <main>
+    <main id="main">
       <article>
         <h1>{{ page.title }}</h1>
         <div class="content">{{ content }}</div>
