@@ -36,12 +36,16 @@
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
-  --font-size-xl: 1.5rem;
+  --font-size-xl: 1.3125rem;
+  --font-size-2xl: 1.625rem;
 
   --line-height: 1.5;
 
   --space-1: 8px;
   --space-2: 16px;
+
+  --container-max-width: 75rem;
+  --prose-max-width: 48rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -114,7 +118,7 @@ header {
   border-bottom: 1px solid var(--color-header-border);
   color: #fff;
   display: flex;
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   font-weight: normal;
   justify-content: space-between;
   padding: var(--space-2);
@@ -129,20 +133,21 @@ header a {
 }
 
 article {
-  margin: 0;
+  margin: 0 auto;
+  max-width: var(--container-max-width);
   padding: 0 var(--space-2);
 }
 
 article h1 {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-2xl);
   font-weight: bold;
-  margin-bottom: 0;
-  text-decoration: underline;
+  margin-bottom: 0.5rem;
 }
 
 a {
   color: var(--color-link);
   text-decoration: none;
+  text-underline-offset: 2px;
 }
 
 a:hover {
@@ -155,32 +160,50 @@ a:hover {
 }
 
 .content h2 {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: bold;
-  text-decoration: underline;
+  margin-bottom: 0.5rem;
+  margin-top: 2rem;
 }
 
 .content h3 {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-lg);
   font-weight: bold;
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .content h4 {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   font-weight: bold;
-  text-decoration: underline;
+  margin-bottom: 0.5rem;
+  margin-top: 1.25rem;
 }
 
 .content h5 {
   font-size: var(--font-size-sm);
   font-style: italic;
   font-weight: normal;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
 }
 
 .byline {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   margin-bottom: var(--space-2);
+}
+
+article h1,
+.byline,
+.content > p,
+.content > ul:not(.posts),
+.content > ol,
+.content > h2,
+.content > h3,
+.content > h4,
+.content > h5 {
+  max-width: var(--prose-max-width);
 }
 
 .content .caption {
