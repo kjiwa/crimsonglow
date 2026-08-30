@@ -4,25 +4,26 @@
 :root {
   color-scheme: light dark;
 
-  --color-canvas: #fff;
-  --color-surface: #f7f9fc;
-  --color-code-bg: #edf1f8;
-  --color-text-primary: #11141a;
-  --color-text-muted: #5c6475;
-  --color-link: #007;
-  --color-link-hover: #1e3a8a;
-  --color-header-bg: #007;
+  --color-canvas: #ffffff;
+  --color-surface: #f8fafc;
+  --color-code-bg: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-text-primary: #0f172a;
+  --color-text-muted: #475569;
+  --color-link: #000077;
+  --color-link-hover: #1d4ed8;
+  --color-header-bg: #000077;
   --color-header-border: transparent;
-  --color-table-border: #007;
+  --color-table-border: #000077;
   --color-table-reserved: #339;
   --color-table-partially-reserved: #8a9fe0;
-  --color-table-head-bg: #007;
+  --color-table-head-bg: #000077;
 
   --hl-comment: #57606a;
   --hl-preproc: #6e40c9;
-  --hl-keyword: #0033aa;
-  --hl-number: #0550ae;
-  --hl-string: #0969da;
+  --hl-keyword: #cf222e;
+  --hl-number: #953800;
+  --hl-string: #0a3069;
   --hl-entity: #6639ba;
   --hl-error: #cf222e;
   --hl-error-bg: #ffebe9;
@@ -45,25 +46,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-canvas: #0e121a;
-    --color-surface: #141a24;
-    --color-code-bg: #161c28;
-    --color-text-primary: #dce2ec;
-    --color-text-muted: #8a95a5;
+    --color-canvas: #0a0e17;
+    --color-surface: #111827;
+    --color-code-bg: #0d1322;
+    --color-border: #1e293b;
+    --color-text-primary: #f1f5f9;
+    --color-text-muted: #94a3b8;
     --color-link: #7ea2ff;
     --color-link-hover: #b2cbff;
-    --color-header-bg: #090c12;
-    --color-header-border: #1e2638;
-    --color-table-border: #263044;
-    --color-table-reserved: #3b4b73;
-    --color-table-partially-reserved: #6279b8;
-    --color-table-head-bg: #1a2234;
+    --color-header-bg: #000066;
+    --color-header-border: #1e293b;
+    --color-table-border: #1e293b;
+    --color-table-reserved: #1e3a8a;
+    --color-table-partially-reserved: #3b82f6;
+    --color-table-head-bg: #1e293b;
 
     --hl-comment: #8b949e;
     --hl-preproc: #ffa657;
     --hl-keyword: #ff7b72;
     --hl-number: #79c0ff;
-    --hl-string: #a5d6ff;
+    --hl-string: #7ee787;
     --hl-entity: #d2a8ff;
     --hl-error: #f85149;
     --hl-error-bg: #490202;
