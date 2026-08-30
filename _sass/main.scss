@@ -2,12 +2,34 @@
 @use "highlight";
 
 :root {
-  --color-blue-900: #007;
-  --color-blue-700: #339;
-  --color-blue-400: #99f;
-  --color-blue-100: #ddf;
-  --color-blue-050: #f8f8ff;
-  --color-text-muted: #667;
+  color-scheme: light dark;
+
+  --color-canvas: #fff;
+  --color-surface: #f7f9fc;
+  --color-code-bg: #edf1f8;
+  --color-text-primary: #11141a;
+  --color-text-muted: #5c6475;
+  --color-link: #007;
+  --color-link-hover: #1e3a8a;
+  --color-header-bg: #007;
+  --color-header-border: transparent;
+  --color-table-border: #007;
+  --color-table-reserved: #339;
+  --color-table-partially-reserved: #8a9fe0;
+  --color-table-head-bg: #007;
+
+  --hl-comment: #57606a;
+  --hl-preproc: #6e40c9;
+  --hl-keyword: #0033aa;
+  --hl-number: #0550ae;
+  --hl-string: #0969da;
+  --hl-entity: #6639ba;
+  --hl-error: #cf222e;
+  --hl-error-bg: #ffebe9;
+  --hl-deleted: #82071e;
+  --hl-deleted-bg: #ffebe9;
+  --hl-inserted: #116329;
+  --hl-inserted-bg: #dafbe1;
 
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -21,7 +43,40 @@
   --space-2: 16px;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #0e121a;
+    --color-surface: #141a24;
+    --color-code-bg: #161c28;
+    --color-text-primary: #dce2ec;
+    --color-text-muted: #8a95a5;
+    --color-link: #7ea2ff;
+    --color-link-hover: #b2cbff;
+    --color-header-bg: #090c12;
+    --color-header-border: #1e2638;
+    --color-table-border: #263044;
+    --color-table-reserved: #3b4b73;
+    --color-table-partially-reserved: #6279b8;
+    --color-table-head-bg: #1a2234;
+
+    --hl-comment: #8b949e;
+    --hl-preproc: #ffa657;
+    --hl-keyword: #ff7b72;
+    --hl-number: #79c0ff;
+    --hl-string: #a5d6ff;
+    --hl-entity: #d2a8ff;
+    --hl-error: #f85149;
+    --hl-error-bg: #490202;
+    --hl-deleted: #ffdcd7;
+    --hl-deleted-bg: #490202;
+    --hl-inserted: #aff5b4;
+    --hl-inserted-bg: #033a16;
+  }
+}
+
 body {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: var(--font-size-sm);
   line-height: var(--line-height);
@@ -31,7 +86,8 @@ body {
 
 header {
   align-items: center;
-  background-color: var(--color-blue-900);
+  background-color: var(--color-header-bg);
+  border-bottom: 1px solid var(--color-header-border);
   color: #fff;
   display: flex;
   font-size: var(--font-size-xl);
@@ -57,11 +113,12 @@ article h1 {
 }
 
 a {
-  color: var(--color-blue-900);
+  color: var(--color-link);
   text-decoration: none;
 }
 
 a:hover {
+  color: var(--color-link-hover);
   text-decoration: underline;
 }
 
@@ -99,7 +156,7 @@ a:hover {
 }
 
 .content .caption {
-  background-color: var(--color-blue-050);
+  background-color: var(--color-surface);
   font-weight: bold;
   padding: var(--space-1);
 }
@@ -114,7 +171,7 @@ a:hover {
 }
 
 .content pre {
-  background-color: var(--color-blue-100);
+  background-color: var(--color-code-bg);
   margin-top: 0;
   overflow-x: auto;
   padding: var(--space-1);
@@ -133,13 +190,13 @@ a:hover {
 }
 
 .home-links svg {
-  fill: var(--color-blue-900);
+  fill: var(--color-link);
   height: 32px;
   width: 32px;
 }
 
 .home-links a:hover svg {
-  fill: var(--color-blue-700);
+  fill: var(--color-link-hover);
 }
 
 .software-job-search-div {
@@ -166,7 +223,7 @@ a:hover {
 }
 
 .dos-boot-sector-table td {
-  border: 1px solid var(--color-blue-900);
+  border: 1px solid var(--color-table-border);
   height: 20px;
   margin: 0;
   padding: 0;
@@ -174,11 +231,11 @@ a:hover {
 }
 
 .dos-boot-sector-table-partially-reserved-byte {
-  background-color: var(--color-blue-400);
+  background-color: var(--color-table-partially-reserved);
 }
 
 .dos-boot-sector-table-reserved-byte {
-  background-color: var(--color-blue-700);
+  background-color: var(--color-table-reserved);
 }
 
 .dos-boot-sector-table + .caption {
@@ -191,7 +248,7 @@ a:hover {
 }
 
 .dos-boot-sector-parameters + table thead {
-  background-color: var(--color-blue-900);
+  background-color: var(--color-table-head-bg);
   color: #fff;
   font-weight: bold;
 }
