@@ -274,34 +274,36 @@ article h1,
   width: 100%;
 }
 
-.dos-boot-sector-table {
-  overflow-x: auto;
-  text-align: center;
-}
-
-.dos-boot-sector-table table {
-  border-collapse: collapse;
+.dos-boot-sector-grid {
+  display: block;
+  height: auto;
   margin: var(--space-1) auto;
-  width: 640px;
+  max-width: 640px;
+  width: 100%;
 }
 
-.dos-boot-sector-table td {
-  border: 1px solid var(--color-table-border);
-  height: 20px;
-  margin: 0;
-  padding: 0;
-  width: 20px;
+.dos-boot-sector-grid-free {
+  fill: var(--color-canvas);
 }
 
-.dos-boot-sector-table-partially-reserved-byte {
-  background-color: var(--color-table-partially-reserved);
+.dos-boot-sector-grid-reserved {
+  fill: var(--color-table-reserved);
 }
 
-.dos-boot-sector-table-reserved-byte {
-  background-color: var(--color-table-reserved);
+.dos-boot-sector-grid-partially-reserved {
+  fill: var(--color-table-partially-reserved);
 }
 
-.dos-boot-sector-table + .caption {
+.dos-boot-sector-grid-lines,
+.dos-boot-sector-grid-border {
+  fill: none;
+  stroke: var(--color-table-border);
+  stroke-width: 1;
+}
+
+.dos-boot-sector-grid + .caption {
+  margin: 0 auto;
+  max-width: 640px;
   text-align: center;
 }
 

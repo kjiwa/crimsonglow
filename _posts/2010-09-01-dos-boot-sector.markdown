@@ -10,26 +10,14 @@ After your BIOS completes its POST, an IBM PC compatible computer will read the 
 
 MS-DOS expects the disk to be formatted with the FAT file system and will populate the boot sector with an 8 B OEM name and a 51 B data structure known as the BIOS parameter block. The first 3 B are expected to contain a jump instruction. This finally leaves us with 448 B for code. Had I been writing a production DOS boot sector, I would have written the code in an assembly language under such extreme constraints. However, as a philocalist and masochist I felt compelled to write legible code and decided to use C.
 
-<div class="dos-boot-sector-table" role="region" aria-label="MS-DOS boot sector byte grid">
-  <table role="presentation">
-    <tbody>
-    {% assign x = 0 %}
-    {% for r in (0..15) %}
-      <tr>
-      {% for c in (0..31) %}
-        {% if r == 0 or r == 1 or x == 510 or x == 511 %}
-        <td class="dos-boot-sector-table-reserved-byte">&nbsp;</td>
-        {% else %}
-        <td>&nbsp;</td>
-        {% endif %}
-        {% assign x = x | plus: 1 %}
-      {% endfor %}
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
-<div class="caption">Free and reserved bytes in an MS-DOS boot sector (1 B per square)</div>
+<svg class="dos-boot-sector-grid" viewBox="0 0 640 320" role="img" aria-labelledby="dos-boot-sector-caption" shape-rendering="crispEdges">
+  <rect width="640" height="320" class="dos-boot-sector-grid-free" />
+  <rect x="0" y="0" width="640" height="40" class="dos-boot-sector-grid-reserved" />
+  <rect x="600" y="300" width="40" height="20" class="dos-boot-sector-grid-reserved" />
+  <path d="M0,20h640M0,40h640M0,60h640M0,80h640M0,100h640M0,120h640M0,140h640M0,160h640M0,180h640M0,200h640M0,220h640M0,240h640M0,260h640M0,280h640M0,300h640M20,0v320M40,0v320M60,0v320M80,0v320M100,0v320M120,0v320M140,0v320M160,0v320M180,0v320M200,0v320M220,0v320M240,0v320M260,0v320M280,0v320M300,0v320M320,0v320M340,0v320M360,0v320M380,0v320M400,0v320M420,0v320M440,0v320M460,0v320M480,0v320M500,0v320M520,0v320M540,0v320M560,0v320M580,0v320M600,0v320M620,0v320" class="dos-boot-sector-grid-lines" />
+  <rect width="640" height="320" class="dos-boot-sector-grid-border" />
+</svg>
+<div id="dos-boot-sector-caption" class="caption">Free and reserved bytes in an MS-DOS boot sector (1 B per square)</div>
 
 The BIOS parameter block contains important information about the layout of the filesystem. Here is a table describing its layout:
 
@@ -60,28 +48,18 @@ The CPU will be in real mode when the boot sector is loaded. This means we can o
 
 Some parts of conventional memory are reserved by the system. The first 1 024 B are used for the interrupt vector table and the next 256 B are used for the BIOS data area. Also, recall that the boot sector is loaded in 512 B in [0x07C00, 0x07E00). We can safely use 29.75 KiB in [0x00500, 0x07C00) and 480.5 KiB in [0x07E00, 0x80000) for a total of 510.25 KiB. There are also 128 KiB in [0x80000, 0xA0000), but some systems consume part of this region for the extended BIOS data area.
 
-<div class="dos-boot-sector-table">
-  <table>
-    <tbody>
-    {% assign x = 0 %}
-    {% for r in (0..19) %}
-      <tr>
-      {% for c in (0..31) %}
-        {% if x == 0 or x == 639 %}
-        <td class="dos-boot-sector-table-reserved-byte">&nbsp;</td>
-        {% elsif x == 1 or x == 30 or r == 16 or r == 17 or r == 18 or r == 19 %}
-        <td class="dos-boot-sector-table-partially-reserved-byte">&nbsp;</td>
-        {% else %}
-        <td>&nbsp;</td>
-        {% endif %}
-        {% assign x = x | plus: 1 %}
-      {% endfor %}
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
-<div class="caption">Free, partial, and reserved bytes in conventional memory (1 KiB per square)</div>
+<svg class="dos-boot-sector-grid" viewBox="0 0 640 400" role="img" aria-labelledby="dos-conv-mem-caption" shape-rendering="crispEdges">
+  <rect width="640" height="400" class="dos-boot-sector-grid-free" />
+  <rect x="20" y="0" width="20" height="20" class="dos-boot-sector-grid-partially-reserved" />
+  <rect x="600" y="0" width="20" height="20" class="dos-boot-sector-grid-partially-reserved" />
+  <rect x="0" y="320" width="640" height="60" class="dos-boot-sector-grid-partially-reserved" />
+  <rect x="0" y="380" width="620" height="20" class="dos-boot-sector-grid-partially-reserved" />
+  <rect x="0" y="0" width="20" height="20" class="dos-boot-sector-grid-reserved" />
+  <rect x="620" y="380" width="20" height="20" class="dos-boot-sector-grid-reserved" />
+  <path d="M0,20h640M0,40h640M0,60h640M0,80h640M0,100h640M0,120h640M0,140h640M0,160h640M0,180h640M0,200h640M0,220h640M0,240h640M0,260h640M0,280h640M0,300h640M0,320h640M0,340h640M0,360h640M0,380h640M20,0v400M40,0v400M60,0v400M80,0v400M100,0v400M120,0v400M140,0v400M160,0v400M180,0v400M200,0v400M220,0v400M240,0v400M260,0v400M280,0v400M300,0v400M320,0v400M340,0v400M360,0v400M380,0v400M400,0v400M420,0v400M440,0v400M460,0v400M480,0v400M500,0v400M520,0v400M540,0v400M560,0v400M580,0v400M600,0v400M620,0v400" class="dos-boot-sector-grid-lines" />
+  <rect width="640" height="400" class="dos-boot-sector-grid-border" />
+</svg>
+<div id="dos-conv-mem-caption" class="caption">Free, partial, and reserved bytes in conventional memory (1 KiB per square)</div>
 
 In my boot sector implementation, I use 5 B in [0x07E00, 0x07E05) to store the number of sectors on the disk and the logical block address of the root directory and IO.SYS. I use 29.75 KiB in [0x00500, 0x07C00) for the root directory index. Each root directory entry is 32 B, meaning that IO.SYS must be one of the first 952 entries. (MS-DOS 4.0 expects IO.SYS to be the first record in the root directory.) Here is a table describing the layout of each root directory entry:
 
