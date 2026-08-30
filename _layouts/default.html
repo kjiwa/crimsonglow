@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#000077">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000066">
     <title>{{ page.title }}{% unless page.title == site.title %} · {{ site.title }}{% endunless %}</title>
     {% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{{ site.home }}/assets/favicon.svg">
@@ -15,8 +17,10 @@
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
     <header>
-      <a href="{{ site.home }}/">{{ site.handle }}</a>
-      <a href="{{ site.home }}/" class="header-avatar" aria-label="{{ site.handle }}">{% include avatar.svg %}</a>
+      <a href="{{ site.home }}/" class="header-brand">
+        <span class="header-handle">{{ site.handle }}</span>
+        <span class="header-avatar" aria-hidden="true">{% include avatar.svg %}</span>
+      </a>
     </header>
     <main id="main">
       <article>
