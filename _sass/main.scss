@@ -44,8 +44,7 @@
   --space-1: 8px;
   --space-2: 16px;
 
-  --container-max-width: 75rem;
-  --prose-max-width: 48rem;
+  --content-max-width: 50rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -125,6 +124,8 @@ header {
   font-size: var(--font-size-2xl);
   font-weight: normal;
   justify-content: space-between;
+  margin: 0 auto;
+  max-width: var(--content-max-width);
   text-decoration: none;
 
   &:hover .header-handle {
@@ -138,7 +139,7 @@ header {
 
 article {
   margin: 0 auto;
-  max-width: var(--container-max-width);
+  max-width: var(--content-max-width);
   padding: 0 var(--space-2);
 }
 
@@ -196,18 +197,6 @@ a:hover {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   margin-bottom: var(--space-2);
-}
-
-article h1,
-.byline,
-.content > p,
-.content > ul:not(.posts),
-.content > ol,
-.content > h2,
-.content > h3,
-.content > h4,
-.content > h5 {
-  max-width: var(--prose-max-width);
 }
 
 .content .caption {
@@ -270,7 +259,6 @@ article h1,
   aspect-ratio: 16 / 9;
   border: none;
   display: block;
-  min-height: 480px;
   width: 100%;
 }
 
