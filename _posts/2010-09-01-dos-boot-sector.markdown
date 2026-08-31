@@ -21,8 +21,6 @@ MS-DOS expects the disk to be formatted with the FAT file system and will popula
 
 The BIOS parameter block contains important information about the layout of the filesystem. Here is a table describing its layout:
 
-<div class="dos-boot-sector-parameters"></div>
-
 Length | Name
 -------|----------------------------------
      2 | Bytes per sector
@@ -43,6 +41,7 @@ Length | Name
      4 | Volume ID
     11 | Volume label
      8 | Volume type
+{:.dos-boot-sector-parameters}
 
 The CPU will be in real mode when the boot sector is loaded. This means we can only use 16-bit opcodes and address up to 1 MiB of memory. The first 640 KiB are available to our program while the remaining 384 KiB are used for assorted system-specific purposes. These memory areas are known as conventional memory and the upper memory area, respectively.
 
@@ -63,8 +62,6 @@ Some parts of conventional memory are reserved by the system. The first 1 024 B 
 
 In my boot sector implementation, I use 5 B in [0x07E00, 0x07E05) to store the number of sectors on the disk and the logical block address of the root directory and IO.SYS. I use 29.75 KiB in [0x00500, 0x07C00) for the root directory index. Each root directory entry is 32 B, meaning that IO.SYS must be one of the first 952 entries. (MS-DOS 4.0 expects IO.SYS to be the first record in the root directory.) Here is a table describing the layout of each root directory entry:
 
-<div class="dos-boot-sector-parameters"></div>
-
 Length | Name
 -------|-------------------------------------
      8 | Filename
@@ -80,6 +77,7 @@ Length | Name
      2 | Last modified date
      2 | Cluster offset
      4 | File size in bytes
+{:.dos-boot-sector-parameters}
 
 Dates are 16-bit, little-endian values stored in the following format: YYYYYYYMMMMDDDDD. Timestamps are 16-bit, little-endian values stored in the following format: HHHHHMMMMMMSSSSS.
 

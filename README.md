@@ -63,7 +63,8 @@ make check   # build, then validate .htaccess redirects and internal links/image
 `make check` is exactly what [CI](.github/workflows/ci.yml) runs on every push
 and pull request.
 
-To verify compression and caching headers on the live server after deploying:
+To verify compression, caching, and security headers on the live server after
+deploying:
 
 ```sh
 make check-live   # tools/check-headers.sh

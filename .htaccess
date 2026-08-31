@@ -40,22 +40,41 @@ ErrorDocument 404 /~kjiwa/404.html
 </IfModule>
 
 <IfModule mod_deflate.c>
+  # Both .js names: Apache's mime.types maps js to text/javascript; the host
+  # doesn't advertise a version, so the older name stays too.
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml \
-    application/xml application/atom+xml application/ld+json image/svg+xml
+    application/xml application/atom+xml text/javascript application/javascript \
+    application/ld+json image/svg+xml
 </IfModule>
 
 <IfModule mod_brotli.c>
+  # Both .js names: Apache's mime.types maps js to text/javascript; the host
+  # doesn't advertise a version, so the older name stays too.
   AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/xml \
-    application/xml application/atom+xml application/ld+json image/svg+xml
+    application/xml application/atom+xml text/javascript application/javascript \
+    application/ld+json image/svg+xml
 </IfModule>
 
 <IfModule mod_headers.c>
+  # No includeSubDomains or preload: both are effectively one-way commitments.
+  Header always set Strict-Transport-Security "max-age=15768000"
+
+  Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # style-src unsafe-inline is deliberate: every page carries its stylesheet
+  # inline. frame-src covers the Slides embed in the 2016 job-search post.
   Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-src https://docs.google.com; frame-ancestors 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; connect-src 'none'"
 
   # HTML carries the stylesheet inline, so it must stay short-lived.
   <FilesMatch "\.(html|xml|txt)$">
+    Header set Cache-Control "public, max-age=600"
+  </FilesMatch>
+
+  # legacy-redirect.js is generated from the post list, so it tracks HTML's TTL.
+  <FilesMatch "\.js$">
     Header set Cache-Control "public, max-age=600"
   </FilesMatch>
 

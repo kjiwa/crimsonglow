@@ -7,7 +7,6 @@
   --color-canvas: #ffffff;
   --color-surface: #f8fafc;
   --color-code-bg: #f1f5f9;
-  --color-border: #e2e8f0;
   --color-text-primary: #0f172a;
   --color-text-muted: #475569;
   --color-link: #000077;
@@ -52,7 +51,6 @@
     --color-canvas: #0a0e17;
     --color-surface: #111827;
     --color-code-bg: #0d1322;
-    --color-border: #1e293b;
     --color-text-primary: #f1f5f9;
     --color-text-muted: #94a3b8;
     --color-link: #7ea2ff;
@@ -295,22 +293,22 @@ a:hover {
   text-align: center;
 }
 
-.dos-boot-sector-parameters + table {
+table.dos-boot-sector-parameters {
   border-collapse: collapse;
   margin: auto;
 }
 
-.dos-boot-sector-parameters + table thead {
+table.dos-boot-sector-parameters thead {
   background-color: var(--color-table-head-bg);
   color: #fff;
   font-weight: bold;
 }
 
-.dos-boot-sector-parameters + table thead tr th {
+table.dos-boot-sector-parameters thead tr th {
   min-width: 4em;
   text-align: left;
 }
 
-.dos-boot-sector-parameters + table tbody tr td:first-child {
+table.dos-boot-sector-parameters tbody tr td:first-child {
   text-align: center;
 }
