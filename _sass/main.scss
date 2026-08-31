@@ -12,10 +12,9 @@
   --color-link: #000077;
   --color-link-hover: #1d4ed8;
   --color-header-bg: #000077;
-  --color-header-border: transparent;
-  --color-table-border: #000077;
-  --color-table-reserved: #339;
-  --color-table-partially-reserved: #8a9fe0;
+  --color-grid-line: #000077;
+  --color-grid-reserved: #333399;
+  --color-grid-partially-reserved: #8a9fe0;
   --color-table-head-bg: #000077;
 
   --hl-comment: #57606a;
@@ -44,6 +43,7 @@
   --space-2: 16px;
 
   --content-max-width: 50rem;
+  --figure-max-width: 640px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -56,10 +56,9 @@
     --color-link: #7ea2ff;
     --color-link-hover: #b2cbff;
     --color-header-bg: #000066;
-    --color-header-border: #1e293b;
-    --color-table-border: #1e293b;
-    --color-table-reserved: #1e3a8a;
-    --color-table-partially-reserved: #3b82f6;
+    --color-grid-line: #94a3b8;
+    --color-grid-reserved: #3b82f6;
+    --color-grid-partially-reserved: #1e3a8a;
     --color-table-head-bg: #1e293b;
 
     --hl-comment: #8b949e;
@@ -75,6 +74,12 @@
     --hl-inserted: #aff5b4;
     --hl-inserted-bg: #033a16;
   }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 :focus-visible {
@@ -109,9 +114,14 @@ body {
   }
 }
 
+header,
+article {
+  margin: 0 auto;
+  max-width: var(--content-max-width);
+}
+
 header {
   background-color: var(--color-header-bg);
-  border-bottom: 1px solid var(--color-header-border);
   padding: var(--space-2);
 }
 
@@ -122,8 +132,6 @@ header {
   font-size: var(--font-size-2xl);
   font-weight: normal;
   justify-content: space-between;
-  margin: 0 auto;
-  max-width: var(--content-max-width);
   text-decoration: none;
 
   &:hover .header-handle {
@@ -136,8 +144,6 @@ header {
 }
 
 article {
-  margin: 0 auto;
-  max-width: var(--content-max-width);
   padding: 0 var(--space-2);
 }
 
@@ -264,7 +270,7 @@ a:hover {
   display: block;
   height: auto;
   margin: var(--space-1) auto;
-  max-width: 640px;
+  max-width: var(--figure-max-width);
   width: 100%;
 }
 
@@ -273,23 +279,23 @@ a:hover {
 }
 
 .dos-boot-sector-grid-reserved {
-  fill: var(--color-table-reserved);
+  fill: var(--color-grid-reserved);
 }
 
 .dos-boot-sector-grid-partially-reserved {
-  fill: var(--color-table-partially-reserved);
+  fill: var(--color-grid-partially-reserved);
 }
 
 .dos-boot-sector-grid-lines,
 .dos-boot-sector-grid-border {
   fill: none;
-  stroke: var(--color-table-border);
+  stroke: var(--color-grid-line);
   stroke-width: 1;
 }
 
 .dos-boot-sector-grid + .caption {
   margin: 0 auto;
-  max-width: 640px;
+  max-width: var(--figure-max-width);
   text-align: center;
 }
 

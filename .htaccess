@@ -68,13 +68,9 @@ ErrorDocument 404 /~kjiwa/404.html
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-src https://docs.google.com; frame-ancestors 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; connect-src 'none'"
 
-  # HTML carries the stylesheet inline, so it must stay short-lived.
-  <FilesMatch "\.(html|xml|txt)$">
-    Header set Cache-Control "public, max-age=600"
-  </FilesMatch>
-
-  # legacy-redirect.js is generated from the post list, so it tracks HTML's TTL.
-  <FilesMatch "\.js$">
+  # HTML carries its stylesheet inline and legacy-redirect.js is generated from
+  # the post list, so both must stay short-lived.
+  <FilesMatch "\.(html|xml|txt|js)$">
     Header set Cache-Control "public, max-age=600"
   </FilesMatch>
 
