@@ -33,12 +33,14 @@ main() {
   assert_header "$_main_html_url" "$_main_html_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^content-encoding:' "content-encoding header" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
-  assert_header "$_main_html_url" "$_main_html_headers" '^strict-transport-security:.*max-age=15768000[^0-9]' "strict-transport-security" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^strict-transport-security:.*max-age=31536000[^0-9]' "strict-transport-security" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^permissions-policy:.*geolocation=\(\)' "permissions-policy" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^x-content-type-options:.*nosniff' "x-content-type-options nosniff" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^referrer-policy:.*strict-origin-when-cross-origin' "referrer-policy strict-origin-when-cross-origin" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^cross-origin-opener-policy:.*same-origin' "cross-origin-opener-policy same-origin" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^x-frame-options:.*sameorigin' "x-frame-options sameorigin" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^content-security-policy:.*default-src .self.' "content-security-policy" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^content-security-policy:.*require-trusted-types-for .script.' "content-security-policy require-trusted-types-for" || _main_status=1
 
   _main_feed_url="https://crimsonglow.ca/~kjiwa/feed.xml"
   _main_feed_headers=$(fetch_headers "$_main_feed_url")
@@ -54,7 +56,7 @@ main() {
   _main_js_headers=$(fetch_headers "$_main_js_url")
   assert_header "$_main_js_url" "$_main_js_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_js_url" "$_main_js_headers" '^content-encoding:' "content-encoding header" || _main_status=1
-  assert_header "$_main_js_url" "$_main_js_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
+  assert_header "$_main_js_url" "$_main_js_headers" '^cache-control:.*max-age=2592000' "cache-control max-age=2592000" || _main_status=1
 
   return "$_main_status"
 }
