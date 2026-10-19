@@ -1,7 +1,7 @@
 #!/bin/sh
 # Downloads the mail backup for <address> and its mbsyncrc into
 # ~/crimsonglow-mail/ and prints per-folder message counts. With --push, also
-# uploads the Maildir to the live mailbox with `mbsync restore-<address>`.
+# uploads the Maildir to an empty or new mailbox with `mbsync restore-<address>`.
 # Uses ReadOnlyAccess to download and AdministratorAccess (SSM password read)
 # to push, unless AWS_PROFILE is set.
 
@@ -16,7 +16,24 @@ readonly MAIL_DIR="$HOME/crimsonglow-mail"
 _download() {
   mkdir -p "$MAIL_DIR/$1"
   aws s3 cp --only-show-errors "s3://$ARCHIVE_BUCKET/mbsyncrc" "$MAIL_DIR/mbsyncrc"
-  aws s3 sync --only-show-errors "s3://$ARCHIVE_BUCKET/migadu/$1" "$MAIL_DIR/$1"
+  aws s3 sync --only-show-errors --delete "s3://$ARCHIVE_BUCKET/migadu/$1" "$MAIL_DIR/$1"
+  # -- S3 holds no empty directories, so mailboxes with no messages lose cur/new/tmp.
+  find "$MAIL_DIR/$1" -name .uidvalidity -execdir mkdir -p cur new tmp \;
+}
+
+# -- mbsync does not de-duplicate against the server: pushing into a mailbox that already
+# -- holds the mail doubles it. Verified by pushing twice into an empty mailbox.
+_confirm_empty_target() {
+  printf 'Pushing into a mailbox that already has this mail duplicates every message.\n' >&2
+  printf 'Type %s to confirm the target is empty or new: ' "$1" >&2
+  IFS= read -r _confirm_empty_target_answer
+  [ "$_confirm_empty_target_answer" = "$1" ] || die "not confirmed; nothing pushed"
+}
+
+# -- The backup's sync state records every message as already on the server, so a push
+# -- that trusts it would not re-create mail or folders that were later deleted there.
+_drop_sync_state() {
+  find "$MAIL_DIR/$1" \( -name .mbsyncstate -o -name .uidvalidity \) -delete
 }
 
 _print_counts() {
@@ -54,6 +71,8 @@ main() {
   _print_counts "$_main_address"
 
   if [ "$_main_push" -eq 1 ]; then
+    _confirm_empty_target "$_main_address"
+    _drop_sync_state "$_main_address"
     mbsync -c "$MAIL_DIR/mbsyncrc" "restore-$_main_address"
   fi
 }
