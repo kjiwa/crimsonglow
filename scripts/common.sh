@@ -5,6 +5,10 @@
 SITE_ORIGIN="${SITE_ORIGIN:-https://crimsonglow.ca}"
 readonly SITE_ORIGIN
 
+# SSO profiles carry no region; the stack's regional resources are all here.
+AWS_REGION="${AWS_REGION:-ca-central-1}"
+export AWS_REGION
+
 TFVARS="$(dirname "$0")/../terraform/terraform.tfvars"
 readonly TFVARS
 
