@@ -22,6 +22,7 @@ check: build
 check-live:
 	scripts/check-headers.sh
 	scripts/check-routes.sh
+	scripts/check-mail.sh
 
 # Companion to check: same flags, but external links are live-checked instead
 # of skipped, and 429 (rate-limited) / 999 (LinkedIn's anti-bot response, not
