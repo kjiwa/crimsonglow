@@ -49,3 +49,10 @@ resource "aws_iam_role_policy" "github_deploy" {
     ]
   })
 }
+
+check "deploy_role_trust_has_no_wildcard_principal" {
+  assert {
+    condition     = !strcontains(aws_iam_role.github_deploy.assume_role_policy, "\"*\"")
+    error_message = "The deploy role's trust policy must not use a wildcard principal."
+  }
+}

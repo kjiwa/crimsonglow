@@ -94,7 +94,9 @@ make serve   # python3 -m http.server -d site/_site 8000, http://localhost:8000/
 Pushes to `main` deploy through the `deploy` job in
 [`ci.yml`](.github/workflows/ci.yml), which assumes an AWS role by GitHub OIDC,
 syncs `site/_site` to S3, and invalidates CloudFront. The infrastructure lives
-in [`terraform/`](terraform/).
+in [`terraform/`](terraform/). The AWS account ID in `terraform.tfvars` is
+committed on purpose: AWS does not treat it as secret, and the only role's trust
+policy admits just this repository's `main` branch through GitHub OIDC.
 
 Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
 -- a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a
