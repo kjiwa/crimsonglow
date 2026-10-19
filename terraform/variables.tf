@@ -32,8 +32,8 @@ variable "records" {
   }
 
   validation {
-    condition     = alltrue([for r in var.records : r.alias == null || contains(["site"], r.alias)])
-    error_message = "Each record alias must be \"site\", the only alias target defined."
+    condition     = alltrue([for r in var.records : r.alias == null || contains(["site", "webmail"], r.alias)])
+    error_message = "Each record alias must be \"site\" or \"webmail\", the alias targets defined in locals.tf."
   }
 }
 

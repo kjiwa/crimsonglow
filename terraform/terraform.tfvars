@@ -10,12 +10,12 @@ records = {
     alias = "site"
   }
   "crimsonglow.ca-MX" = {
-    values = ["0 mail.crimsonglow.ca."]
+    values = ["10 aspmx1.migadu.com.", "20 aspmx2.migadu.com."]
   }
   "crimsonglow.ca-TXT" = {
     values = [
       "google-site-verification=wewhsofE1PNjCgdm8RfJGK31LuStgXOxC--ovG1qujI",
-      "v=spf1 a mx include:hoster907.smtp-spf.sureserver.com ~all",
+      "v=spf1 include:spf.migadu.com -all",
       "hosted-email-verify=usomlcq4",
     ]
   }
@@ -23,7 +23,10 @@ records = {
     values = ["crimsonglow.ca"]
   }
   "mail.crimsonglow.ca-A" = {
-    values = ["192.252.156.28"]
+    alias = "webmail"
+  }
+  "mail.crimsonglow.ca-AAAA" = {
+    alias = "webmail"
   }
   "_dmarc.crimsonglow.ca-TXT" = {
     values = ["v=DMARC1; p=none;"]
