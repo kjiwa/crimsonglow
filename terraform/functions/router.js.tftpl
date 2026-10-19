@@ -1,0 +1,51 @@
+var DOMAIN = "${domain}";
+var HOME = "${home}";
+var REDIRECTS = ${redirects};
+
+function redirect(location) {
+  return {
+    statusCode: 301,
+    statusDescription: "Moved Permanently",
+    headers: { location: { value: location } },
+  };
+}
+
+function flattenQuery(querystring) {
+  var parts = [];
+  for (var key in querystring) {
+    var entry = querystring[key];
+    var values = entry.multiValue || [entry];
+    for (var i = 0; i < values.length; i++) {
+      parts.push(values[i].value === "" ? key : key + "=" + values[i].value);
+    }
+  }
+  return parts.length ? "?" + parts.join("&") : "";
+}
+
+function lastSegment(uri) {
+  return uri.substring(uri.lastIndexOf("/") + 1);
+}
+
+function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  var host = request.headers.host ? request.headers.host.value : "";
+
+  if (host.toLowerCase().indexOf("www.") === 0) {
+    return redirect("https://" + DOMAIN + uri + flattenQuery(request.querystring));
+  }
+  if (uri === "/") {
+    return redirect("https://" + DOMAIN + HOME + "/");
+  }
+  if (REDIRECTS.hasOwnProperty(uri)) {
+    return redirect("https://" + DOMAIN + REDIRECTS[uri]);
+  }
+  if (uri.charAt(uri.length - 1) === "/") {
+    request.uri = uri + "index.html";
+    return request;
+  }
+  if (lastSegment(uri).indexOf(".") === -1) {
+    return redirect("https://" + DOMAIN + uri + "/");
+  }
+  return request;
+}
