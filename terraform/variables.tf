@@ -50,7 +50,7 @@ variable "webmail_url" {
 }
 
 variable "mailboxes" {
-  description = "Migadu mailboxes backed up nightly, keyed by address. Each password lives in SSM at /mail/<address>/password, set by scripts/mail-password.sh."
+  description = "Migadu mailboxes backed up nightly, keyed by address. Each password lives in SSM at /mail/<address with @ as _at_>/password, set by scripts/mail-password.sh."
   type        = map(object({}))
   default     = {}
 }
