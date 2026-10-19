@@ -2,6 +2,9 @@ locals {
   site_config = yamldecode(file("${path.module}/../site/_config.yml"))
   home        = local.site_config.home
 
+  # -- CloudFront rejects a literal "~" in ResponsePagePath (InvalidArgument).
+  error_page_path = "${replace(local.home, "~", "%7E")}/404.html"
+
   redirects = yamldecode(file("${path.module}/../site/_data/redirects.yml"))
 
   # Record keys are <fqdn>-<TYPE>; the fqdn may itself contain dashes.

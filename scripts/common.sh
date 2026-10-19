@@ -2,7 +2,7 @@
 # Shared helpers, sourced by the other scripts. Not executable on its own.
 
 # shellcheck disable=SC2034  # used by the sourcing scripts
-SITE_ORIGIN="https://crimsonglow.ca"
+SITE_ORIGIN="${SITE_ORIGIN:-https://crimsonglow.ca}"
 readonly SITE_ORIGIN
 
 die() {
@@ -26,10 +26,9 @@ curl_site() {
   fi
 }
 
-# $2 overrides Accept-Encoding. ICDSoft's HTTP/2 resets a HEAD for feed.xml that
-# offers gzip alongside other encodings, so the feed is fetched uncompressed.
+# GET with the body discarded, not HEAD: CloudFront omits content-encoding on HEAD.
 fetch_headers() {
-  curl_site -I -H "Accept-Encoding: ${2:-gzip, deflate, br, zstd}" \
+  curl_site -o /dev/null -D - -H "Accept-Encoding: gzip, deflate, br, zstd" \
     -w '\nhttp_status: %{http_code}\n' "$1"
 }
 
