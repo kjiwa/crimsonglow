@@ -27,3 +27,6 @@ jobs:
 
       - name: Lint and check
         run: make lint check
+
+  privacy:
+    uses: kjiwa/.github/.github/workflows/privacy.yml@main
