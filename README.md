@@ -124,9 +124,13 @@ Restore needs `isync` (`mbsync`) and the AWS CLI:
 
 ```sh
 scripts/mail-restore.sh <address>         # download to ~/crimsonglow-mail/, print folder counts
-scripts/mail-restore.sh --push <address>  # also upload the Maildir to Migadu
+scripts/mail-restore.sh --push <address>  # also upload to <address>, which must be empty or new
 ```
 
+- `--push` is for a lost or new mailbox: it asks you to confirm the target is empty,
+  because `mbsync` does not de-duplicate and a second push doubles the mail. It also
+  ignores the backup's sync state, so it re-creates deleted folders. To recover a few
+  messages from a mailbox that still exists, open the Maildir in a client and copy them.
 - Read offline: point any Maildir-capable client at `~/crimsonglow-mail/<address>/`.
 - Another provider: edit `Host` and `User` (and `PassCmd`) in the downloaded
   `~/crimsonglow-mail/mbsyncrc`, then run `scripts/mail-restore.sh --push`.
