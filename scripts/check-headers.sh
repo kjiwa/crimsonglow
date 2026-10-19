@@ -6,6 +6,9 @@
 
 set -eu
 
+# shellcheck source=common.sh
+. "$(dirname "$0")/common.sh"
+
 assert_header() {
   _assert_header_url="$1"
   _assert_header_headers="$2"
@@ -19,15 +22,10 @@ assert_header() {
   return 0
 }
 
-fetch_headers() {
-  curl -sSI -H "Accept-Encoding: gzip, deflate, br, zstd" \
-    -w '\nhttp_status: %{http_code}\n' "$1"
-}
-
 main() {
   _main_status=0
 
-  _main_html_url="https://crimsonglow.ca/~kjiwa/2010/09/dos-boot-sector.html"
+  _main_html_url="$SITE_ORIGIN/~kjiwa/2010/09/dos-boot-sector.html"
   _main_html_headers=$(fetch_headers "$_main_html_url")
 
   assert_header "$_main_html_url" "$_main_html_headers" '^http_status: 200' "HTTP 200" || _main_status=1
@@ -42,17 +40,17 @@ main() {
   assert_header "$_main_html_url" "$_main_html_headers" '^content-security-policy:.*default-src .self.' "content-security-policy" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^content-security-policy:.*require-trusted-types-for .script.' "content-security-policy require-trusted-types-for" || _main_status=1
 
-  _main_feed_url="https://crimsonglow.ca/~kjiwa/feed.xml"
+  _main_feed_url="$SITE_ORIGIN/~kjiwa/feed.xml"
   _main_feed_headers=$(fetch_headers "$_main_feed_url")
   assert_header "$_main_feed_url" "$_main_feed_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_feed_url" "$_main_feed_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
 
-  _main_asset_url="https://crimsonglow.ca/~kjiwa/assets/og-card.png"
+  _main_asset_url="$SITE_ORIGIN/~kjiwa/assets/og-card.png"
   _main_asset_headers=$(fetch_headers "$_main_asset_url")
   assert_header "$_main_asset_url" "$_main_asset_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_asset_url" "$_main_asset_headers" '^cache-control:.*max-age=2592000' "cache-control max-age=2592000" || _main_status=1
 
-  _main_js_url="https://crimsonglow.ca/~kjiwa/assets/legacy-redirect.js"
+  _main_js_url="$SITE_ORIGIN/~kjiwa/assets/legacy-redirect.js"
   _main_js_headers=$(fetch_headers "$_main_js_url")
   assert_header "$_main_js_url" "$_main_js_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_js_url" "$_main_js_headers" '^content-encoding:' "content-encoding header" || _main_status=1

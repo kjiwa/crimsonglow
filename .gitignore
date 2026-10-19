@@ -8,7 +8,7 @@ _site
 vendor
 .bundle
 
-# Python tooling (tools/*.py)
+# Python tooling (scripts/*.py)
 __pycache__/
 *.pyc
 

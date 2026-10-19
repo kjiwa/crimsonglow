@@ -45,13 +45,7 @@ feed:
   path: ~kjiwa/feed.xml
 
 include:
-  - ".htaccess"
   - "~kjiwa"
-
-exclude:
-  - README.md
-  - Makefile
-  - tools
 
 plugins:
   - jekyll-feed

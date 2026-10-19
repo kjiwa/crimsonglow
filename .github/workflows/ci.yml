@@ -18,11 +18,12 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          # Reads .ruby-version. If ruby-build has no prebuilt binary yet for
-          # this exact patch release, setup-ruby falls back to compiling from
-          # source, which is slower but still correct -- no action needed
+          # Reads site/.ruby-version. If ruby-build has no prebuilt binary yet
+          # for this exact patch release, setup-ruby falls back to compiling
+          # from source, which is slower but still correct -- no action needed
           # unless the build step itself fails.
           bundler-cache: true
+          working-directory: site
 
-      - name: Build and check
-        run: make check
+      - name: Lint and check
+        run: make lint check

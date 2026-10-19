@@ -2,13 +2,13 @@
 """Emits ImageMagick MVG draw commands for the face glyph on the social card.
 
 The glyph is the same head/glasses/eyebrows/eyes/mouth/teeth shapes used by
-_includes/avatar.svg, carried through the same nested translate/scale
+site/_includes/avatar.svg, carried through the same nested translate/scale
 transforms that file applies, then placed on the card canvas. See
-tools/og-card.sh for why this indirection exists.
+scripts/og-card.sh for why this indirection exists.
 
-_includes/avatar.svg wraps its shapes in <g transform="translate(5 5)">, so
+site/_includes/avatar.svg wraps its shapes in <g transform="translate(5 5)">, so
 each shape's absolute anchor is its <use> translate plus (5, 5). The anchors
-below are those absolute positions; ~kjiwa/assets/favicon.svg's own <use>
+below are those absolute positions; site/~kjiwa/assets/favicon.svg's own <use>
 translates match this same frame for the shapes it keeps (head, glasses,
 eyebrows) but drops eyes/mouth/teeth for legibility at icon sizes. The card
 has room for the full set, so it draws from avatar.svg's frame directly.

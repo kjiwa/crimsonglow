@@ -1,7 +1,8 @@
 JEKYLL_ENV ?= production
+SITE = site
 
 build:
-	JEKYLL_ENV=$(JEKYLL_ENV) bundle exec jekyll build
+	cd $(SITE) && JEKYLL_ENV=$(JEKYLL_ENV) bundle exec jekyll build
 
 # Shared with the weekly link-check workflow, which also needs --disable-external
 # off and --ignore-status-codes 429,999 on top -- see link-check below.
@@ -15,11 +16,12 @@ PROOFER_FLAGS = --no-enforce-https \
 # content call, not a build break. External reachability (including scheme
 # redirects) is covered separately by the weekly link-check workflow.
 check: build
-	tools/check-redirects.sh
-	bundle exec htmlproofer ./_site --disable-external $(PROOFER_FLAGS)
+	scripts/check-redirects.sh
+	cd $(SITE) && bundle exec htmlproofer ./_site --disable-external $(PROOFER_FLAGS)
 
 check-live:
-	tools/check-headers.sh
+	scripts/check-headers.sh
+	scripts/check-routes.sh
 
 # Companion to check: same flags, but external links are live-checked instead
 # of skipped, and 429 (rate-limited) / 999 (LinkedIn's anti-bot response, not
@@ -28,18 +30,15 @@ check-live:
 # links, which fail intermittently for reasons unrelated to this repo and must
 # never block a build.
 link-check: build
-	bundle exec htmlproofer ./_site $(PROOFER_FLAGS) --ignore-status-codes "429,999"
+	cd $(SITE) && bundle exec htmlproofer ./_site $(PROOFER_FLAGS) --ignore-status-codes "429,999"
 
-deploy: check
-	tools/deploy.sh
-
-deploy-dry-run: check
-	tools/deploy.sh --dry-run
+lint:
+	shellcheck -x -P SCRIPTDIR scripts/*.sh
 
 serve: build
-	python3 -m http.server -d _site 8000
+	python3 -m http.server -d $(SITE)/_site 8000
 
 og-card:
-	tools/og-card.sh
+	scripts/og-card.sh
 
-.PHONY: build check check-live link-check deploy deploy-dry-run serve og-card
+.PHONY: build check check-live link-check lint serve og-card
