@@ -35,6 +35,8 @@ resource "aws_codebuild_project" "mail_backup" {
             flatten([for address in keys(var.mailboxes) : [
               "mkdir -p \"$HOME/crimsonglow-mail/${address}\"",
               "aws s3 sync --only-show-errors s3://${aws_s3_bucket.archive.id}/migadu/${address} \"$HOME/crimsonglow-mail/${address}\"",
+              # -- S3 holds no empty directories, so a mailbox with no messages loses cur/new/tmp.
+              "find \"$HOME/crimsonglow-mail/${address}\" -name .uidvalidity -execdir mkdir -p cur new tmp \\;",
               "mbsync backup-${address}",
               # -- Sync state lives in the Maildir, so it round-trips through S3 with the mail.
               "aws s3 sync --only-show-errors --delete \"$HOME/crimsonglow-mail/${address}\" s3://${aws_s3_bucket.archive.id}/migadu/${address}",
