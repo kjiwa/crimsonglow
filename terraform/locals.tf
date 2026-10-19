@@ -21,5 +21,9 @@ locals {
       name    = aws_cloudfront_distribution.this.domain_name
       zone_id = aws_cloudfront_distribution.this.hosted_zone_id
     }
+    webmail = {
+      name    = aws_cloudfront_distribution.webmail.domain_name
+      zone_id = aws_cloudfront_distribution.webmail.hosted_zone_id
+    }
   }
 }

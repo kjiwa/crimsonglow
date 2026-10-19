@@ -22,3 +22,8 @@ output "deploy_role_arn" {
   description = "Role the GitHub deploy job assumes over OIDC."
   value       = aws_iam_role.github_deploy.arn
 }
+
+output "webmail_distribution_domain" {
+  description = "CloudFront domain name of the mail redirect, for probing before DNS points at it."
+  value       = aws_cloudfront_distribution.webmail.domain_name
+}
