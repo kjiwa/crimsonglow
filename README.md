@@ -10,7 +10,7 @@ site/                  Jekyll source; _site/ is the built output
 ├── _data/redirects.yml  # legacy path -> target; single source for the JS fallback and the edge router
 ├── robots.txt           # must live at the host root to be honoured by crawlers
 └── ~kjiwa/              # page and asset content, served at /~kjiwa/
-terraform/             # AWS infrastructure (S3, CloudFront, Route 53, IAM)
+terraform/             # AWS infrastructure (S3, CloudFront, Route 53, IAM, mail backup)
 scripts/               # POSIX sh checks and tooling
 ```
 
@@ -101,6 +101,35 @@ policy admits just this repository's `main` branch through GitHub OIDC.
 Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
 -- a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a
 relative path. This only matters if you're poking around `site/` by hand.
+
+## Mail backup and restore
+
+Migadu does not promise to keep a terminated account's mail, so a nightly
+CodeBuild job (`mail-backup`, started by EventBridge Scheduler) pulls each
+mailbox in `mailboxes` ([`terraform.tfvars`](terraform/terraform.tfvars)) with
+`mbsync` into the `crimsonglow-archive` bucket under `migadu/<address>/`, as a
+Maildir. The pull never expunges or removes; history lives in S3 versions,
+kept 365 days. The rendered `mbsyncrc` sits at the bucket root. A CloudWatch
+alarm emails `alert_emails` when no build succeeds for two days.
+
+After adding a mailbox, store its IMAP password (kept in SSM, never in
+Terraform state), then apply:
+
+```sh
+scripts/mail-password.sh <address>
+scripts/tf.sh apply
+```
+
+Restore needs `isync` (`mbsync`) and the AWS CLI:
+
+```sh
+scripts/mail-restore.sh <address>         # download to ~/crimsonglow-mail/, print folder counts
+scripts/mail-restore.sh --push <address>  # also upload the Maildir to Migadu
+```
+
+- Read offline: point any Maildir-capable client at `~/crimsonglow-mail/<address>/`.
+- Another provider: edit `Host` and `User` (and `PassCmd`) in the downloaded
+  `~/crimsonglow-mail/mbsyncrc`, then run `scripts/mail-restore.sh --push`.
 
 ## License
 

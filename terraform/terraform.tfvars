@@ -41,3 +41,9 @@ records = {
     values = ["key3.crimsonglow.ca._domainkey.migadu.com."]
   }
 }
+
+mailboxes = {
+  "kjiwa@crimsonglow.ca" = {}
+}
+
+alert_emails = ["kamil.jiwa@gmail.com"]

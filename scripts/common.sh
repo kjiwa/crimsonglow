@@ -5,6 +5,9 @@
 SITE_ORIGIN="${SITE_ORIGIN:-https://crimsonglow.ca}"
 readonly SITE_ORIGIN
 
+TFVARS="$(dirname "$0")/../terraform/terraform.tfvars"
+readonly TFVARS
+
 die() {
   echo "$(basename "$0"): $*" >&2
   exit 1
@@ -34,4 +37,14 @@ fetch_headers() {
 
 fetch_body() {
   curl_site "$1"
+}
+
+account_id() {
+  sed -n 's/^account_id *= *"\([0-9]*\)".*/\1/p' "$TFVARS"
+}
+
+ensure_login() {
+  if ! aws sts get-caller-identity >/dev/null 2>&1; then
+    aws sso login
+  fi
 }
