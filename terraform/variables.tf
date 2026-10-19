@@ -48,3 +48,20 @@ variable "webmail_url" {
   type        = string
   default     = "https://webmail.migadu.com/"
 }
+
+variable "mailboxes" {
+  description = "Migadu mailboxes backed up nightly, keyed by address. Each password lives in SSM at /mail/<address>/password, set by scripts/mail-password.sh."
+  type        = map(object({}))
+  default     = {}
+}
+
+variable "alert_emails" {
+  description = "Addresses subscribed to alarm notifications; must not be hosted on this domain, because alerts about mail cannot depend on that mail."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for e in var.alert_emails : !endswith(e, "@${var.domain}")])
+    error_message = "alert_emails must not use the site's own domain, because a mail outage would then silence the alert."
+  }
+}

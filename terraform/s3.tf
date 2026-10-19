@@ -242,3 +242,12 @@ resource "aws_s3_bucket_policy" "archive" {
     ]
   })
 }
+
+# -- Restore config: stored beside the data so the bucket describes its own restore.
+
+resource "aws_s3_object" "mbsyncrc" {
+  bucket       = aws_s3_bucket.archive.id
+  key          = "mbsyncrc"
+  content_type = "text/plain"
+  content      = templatefile("${path.module}/mail/mbsyncrc.tftpl", { addresses = keys(var.mailboxes) })
+}

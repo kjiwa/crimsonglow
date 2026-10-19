@@ -1,0 +1,35 @@
+%{ for address in addresses ~}
+IMAPAccount ${address}
+Host imap.migadu.com
+User ${address}
+PassCmd "aws ssm get-parameter --with-decryption --name /mail/${address}/password --query Parameter.Value --output text"
+SSLType IMAPS
+
+IMAPStore ${address}-remote
+Account ${address}
+
+MaildirStore ${address}-local
+Path ~/crimsonglow-mail/${address}/
+Inbox ~/crimsonglow-mail/${address}/INBOX
+SubFolders Verbatim
+
+Channel backup-${address}
+Far :${address}-remote:
+Near :${address}-local:
+Patterns *
+Sync Pull
+Create Near
+Expunge None
+Remove None
+SyncState *
+
+Channel restore-${address}
+Far :${address}-remote:
+Near :${address}-local:
+Patterns *
+Sync Push
+Create Far
+Expunge None
+SyncState *
+
+%{ endfor ~}
