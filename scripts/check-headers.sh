@@ -41,7 +41,7 @@ main() {
   assert_header "$_main_html_url" "$_main_html_headers" '^content-security-policy:.*require-trusted-types-for .script.' "content-security-policy require-trusted-types-for" || _main_status=1
 
   _main_feed_url="$SITE_ORIGIN/~kjiwa/feed.xml"
-  _main_feed_headers=$(fetch_headers "$_main_feed_url")
+  _main_feed_headers=$(fetch_headers "$_main_feed_url" identity)
   assert_header "$_main_feed_url" "$_main_feed_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_feed_url" "$_main_feed_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
 

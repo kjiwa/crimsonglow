@@ -26,8 +26,10 @@ curl_site() {
   fi
 }
 
+# $2 overrides Accept-Encoding. ICDSoft's HTTP/2 resets a HEAD for feed.xml that
+# offers gzip alongside other encodings, so the feed is fetched uncompressed.
 fetch_headers() {
-  curl_site -I -H "Accept-Encoding: gzip, deflate, br, zstd" \
+  curl_site -I -H "Accept-Encoding: ${2:-gzip, deflate, br, zstd}" \
     -w '\nhttp_status: %{http_code}\n' "$1"
 }
 
