@@ -9,3 +9,17 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Dependabot rewrites .terraform.lock.hcl for linux_amd64 only -- every
+  # provider-bump PR needs a local `terraform providers lock` re-run before
+  # merge, or the darwin hashes are lost.
+  - package-ecosystem: terraform
+    directory: "/terraform"
+    schedule:
+      interval: weekly
+    groups:
+      providers:
+        patterns: ["*"]
