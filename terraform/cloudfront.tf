@@ -73,6 +73,7 @@ resource "aws_cloudfront_response_headers_policy" "this" {
 }
 
 resource "aws_cloudfront_distribution" "this" {
+  aliases         = [var.domain, "www.${var.domain}"]
   enabled         = true
   is_ipv6_enabled = true
   http_version    = "http2and3"
@@ -120,6 +121,8 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate_validation.this.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 }

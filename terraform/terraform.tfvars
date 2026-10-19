@@ -4,7 +4,10 @@ github_repository = "kjiwa/crimsonglow"
 
 records = {
   "crimsonglow.ca-A" = {
-    values = ["192.252.156.28"]
+    alias = "site"
+  }
+  "crimsonglow.ca-AAAA" = {
+    alias = "site"
   }
   "crimsonglow.ca-MX" = {
     values = ["0 mail.crimsonglow.ca."]
