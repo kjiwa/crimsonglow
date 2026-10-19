@@ -1,9 +1,9 @@
 #!/bin/sh
-# Regenerates ~kjiwa/assets/og-card.png, the site's social share image.
+# Regenerates site/~kjiwa/assets/og-card.png, the site's social share image.
 #
-# The face glyph can't be rendered from _includes/avatar.svg directly: the
+# The face glyph can't be rendered from site/_includes/avatar.svg directly: the
 # installed ImageMagick only has the MSVG renderer, which silently drops
-# <defs>/<use> and produces a blank glyph. Instead tools/og-card-glyph.py
+# <defs>/<use> and produces a blank glyph. Instead scripts/og-card-glyph.py
 # transforms avatar.svg's shapes by hand into the absolute "-draw" coordinates
 # used below (see that file for the coordinate math).
 #
@@ -16,13 +16,13 @@
 
 set -eu
 
-# 2.0 SVG units (matching _sass/avatar.scss's 2px stroke in the 70-unit
+# 2.0 SVG units (matching site/_sass/avatar.scss's 2px stroke in the 70-unit
 # header viewBox), scaled by the same SCALE * FAV_SCALE factor the glyph
 # coordinates use.
 STROKE=10.14
 readonly STROKE
 
-OUT_FILE="~kjiwa/assets/og-card.png"
+OUT_FILE="site/~kjiwa/assets/og-card.png"
 readonly OUT_FILE
 
 # Tries each candidate in order, printing the first that resolves. "fc:"
@@ -104,11 +104,11 @@ main() {
   echo "og-card: bold font:    $_main_font_bold" >&2
   echo "og-card: regular font: $_main_font_regular" >&2
 
-  # Absolute coordinates for the face glyph, computed by tools/og-card-glyph.py
+  # Absolute coordinates for the face glyph, computed by scripts/og-card-glyph.py
   # from the shapes in avatar.svg.
-  _main_strokes=$(python3 tools/og-card-glyph.py strokes)
-  _main_lenses=$(python3 tools/og-card-glyph.py lenses)
-  _main_eyes=$(python3 tools/og-card-glyph.py eyes)
+  _main_strokes=$(python3 scripts/og-card-glyph.py strokes)
+  _main_lenses=$(python3 scripts/og-card-glyph.py lenses)
+  _main_eyes=$(python3 scripts/og-card-glyph.py eyes)
 
   $_main_im_convert -size 1200x630 xc:"#000077" \
     -fill none -stroke white -strokewidth "$STROKE" \

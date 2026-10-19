@@ -8,11 +8,9 @@ layout: null
   var slug = location.hash.replace(/^#\/?/, "").replace(/\/$/, "");
   if (!slug) return;
   var legacy = {
-    "x86-dos-boot-sector-in-c": "/~kjiwa/2010/09/dos-boot-sector.html",
-    "adding-namespaces-to-java-properties": "/~kjiwa/2012/02/namespaces-in-java-properties.html",
-    "java-skip-list": "/~kjiwa/2011/06/skip-list.html",
-    "kde_programming": "/~kjiwa/2004/09/introduction-to-kde-programming.html",
-    "technical-job-search": "/~kjiwa/2016/11/software-job-search.html"
+{%- for entry in site.data.redirects %}
+    {{ entry[0] | split: "/" | last | remove: ".html" | jsonify }}: {{ entry[1] | jsonify }}{% unless forloop.last %},{% endunless %}
+{%- endfor %}
   };
   if (legacy[slug]) {
     location.replace(legacy[slug]);

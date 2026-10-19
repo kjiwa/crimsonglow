@@ -8,7 +8,7 @@ _site
 vendor
 .bundle
 
-# Python tooling (tools/*.py)
+# Python tooling (scripts/*.py)
 __pycache__/
 *.pyc
 
@@ -18,3 +18,9 @@ __pycache__/
 # Claude
 .claude/
 
+
+# Terraform (state is in S3; .terraform.lock.hcl is committed)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan

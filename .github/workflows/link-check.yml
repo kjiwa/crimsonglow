@@ -22,6 +22,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          working-directory: site
 
       - name: Ensure link-rot label exists
         env:
