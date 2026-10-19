@@ -42,3 +42,9 @@ variable "default_tags" {
   type        = map(string)
   default     = { ManagedBy = "terraform" }
 }
+
+variable "webmail_url" {
+  description = "Where mail.<domain> redirects; Migadu's webmail has no custom hostname."
+  type        = string
+  default     = "https://webmail.migadu.com/"
+}
