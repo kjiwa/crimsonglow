@@ -31,11 +31,11 @@ function handler(event) {
   var uri = request.uri;
   var host = request.headers.host ? request.headers.host.value : "";
 
-  if (host.toLowerCase().indexOf("www.") === 0) {
-    return redirect("https://" + DOMAIN + uri + flattenQuery(request.querystring));
-  }
   if (uri === "/") {
     return redirect("https://" + DOMAIN + HOME + "/");
+  }
+  if (host.toLowerCase().indexOf("www.") === 0) {
+    return redirect("https://" + DOMAIN + uri + flattenQuery(request.querystring));
   }
   if (REDIRECTS.hasOwnProperty(uri)) {
     return redirect("https://" + DOMAIN + REDIRECTS[uri]);
