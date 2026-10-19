@@ -22,10 +22,6 @@ function flattenQuery(querystring) {
   return parts.length ? "?" + parts.join("&") : "";
 }
 
-function lastSegment(uri) {
-  return uri.substring(uri.lastIndexOf("/") + 1);
-}
-
 function handler(event) {
   var request = event.request;
   var uri = request.uri;
@@ -44,8 +40,8 @@ function handler(event) {
     request.uri = uri + "index.html";
     return request;
   }
-  if (lastSegment(uri).indexOf(".") === -1) {
-    return redirect("https://" + DOMAIN + uri + "/");
+  if (uri === HOME) {
+    return redirect("https://" + DOMAIN + HOME + "/");
   }
   return request;
 }
