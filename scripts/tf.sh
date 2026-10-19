@@ -15,7 +15,7 @@ _account_id() {
 _profile_for() {
   _profile_for_account="$1"
   case "$2" in
-    apply | import | state | force-unlock | taint | untaint | destroy)
+    apply | import | state | force-unlock | taint | untaint | destroy | refresh | workspace)
       echo "AdministratorAccess-$_profile_for_account"
       ;;
     *)
