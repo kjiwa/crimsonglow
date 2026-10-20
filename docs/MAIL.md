@@ -9,16 +9,19 @@ webmail at `mail.crimsonglow.ca`, and a nightly backup. How they fit into AWS:
 `mail.crimsonglow.ca` serves [Alps](https://github.com/migadu/alps), Migadu's own webmail, from
 a Lambda function behind an API Gateway HTTP API. The Lambda Web Adapter runs the Alps binary;
 [`webmail/run.sh`](../webmail/run.sh) writes its config from the function's environment. Sign-in
-goes to Migadu's IMAP and SMTP servers; Alps stores a user's settings in IMAP metadata, so the
-function holds no state beyond the login key (Terraform-generated, in state).
+goes to Migadu's IMAP and SMTP servers, calendars and contacts to Migadu's CalDAV and CardDAV
+server; Alps stores a user's settings in IMAP metadata, so the function holds no state beyond the
+login key (Terraform-generated, in state).
 
 Alps has no theme layer. [`scripts/webmail-build.sh`](../scripts/webmail-build.sh) checks out the
 commit in [`webmail/alps.ref`](../webmail/alps.ref), and [`webmail/theme.mjs`](../webmail/theme.mjs)
 rewrites its colours, fonts, title and logo from the site's design tokens
 ([`site/_sass/tokens.scss`](../site/_sass/tokens.scss)) and font faces
 ([`site/_sass/fonts.scss`](../site/_sass/fonts.scss)), published together as `site-tokens.css`.
-A token or font change reaches the webmail on the next deploy. To update Alps, change `alps.ref`
-and run `make webmail`; the patch fails loudly if upstream moved something it edits.
+[`webmail/paths.mjs`](../webmail/paths.mjs) adds a layer of URL encoding to mailbox and DAV path
+segments, because API Gateway decodes the path once more than Alps expects and names containing
+`/`, such as `[Gmail]/All Mail`, would otherwise 404. A token or font change reaches the webmail on the next deploy. To update Alps,
+change `alps.ref` and run `make webmail`; the patches fail loudly if upstream moved something it edits.
 
 Limits:
 
