@@ -33,6 +33,17 @@ server = "imaps://imap.migadu.com:993"
 [smtp]
 server = "smtps://smtp.migadu.com:465"
 
+# Any [plugin.*] section turns the rest into an allowlist, so every plugin that
+# should run is listed, the core one (base) included.
+[plugin.base]
+enabled = true
+
+[plugin.gpg]
+enabled = true
+
+[plugin.password]
+enabled = true
+
 [plugin.caldav]
 enabled = true
 server = "https://cdav.migadu.com"
