@@ -9,24 +9,35 @@
     <title>{{ page.title }}{% unless page.title == site.title %} · {{ site.title }}{% endunless %}</title>
     {% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
     <link rel="icon" type="image/svg+xml" href="{{ site.home }}/assets/favicon.svg">
+    <link rel="preload" href="{{ site.home }}/assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ site.home }}/assets/fonts/ibm-plex-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
     <style>{{ '@use "main";' | scssify }}</style>
     {% seo title=false %}
     {% feed_meta %}
     {% include person.html %}
+    <script src="{{ site.home }}/assets/site.js" defer></script>
   </head>
-  <body>
+  <body class="{{ page.layout }}">
     <a href="#main" class="skip-link">Skip to content</a>
     <header>
-      <a href="{{ site.home }}/" class="header-brand">
-        <span class="header-handle">{{ site.handle }}</span>
-        <span class="header-avatar" aria-hidden="true">{% include avatar.svg %}</span>
-      </a>
+      {% include path.html %}
+      <span class="header-avatar" aria-hidden="true">{% include avatar.svg %}</span>
     </header>
-    <main id="main">
-      <article>
-        <h1>{{ page.title }}</h1>
-        <div class="content">{{ content }}</div>
-      </article>
-    </main>
+    <div class="page">
+      <aside class="rail" aria-label="Navigation">
+        {% include dir.html %}
+        {% include contact.html %}
+      </aside>
+      <main id="main">
+        <article>
+          <h1>{{ page.title }}</h1>
+          <div class="content">{{ content }}</div>
+        </article>
+      </main>
+      <aside class="toc-rail" aria-label="On this page"></aside>
+    </div>
+    <footer class="site-footer">
+      {% include contact.html %}
+    </footer>
   </body>
 </html>

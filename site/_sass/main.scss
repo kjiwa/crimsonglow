@@ -1,4 +1,5 @@
 @use "avatar";
+@use "fonts";
 @use "highlight";
 @use "tokens";
 
@@ -8,8 +9,19 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 :focus-visible {
-  outline: 2px solid var(--color-link);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -17,17 +29,16 @@ body {
   background-color: var(--color-canvas);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   line-height: var(--line-height);
   margin: 0;
-  padding: var(--space-1);
 }
 
 .skip-link {
   background-color: var(--color-header-bg);
-  border: 1px solid #fff;
-  color: #fff;
-  font-weight: bold;
+  border: 1px solid var(--color-header-text);
+  color: var(--color-header-text);
+  font-weight: 600;
   left: var(--space-1);
   padding: var(--space-1) var(--space-2);
   position: absolute;
@@ -35,109 +46,292 @@ body {
   z-index: 100;
 
   &:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--color-header-text);
     top: var(--space-1);
   }
 }
 
-header,
-article {
-  margin: 0 auto;
-  max-width: var(--content-max-width);
-}
-
-header {
-  background-color: var(--color-header-bg);
-  padding: var(--space-2);
-}
-
-.header-brand {
-  align-items: center;
-  color: #fff;
-  display: flex;
-  font-size: var(--font-size-2xl);
-  font-weight: normal;
-  justify-content: space-between;
-  text-decoration: none;
-
-  &:hover .header-handle {
-    text-decoration: underline;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #fff;
-  }
-}
-
-article {
-  padding: 0 var(--space-2);
-}
-
-article h1 {
-  font-size: var(--font-size-2xl);
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
 a {
   color: var(--color-link);
-  text-decoration: none;
-  text-underline-offset: 2px;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
 }
 
 a:hover {
   color: var(--color-link-hover);
-  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
-.content {
+// Header: full-bleed identity strip carrying the navigable path.
+body > header {
+  align-items: center;
+  background-color: var(--color-header-bg);
+  color: var(--color-header-text);
+  display: flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+  padding: var(--space-2) var(--gutter);
+}
+
+.path {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  gap: 0 var(--space-1);
+  list-style: none;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 0;
+}
+
+.path li {
+  align-items: center;
+  display: flex;
+}
+
+.path li:not(:last-child)::after {
+  content: "/";
+  margin-left: var(--space-1);
+  opacity: 0.6;
+}
+
+.path li > * {
+  display: inline-block;
+  padding: 0.5rem 0;
+}
+
+.path a,
+.path [aria-current] {
+  color: var(--color-header-text);
+}
+
+.path a {
+  text-decoration-color: rgba(255, 255, 255, 0.5);
+}
+
+.path a:hover {
+  color: var(--color-header-text);
+  text-decoration-color: currentColor;
+}
+
+.path a:focus-visible,
+.path .path-host {
+  outline-color: var(--color-header-text);
+}
+
+.path [aria-current] {
+  font-weight: 600;
+}
+
+.path-host {
+  opacity: 0.75;
+}
+
+// Page: rail | article. The article is itself a two-track grid (text | margin).
+.page {
+  display: grid;
+  gap: 0 var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+  padding: var(--space-3) var(--gutter) var(--space-5);
+}
+
+.rail,
+.toc-rail,
+main {
+  min-width: 0;
+}
+
+main {
+  container-type: inline-size;
+}
+
+.toc-rail {
+  order: -1;
+}
+
+.toc-rail:empty {
+  display: none;
+}
+
+article {
+  display: grid;
+  column-gap: var(--space-4);
+  grid-template-columns: minmax(0, var(--measure));
+  min-width: 0;
   overflow-wrap: break-word;
 }
 
+.content {
+  display: contents;
+}
+
+.content > *,
+article > h1 {
+  grid-column: 1;
+}
+
+@media (max-width: 40rem) {
+  article {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// Rail and main from 70rem; the contents column joins them from 80rem, left-aligned so
+// nothing floats away from the text on very wide screens.
+@media (min-width: 70rem) {
+  .page {
+    grid-template-columns: var(--rail-width) minmax(0, var(--measure-wide));
+    justify-content: start;
+  }
+
+  article {
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
+  }
+
+  .rail {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .toc-rail {
+    grid-column: 2;
+    grid-row: 1;
+    order: 0;
+  }
+
+  main {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .rail {
+    align-self: start;
+    max-height: calc(100vh - var(--space-4));
+    overflow-y: auto;
+    position: sticky;
+    top: var(--space-2);
+  }
+}
+
+@media (min-width: 80rem) {
+  .page {
+    grid-template-columns: var(--rail-width) minmax(0, var(--measure-wide)) var(--toc-width);
+  }
+
+  .rail {
+    grid-row: 1;
+  }
+
+  main {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .toc-rail {
+    align-self: start;
+    grid-column: 3;
+    max-height: calc(100vh - var(--space-4));
+    overflow-y: auto;
+    position: sticky;
+    top: var(--space-2);
+  }
+}
+
+article h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+  margin: 0 0 var(--space-1);
+}
+
+.content h2,
+.content h3,
+.content h4,
+.content h5 {
+  line-height: var(--line-height-tight);
+  scroll-margin-top: var(--space-2);
+}
+
 .content h2 {
+  border-top: 1px solid var(--color-rule);
   font-size: var(--font-size-xl);
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  margin-top: 2rem;
+  font-weight: 600;
+  margin: var(--space-4) 0 var(--space-2);
+  padding-top: var(--space-2);
 }
 
 .content h3 {
   font-size: var(--font-size-lg);
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  margin-top: 1.5rem;
+  font-weight: 600;
+  margin: var(--space-3) 0 var(--space-1);
 }
 
 .content h4 {
   font-size: var(--font-size-md);
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  margin-top: 1.25rem;
+  font-weight: 600;
+  margin: var(--space-3) 0 var(--space-1);
 }
 
 .content h5 {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   font-style: italic;
-  font-weight: normal;
-  margin-bottom: 0.5rem;
-  margin-top: 1rem;
+  font-weight: 400;
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.content p,
+.content ul,
+.content ol {
+  margin: 0 0 var(--space-2);
+}
+
+.heading-anchor {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  margin-left: 0.4em;
+  opacity: 0;
+  text-decoration: none;
+}
+
+h2:hover .heading-anchor,
+h3:hover .heading-anchor,
+h4:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .heading-anchor {
+    opacity: 0.6;
+  }
 }
 
 .byline {
   color: var(--color-text-muted);
+  font-family: var(--font-mono);
   font-size: var(--font-size-xs);
-  margin-bottom: var(--space-2);
+  margin: 0 0 var(--space-3);
 }
 
 .content .caption {
   background-color: var(--color-surface);
-  font-weight: bold;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
   padding: var(--space-1);
 }
 
 .content code {
-  font-family: ui-monospace, "SF Mono", Consolas, monospace;
-  font-size: var(--font-size-xs);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.content :not(pre) > code {
+  background-color: var(--color-code-bg);
+  padding: 0.1em 0.3em;
 }
 
 .content figure {
@@ -146,39 +340,206 @@ a:hover {
 
 .content pre {
   background-color: var(--color-code-bg);
-  margin-top: 0;
+  border: 1px solid var(--color-rule);
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  margin: 0;
   overflow-x: auto;
-  padding: var(--space-1);
+  padding: var(--space-2);
 }
 
-.posts {
-  // Dates are fixed-shape (YYYY-MM), so tabular figures are enough to line the
-  // titles up -- no fixed-width date column needed.
-  font-variant-numeric: tabular-nums;
+.content pre code {
+  font-size: inherit;
 }
 
-.home-links {
-  display: flex;
-  gap: var(--space-2);
+.content > .highlight,
+.content > pre,
+.content > .code,
+.content > .wide,
+.content > .software-job-search-div {
+  margin: 0 0 var(--space-2);
+  max-width: var(--code-max-width);
+  min-width: 0;
+}
+
+@media (min-width: 70rem) {
+  .content > .highlight,
+  .content > pre,
+  .content > .code,
+  .content > .wide,
+  .content > .span,
+  .content > .software-job-search-div {
+    grid-column: 1 / -1;
+  }
+}
+
+.code {
+  position: relative;
+}
+
+.copy-button {
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-rule);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  min-height: 2rem;
   padding: 0 var(--space-1);
+  position: absolute;
+  right: var(--space-1);
+  top: var(--space-1);
 }
 
-.home-links a {
+.copy-button:hover {
+  color: var(--color-text-primary);
+}
+
+// Contents: built by site.js. A disclosure on narrow screens, a pinned rail on wide ones.
+.toc {
+  border-bottom: 1px solid var(--color-rule);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+
+.toc summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  min-height: 2.75rem;
+  padding: var(--space-1) 0;
+}
+
+.toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc ol ol {
+  padding-left: var(--space-2);
+}
+
+.toc a {
+  border-left: 2px solid transparent;
+  color: var(--color-text-muted);
+  display: block;
+  padding: 0.35rem 0 0.35rem var(--space-1);
+  text-decoration: none;
+}
+
+.toc a:hover {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.toc a[aria-current="location"] {
+  border-left-color: var(--color-accent);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+@media (min-width: 80rem) {
+  .toc {
+    border-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .toc summary {
+    cursor: default;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .toc summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+// Home: one list; each entry is a project with its write-up and, if any, its source.
+.projects {
+  display: grid;
+  gap: var(--space-3) var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.projects time {
+  color: var(--color-text-muted);
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.projects li > a {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.projects p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0.15rem 0 0;
+}
+
+.projects .source {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+// Contact: in the rail on wide screens, in the footer below.
+.contact {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.contact-label {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-1);
+}
+
+.contact ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.contact a {
   align-items: center;
   display: inline-flex;
-  justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
+  gap: 0.6em;
+  padding: 0.3rem 0;
 }
 
-.home-links svg {
-  fill: var(--color-link);
-  height: 32px;
-  width: 32px;
+.icon {
+  fill: currentColor;
+  flex: none;
+  height: 1.1em;
+  width: 1.1em;
 }
 
-.home-links a:hover svg {
-  fill: var(--color-link-hover);
+.rail .contact {
+  display: none;
+}
+
+.site-footer {
+  border-top: 1px solid var(--color-rule);
+  margin: 0 var(--gutter);
+  padding: var(--space-3) 0 var(--space-4);
+}
+
+@media (min-width: 70rem) {
+  .rail .contact {
+    display: block;
+    margin-bottom: var(--space-3);
+  }
+
+  .site-footer {
+    display: none;
+  }
 }
 
 .software-job-search-div {
@@ -243,4 +604,79 @@ table.dos-boot-sector-parameters thead tr th {
 
 table.dos-boot-sector-parameters tbody tr td:first-child {
   text-align: center;
+}
+
+.dir {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-3);
+}
+
+.dir ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dir a {
+  color: var(--color-text-primary);
+  display: block;
+  padding: 0.35rem 0;
+  text-decoration: none;
+}
+
+.dir a:hover {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.dir a[aria-current="page"] {
+  font-weight: 600;
+}
+
+@media (min-width: 70rem) {
+  .dir {
+    display: block;
+  }
+}
+
+@media print {
+  body > header,
+  .rail,
+  .copy-button,
+  .skip-link,
+  .heading-anchor {
+    display: none;
+  }
+
+  .page {
+    display: block;
+    padding: 0;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+}
+
+@media (min-width: 70rem) {
+  .home .content h2,
+  .home .content > p {
+    grid-column: 1 / -1;
+  }
+}
+
+// Home intro: large type lets the statement span the collection width at a readable line length.
+.lede {
+  font-size: clamp(1.25rem, calc(100cqw / 34), 2rem);
+  line-height: 1.35;
+  margin: 0 0 var(--space-2);
+}
+
+@media (min-width: 70rem) {
+  .lede {
+    grid-column: 1 / -1;
+  }
 }

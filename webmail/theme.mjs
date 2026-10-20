@@ -1,10 +1,11 @@
-// Rewrites a checked-out Alps tree so its colours, font, title and icon come from
+// Rewrites a checked-out Alps tree so its colours, fonts, title and icon come from
 // the site's design tokens. Usage: node theme.mjs <alps-dir> <tokens.css> <favicon.svg> <title>
+// The font files are read from the fonts/ directory beside <tokens.css>.
 //
 // Alps sets its colours as inline styles on <html> from THEME_BUNDLES at runtime,
 // which beats any stylesheet, so the bundles are edited rather than overridden.
-import { copyFileSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 
 const [alpsDir, tokensPath, faviconPath, title] = process.argv.slice(2);
 if (!title) {
@@ -85,13 +86,32 @@ edit("frontend/src/store/themes.ts", (text) =>
   setBundleColors(setBundleColors(text, "default-light", colors(light, false)), "default-dark", colors(dark, true)),
 );
 
-edit("frontend/src/index.css", (text) =>
-  replaceOnce(
-    replaceOnce(text, /--font-base:[^;]*;/, `--font-base: ${light["font-sans"]};`),
-    /--font-heading:[^;]*;/,
-    `--font-heading: ${light["font-sans"]};`,
-  ),
-);
+// The site's @font-face rules move to Alps' own /fonts/ path, which Vite copies from
+// frontend/public.
+const fontFaces = css.match(/@font-face\s*\{[^}]*\}/g);
+if (!fontFaces) throw new Error(`${tokensPath}: no @font-face rules`);
+const fontFiles = fontFaces.flatMap((rule) => [...rule.matchAll(/url\("([^"]+)"\)/g)].map((m) => m[1]));
+if (fontFiles.length === 0) throw new Error(`${tokensPath}: @font-face rules name no font files`);
+const fontsDir = join(alpsDir, "frontend/public/fonts");
+mkdirSync(fontsDir, { recursive: true });
+for (const url of fontFiles) {
+  copyFileSync(join(dirname(tokensPath), "fonts", basename(url)), join(fontsDir, basename(url)));
+}
+
+edit("frontend/src/index.css", (text) => {
+  const faces = fontFaces
+    .join("\n")
+    .replace(/url\("[^"]*\/([^"/]+)"\)/g, 'url("/fonts/$1")');
+  return (
+    faces +
+    "\n" +
+    replaceOnce(
+      replaceOnce(text, /--font-base:[^;]*;/, `--font-base: ${light["font-sans"]};`),
+      /--font-heading:[^;]*;/,
+      `--font-heading: ${light["font-sans"]};`,
+    )
+  );
+});
 
 edit("frontend/index.html", (text) => {
   let out = replaceOnce(text, /<title>[^<]*<\/title>/, `<title>${title}</title>`);

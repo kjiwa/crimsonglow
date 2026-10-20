@@ -3,4 +3,18 @@ layout: default
 ---
 {{ content }}
 
+<h2 id="projects">projects/</h2>
+<ul class="projects span">
+  {%- for post in site.posts %}
+  <li>
+    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
+    <a href="{{ post.url }}">{{ post.title }}</a>
+    <p>{{ post.description }}</p>
+    {%- if post.repo %}
+    <p class="source">Source: <a href="https://github.com/{{ post.repo }}">{{ post.repo }}</a></p>
+    {%- endif %}
+  </li>
+  {%- endfor %}
+</ul>
+
 <script src="{{ site.home }}/assets/legacy-redirect.js" defer></script>

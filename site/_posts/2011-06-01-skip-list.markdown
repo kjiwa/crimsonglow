@@ -3,6 +3,7 @@ title: Skip List
 description: >-
   A Java implementation of William Pugh's skip list as a java.util.AbstractMap,
   using probabilistic balancing in place of balanced trees, with unit tests.
+repo: kjiwa/java-skip-list
 ---
 
 *Skip lists are a data structure that can be used in place of balanced trees. Skip lists use probabilistic balancing rather than strictly enforced balancing and as a result the algorithms for insertion and deletion in skip lists are much simpler and significantly faster than equivalent algorithms for balanced trees.* (Pugh)
