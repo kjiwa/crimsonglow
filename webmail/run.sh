@@ -10,10 +10,11 @@ readonly CONFIG
 main() {
   : "${LOGIN_KEY:?LOGIN_KEY is required}"
   : "${ALPS_HOST:?ALPS_HOST is required}"
+  : "${AWS_LWA_PORT:?AWS_LWA_PORT is required}"
 
   cat >"$CONFIG" <<EOF
 [server]
-addr = "127.0.0.1:${PORT:-1323}"
+addr = "127.0.0.1:$AWS_LWA_PORT"
 login_key = "$LOGIN_KEY"
 trusted_origins = ["https://$ALPS_HOST"]
 trusted_proxies = ["127.0.0.1/32"]

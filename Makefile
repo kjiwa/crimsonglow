@@ -36,7 +36,7 @@ link-check: build
 lint:
 	shellcheck -x -P SCRIPTDIR scripts/*.sh
 
-webmail: build
+webmail:
 	scripts/webmail-build.sh
 
 serve: build

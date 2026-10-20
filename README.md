@@ -54,7 +54,7 @@ its source root, which is why they sit beside `~kjiwa/` inside `site/`.
 ```sh
 make build   # bundle exec jekyll build
 make lint    # shellcheck scripts/*.sh
-make webmail # build webmail/dist/alps.zip (needs the built site for its design tokens)
+make webmail # build webmail/dist/alps.zip (run make build first: it reads the built design tokens)
 make check   # build, then validate redirect targets and internal links/images
 ```
 

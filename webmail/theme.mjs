@@ -21,12 +21,18 @@ const declarations = (block) =>
       .map(([name, value]) => [name.trim().slice(2), value.trim()]),
   );
 
+const block = (text, pattern) => {
+  const found = text.match(pattern);
+  if (!found) throw new Error(`${tokensPath}: no match for ${pattern}`);
+  return found[1];
+};
+
 const css = readFileSync(tokensPath, "utf8");
-const light = declarations(css.match(/^:root\s*\{([^}]*)\}/)[1]);
+const light = declarations(block(css, /:root\s*\{([^}]*)\}/));
 const dark = {
   ...light,
   ...declarations(
-    css.match(/@media\s*\(prefers-color-scheme:\s*dark\)\s*\{\s*:root\s*\{([^}]*)\}/)[1],
+    block(css, /@media\s*\(prefers-color-scheme:\s*dark\)\s*\{\s*:root\s*\{([^}]*)\}/),
   ),
 };
 
@@ -59,7 +65,8 @@ const edit = (relPath, fn) => {
 };
 
 const replaceOnce = (text, pattern, replacement) => {
-  if (!pattern.test(text)) throw new Error(`pattern not found: ${pattern}`);
+  const count = (text.match(new RegExp(pattern.source, "g")) ?? []).length;
+  if (count !== 1) throw new Error(`expected one match for ${pattern}, found ${count}`);
   return text.replace(pattern, replacement);
 };
 

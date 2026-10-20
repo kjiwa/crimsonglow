@@ -33,12 +33,12 @@ main() {
       "^$_main_key\\.$MAIL_DOMAIN\\._domainkey\\.migadu\\.com\\.\$" || _main_status=1
   done
 
-  _main_headers=$(fetch_headers "https://mail.$MAIL_DOMAIN/")
-  if ! printf '%s\n' "$_main_headers" | grep -q '^http_status: 200$'; then
+  _main_page=$(curl_site "https://mail.$MAIL_DOMAIN/" -w '\nhttp_status: %{http_code}\n')
+  if ! printf '%s\n' "$_main_page" | grep -q '^http_status: 200$'; then
     echo "check-mail: https://mail.$MAIL_DOMAIN/ expected 200" >&2
     _main_status=1
   fi
-  if ! fetch_body "https://mail.$MAIL_DOMAIN/" | grep -q "<title>~kjiwa mail</title>"; then
+  if ! printf '%s\n' "$_main_page" | grep -q '<title>~kjiwa mail</title>'; then
     echo "check-mail: https://mail.$MAIL_DOMAIN/ is not the webmail login page" >&2
     _main_status=1
   fi
