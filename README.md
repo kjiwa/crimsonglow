@@ -1,187 +1,93 @@
 # crimsonglow.ca
 
-Jekyll source for [crimsonglow.ca](https://crimsonglow.ca), served from AWS (S3 + CloudFront); migrating from ICDSoft.
+Source for [crimsonglow.ca](https://crimsonglow.ca): a Jekyll site, an Alps webmail, a nightly
+mailbox backup, and the Terraform that runs them on AWS.
 
-## Layout
+## Repository
 
-```
-site/                  Jekyll source; _site/ is the built output
-├── _config.yml  _data/  _includes/  _layouts/  _posts/  _sass/
-├── _sass/tokens.scss    # design tokens: the one source for the site's and webmail's colours and font stacks
-├── _data/redirects.yml  # legacy path -> target; single source for the JS fallback and the edge router
-├── robots.txt           # must live at the host root to be honoured by crawlers
-└── ~kjiwa/              # page and asset content, served at /~kjiwa/ (assets/fonts/ holds IBM Plex)
-terraform/             # AWS infrastructure (S3, CloudFront, Route 53, IAM, webmail, mail backup)
-webmail/               # Alps webmail: pinned upstream ref, theme patch, Lambda launcher
-scripts/               # POSIX sh checks and tooling
-```
+| Path | Holds |
+|---|---|
+| [`site/`](site/) | Jekyll source; `_site/` is the built output |
+| [`terraform/`](terraform/) | AWS infrastructure: S3, CloudFront, Route 53, IAM, webmail, mail backup |
+| [`webmail/`](webmail/) | Alps webmail: pinned upstream ref, theme patch, Lambda launcher |
+| [`scripts/`](scripts/) | POSIX `sh` checks and tooling |
+| [`docs/`](docs/) | [`ARCHITECTURE.md`](docs/ARCHITECTURE.md): what is deployed. [`MAIL.md`](docs/MAIL.md): webmail, backup, restore |
+| [`.github/`](.github/) | CI, deploy, weekly link check, Terraform checks, Dependabot |
+| [`LICENSE`](LICENSE), [`LICENSE-CONTENT`](LICENSE-CONTENT) | Code under MIT, written content under CC BY 4.0 |
 
-Jekyll requires `_posts/`, `_layouts/`, `_includes/`, `_data/`, and `_sass/` at
-its source root, which is why they sit beside `~kjiwa/` inside `site/`.
+Inside `site/`:
+
+| Path | Holds |
+|---|---|
+| `_posts/`, `_layouts/`, `_includes/`, `_data/`, `_sass/` | Required at the Jekyll source root, so they sit beside `~kjiwa/` |
+| `_sass/tokens.scss` | Design tokens: the one source of colours and font stacks for the site and the webmail |
+| `_data/redirects.yml` | Legacy path to target; the single source for the JavaScript fallback and the edge router |
+| `robots.txt` | Must live at the host root to be honoured by crawlers |
+| `~kjiwa/` | Pages and assets, served at `/~kjiwa/` |
+
+In a shell, quote it or prefix it (`cd "./~kjiwa"`): a bare `~kjiwa` expands to a home directory.
 
 ## Prerequisites
 
-- Ruby, matching [`site/.ruby-version`](site/.ruby-version), and Bundler. `site/Gemfile.lock`
-  is checked in for `arm64-darwin`, `x86_64-linux`, and `aarch64-linux`, so
-  `bundle install` works on Apple Silicon Macs and mainstream glibc Linux
-  (Debian/Ubuntu/Fedora/Arch) without a `bundle lock --add-platform` step.
-  musl-based distros (e.g. Alpine) aren't covered.
-- To regenerate the social share card only: ImageMagick 6 or 7, `python3`, and
-  a bold + regular Arial-metric-compatible font (Arial itself, or Liberation
-  Sans / Arimo — see [scripts/og-card.sh](scripts/og-card.sh) for details and
-  override variables).
+- Ruby matching [`site/.ruby-version`](site/.ruby-version), and Bundler. `site/Gemfile.lock`
+  covers `arm64-darwin`, `x86_64-linux` and `aarch64-linux`, so `bundle install` works on Apple
+  Silicon and mainstream glibc Linux without `bundle lock --add-platform`. musl distros such as
+  Alpine are not covered.
+- [`shellcheck`](https://www.shellcheck.net/) to lint scripts.
+- Go and Node, matching [`ci.yml`](.github/workflows/ci.yml), plus `git` and `zip`, to build the
+  webmail bundle.
+- `curl` and `dig` for the live checks.
+- ImageMagick 6 or 7, `python3` and an Arial-metric font to regenerate the social share card
+  only; see [`scripts/og-card.sh`](scripts/og-card.sh) for fonts and override variables.
 
   ```sh
-  # macOS
-  brew install imagemagick
-
-  # Debian / Ubuntu
-  sudo apt install imagemagick fonts-liberation
-
-  # Fedora / RHEL
-  sudo dnf install ImageMagick liberation-sans-fonts
-
-  # Arch
-  sudo pacman -S imagemagick ttf-liberation
+  brew install imagemagick                                # macOS
+  sudo apt install imagemagick fonts-liberation           # Debian, Ubuntu
+  sudo dnf install ImageMagick liberation-sans-fonts      # Fedora, RHEL
+  sudo pacman -S imagemagick ttf-liberation               # Arch
   ```
 
-- To build the webmail bundle only: Go and Node, matching the versions in
-  [`ci.yml`](.github/workflows/ci.yml), plus `git` and `zip`.
-- To lint scripts: [`shellcheck`](https://www.shellcheck.net/).
-- For live checks: `curl`, `dig`.
+## Commands
 
-## Build
+| Command | Does |
+|---|---|
+| `make build` | Build the site with Jekyll |
+| `make check` | Build, then validate redirect targets and internal links and images |
+| `make lint` | Run `shellcheck` over `scripts/*.sh` |
+| `make webmail` | Build `webmail/dist/alps.zip`; run `make build` first, it reads the built design tokens |
+| `make check-live` | Query the live host: headers, routes, mail DNS. Not part of CI; set `CHECK_CONNECT_TO=<host>` to probe another origin, such as a CloudFront domain, before DNS points at it |
+| `make link-check` | `check` plus external links; the weekly workflow runs it |
+| `make og-card` | Regenerate `site/~kjiwa/assets/og-card.png` |
+| `make serve` | Serve `site/_site` at <http://localhost:8000/~kjiwa/> |
 
-```sh
-make build   # bundle exec jekyll build
-make lint    # shellcheck scripts/*.sh
-make webmail # build webmail/dist/alps.zip (run make build first: it reads the built design tokens)
-make check   # build, then validate redirect targets and internal links/images
-```
+[CI](.github/workflows/ci.yml) runs `make lint check` and `make webmail` on every push and pull
+request, so run all three before you open one. Preview with `make serve`, not `jekyll serve`: Jekyll's dev server hides every path
+starting with `~` by design (`NondisclosureName => [".ht*", "~*"]` in
+[`serve.rb`](https://github.com/jekyll/jekyll/blob/main/lib/jekyll/commands/serve.rb)), so
+`/~kjiwa/` would always 404.
 
-To screenshot every page at phone and desktop widths in light and dark under the
-production CSP (needs [Playwright](https://playwright.dev) and a built site):
+To screenshot every page at phone, laptop and desktop widths in light and dark under the
+production CSP, with [Playwright](https://playwright.dev) and a built site:
 
 ```sh
 PLAYWRIGHT_MODULE=/path/to/node_modules/playwright/index.mjs \
   node scripts/screenshots.mjs site/_site <out-dir>
 ```
 
-`make lint check` is exactly what [CI](.github/workflows/ci.yml) runs on every push
-and pull request.
-
-To verify headers and routing (status and `Location` of every redirect, the 404
-page) on the live site:
-
-```sh
-make check-live   # scripts/check-headers.sh, scripts/check-routes.sh, scripts/check-mail.sh
-```
-
-Set `CHECK_CONNECT_TO=<host>` to probe a different origin (for example a
-CloudFront distribution domain) before DNS points at it.
-
-`make check-live` is deliberately separate from `make check` and CI because it
-queries the live host over the network.
-
-To regenerate the social share card (`~kjiwa/assets/og-card.png`):
-
-```sh
-make og-card   # scripts/og-card.sh
-```
-
-To preview, don't use `bundle exec jekyll serve` — Jekyll's own dev server
-hides every path starting with `~` by design
-([serve.rb](https://github.com/jekyll/jekyll/blob/main/lib/jekyll/commands/serve.rb),
-`file_handler_opts`, `NondisclosureName => [".ht*", "~*"]`), so `/~kjiwa/`
-always 404s under it regardless of what's actually in `site/_site/`. This looks
-like an upstream typo (WEBrick's own default is `"*~"`, for backup files
-ending in `~`, not `"~*"`) but there's no CLI flag to override it. Serve the
-built output with a plain static server instead:
-
-```sh
-make serve   # python3 -m http.server -d site/_site 8000, http://localhost:8000/~kjiwa/
-```
-
 ## Deploy
 
-Pushes to `main` deploy through the `deploy` job in
-[`ci.yml`](.github/workflows/ci.yml), which assumes an AWS role by GitHub OIDC,
-syncs `site/_site` to S3, invalidates CloudFront, and uploads the webmail bundle
-to its Lambda function. The infrastructure lives
-in [`terraform/`](terraform/). The AWS account ID in `terraform.tfvars` is
-committed on purpose: AWS does not treat it as secret, and the only role's trust
-policy admits just this repository's `main` branch through GitHub OIDC.
-
-Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
--- a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a
-relative path. This only matters if you're poking around `site/` by hand.
-
-## Webmail
-
-`mail.crimsonglow.ca` serves [Alps](https://github.com/migadu/alps), Migadu's own
-webmail, from a Lambda function behind an API Gateway HTTP API (CloudFront cannot
-front it: its origin access control needs a body hash on every POST). The Lambda
-Web Adapter runs the Alps binary; [`webmail/run.sh`](webmail/run.sh) writes its
-config from the function's environment. Sign-in goes to Migadu's IMAP and SMTP
-servers; Alps stores a user's settings in IMAP metadata, so the function holds no
-state beyond the login key (Terraform-generated, in state).
-
-Alps has no theme layer. [`scripts/webmail-build.sh`](scripts/webmail-build.sh)
-checks out the commit in [`webmail/alps.ref`](webmail/alps.ref) and
-[`webmail/theme.mjs`](webmail/theme.mjs) rewrites its colours, fonts, title and logo
-from the site's design tokens ([`site/_sass/tokens.scss`](site/_sass/tokens.scss)) and
-font faces ([`site/_sass/fonts.scss`](site/_sass/fonts.scss)), published together as
-`site-tokens.css`, so a token or font change reaches the webmail on the next deploy. To update Alps, change `alps.ref` and run `make webmail`; the patch fails
-loudly if upstream moved something it edits.
-
-- A request over about 4.5 MB in total (attachments are base64-encoded on upload, and
-  Lambda caps payloads at 6 MB) is rejected by API Gateway with a 413. Send larger
-  files from Migadu's webmail or any IMAP client.
-- Two-factor sign-in is WebAuthn only (passkey or security key); Alps has no TOTP.
-  Keys are stored in the mailbox's IMAP metadata.
-- Rate limits and sessions are per Lambda environment; the stage throttles total
-  load, and the login cookie rebuilds a session on any environment.
-- Rotate the login key (signs everyone out) with
-  `scripts/tf.sh apply -replace=random_bytes.login_key`.
-
-## Mail backup and restore
-
-Migadu does not promise to keep a terminated account's mail, so a nightly
-CodeBuild job (`mail-backup`, started by EventBridge Scheduler) pulls each
-mailbox in `mailboxes` ([`terraform.tfvars`](terraform/terraform.tfvars)) with
-`mbsync` into the `crimsonglow-archive` bucket under `migadu/<address>/`, as a
-Maildir. The pull never expunges or removes; history lives in S3 versions,
-kept 365 days. The rendered `mbsyncrc` sits at the bucket root. A CloudWatch
-alarm emails `alert_emails` when no build succeeds for two days.
-
-After adding a mailbox, store its IMAP password (kept in SSM, never in
-Terraform state), then apply:
-
-```sh
-scripts/mail-password.sh <address>
-scripts/tf.sh apply
-```
-
-Restore needs `isync` (`mbsync`) and the AWS CLI:
-
-```sh
-scripts/mail-restore.sh <address>         # download to ~/crimsonglow-mail/, print folder counts
-scripts/mail-restore.sh --push <address>  # also upload to <address>, which must be empty or new
-```
-
-- `--push` is for a lost or new mailbox: it asks you to confirm the target is empty,
-  because `mbsync` does not de-duplicate and a second push doubles the mail. It also
-  ignores the backup's sync state, so it re-creates deleted folders. To recover a few
-  messages from a mailbox that still exists, open the Maildir in a client and copy them.
-- Read offline: point any Maildir-capable client at `~/crimsonglow-mail/<address>/`.
-- Another provider: edit `Host` and `User` (and `PassCmd`) in the downloaded
-  `~/crimsonglow-mail/mbsyncrc`, then run `scripts/mail-restore.sh --push`.
+A push to `main` runs the checks, then the `deploy` job syncs `site/_site` to S3, invalidates
+CloudFront and uploads the webmail bundle, authenticated by GitHub OIDC with no stored keys. The
+Terraform is applied by hand with `scripts/tf.sh`, which also refreshes the GitHub variables CI
+reads (`scripts/ci-vars.sh`); `scripts/deploy.sh --dry-run` previews a site sync. Topology, roles
+and reasons:
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). The AWS account ID in `terraform.tfvars` is
+committed on purpose: AWS does not treat it as secret, and the deploy role's trust policy admits
+just this repository's `main` branch.
 
 ## License
 
-Code (scripts, Terraform, Jekyll layouts, styles, and build configuration) is
-MIT licensed, Copyright (c) 2026 Kamil Jiwa; see [LICENSE](LICENSE).
-
-Written content (posts and pages under `site/_posts/` and `site/~kjiwa/`) is
-licensed CC BY 4.0, Copyright (c) 2004-2026 Kamil Jiwa; see
+Code (scripts, Terraform, Jekyll layouts, styles, build configuration) is MIT licensed,
+Copyright (c) 2026 Kamil Jiwa; see [LICENSE](LICENSE). Written content (posts and pages under
+`site/_posts/` and `site/~kjiwa/`) is CC BY 4.0, Copyright (c) 2004-2026 Kamil Jiwa; see
 [LICENSE-CONTENT](LICENSE-CONTENT).
