@@ -3,8 +3,8 @@ layout: default
 ---
 {{ content }}
 
-<h2 id="projects">projects/</h2>
-<ul class="projects span">
+<h2 id="notes">notes/</h2>
+<ul class="notes span">
   {%- for post in site.posts %}
   <li>
     <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
