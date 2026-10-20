@@ -16,10 +16,15 @@ const PAGES = {
   home: "/~kjiwa/",
   dos: "/~kjiwa/2010/09/dos-boot-sector.html",
   james: "/~kjiwa/2016/06/exploiting-apache-james-2.3.2.html",
+  kde: "/~kjiwa/2004/09/introduction-to-kde-programming.html",
   slides: "/~kjiwa/2016/11/software-job-search.html",
   notfound: "/~kjiwa/404.html",
 };
-const VIEWPORTS = { phone: { width: 393, height: 852 }, desktop: { width: 1440, height: 900 } };
+const VIEWPORTS = {
+  phone: { width: 393, height: 852 },
+  laptop: { width: 1280, height: 640 },
+  desktop: { width: 1440, height: 900 },
+};
 const SCHEMES = ["light", "dark"];
 const MIME = {
   ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript",
@@ -39,6 +44,10 @@ function resolveFile(urlPath) {
 
 const base = "https://crimsonglow.test";
 
+// The embedded Google Slides frame cannot load under request interception and sets its own
+// frame-ancestors policy; neither says anything about this site.
+const GOOGLE_FRAME = /ERR_UNKNOWN_URL_SCHEME|docs\.google\.com/;
+
 // Serves siteDir through request interception, so no local port is needed.
 async function serveSite(context) {
   await context.route(`${base}/**`, (route) => {
@@ -55,6 +64,35 @@ async function serveSite(context) {
   });
 }
 
+// The highlighted contents entry must match the scroll position, not the order in which
+// the observer happened to report headings, and the list must fit without its own scroll.
+async function contentsProblems(page) {
+  return page.evaluate(async () => {
+    const rail = document.querySelector(".toc-rail");
+    const links = [...document.querySelectorAll(".toc a")];
+    if (!rail || !links.length || getComputedStyle(rail).position === "static") return [];
+    const expected = () => {
+      const passed = links
+        .map((a) => document.getElementById(a.hash.slice(1)))
+        .filter((h) => h.getBoundingClientRect().top <= innerHeight * 0.25);
+      return passed.length ? passed[passed.length - 1].id : "";
+    };
+    const actual = () =>
+      document.querySelector('.toc a[aria-current="location"]')?.hash.slice(1) ?? "";
+    const settle = () => new Promise((r) => setTimeout(r, 250));
+    const problems = [];
+    await settle();
+    if (actual() !== expected()) problems.push(`on load: highlighted "${actual()}", expected "${expected()}"`);
+    const target = document.getElementById(links[Math.floor(links.length / 2)].hash.slice(1));
+    scrollTo({ top: target.getBoundingClientRect().top + scrollY - 10, behavior: "instant" });
+    await settle();
+    if (actual() !== expected()) problems.push(`mid-page: highlighted "${actual()}", expected "${expected()}"`);
+    scrollTo({ top: 0, behavior: "instant" });
+    if (rail.scrollHeight > rail.clientHeight) problems.push("contents list needs its own scroll");
+    return problems;
+  });
+}
+
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || "playwright");
 const browser = await chromium.launch();
 mkdirSync(outDir, { recursive: true });
@@ -68,10 +106,14 @@ for (const [name, path] of Object.entries(PAGES)) {
       await serveSite(context);
       const page = await context.newPage();
       const messages = [];
-      page.on("console", (m) => m.type() === "error" && messages.push(m.text()));
+      page.on(
+        "console",
+        (m) => m.type() === "error" && !(name === "slides" && GOOGLE_FRAME.test(m.text())) && messages.push(m.text())
+      );
       page.on("pageerror", (e) => messages.push(String(e)));
       await page.goto(base + path, { waitUntil: "load" });
       await page.evaluate(() => document.fonts.ready);
+      messages.push(...(await contentsProblems(page)));
       await page.evaluate(async () => {
         for (let y = 0; y < document.body.scrollHeight; y += innerHeight) {
           scrollTo({ top: y, behavior: "instant" });

@@ -2,7 +2,7 @@ title: Kamil Jiwa
 handle: "~kjiwa"
 job_title: Software Engineer
 description: >-
-  Kamil Jiwa's notes on programming, systems, and security research.
+  Kamil Jiwa's write-ups on programming, systems, and security research.
 author:
   name: Kamil Jiwa
   url: https://crimsonglow.ca/~kjiwa/
@@ -13,6 +13,7 @@ knows_about:
   - Computer Security
   - Distributed Systems
 lang: en
+locale: en_CA
 timezone: America/Vancouver
 baseurl: ""
 home: "/~kjiwa"

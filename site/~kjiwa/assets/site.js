@@ -52,7 +52,8 @@
     var details = el("details", "toc");
     var root = el("ol");
     var sub = null;
-    var links = [];
+    var group = null;
+    var entries = [];
 
     details.appendChild(el("summary", "", "On this page"));
     headings.forEach(function (heading) {
@@ -60,16 +61,17 @@
       var link = el("a", "", headingLabel(heading));
       link.href = "#" + heading.id;
       item.appendChild(link);
-      links.push(link);
       if (heading.tagName === "H3" && sub) {
         sub.appendChild(item);
-        return;
+      } else {
+        root.appendChild(item);
+        group = item;
+        if (heading.tagName === "H2") {
+          sub = el("ol");
+          item.appendChild(sub);
+        }
       }
-      root.appendChild(item);
-      if (heading.tagName === "H2") {
-        sub = el("ol");
-        item.appendChild(sub);
-      }
+      entries.push({ heading: heading, link: link, group: group });
     });
     root.querySelectorAll("ol:empty").forEach(function (list) {
       list.remove();
@@ -81,34 +83,41 @@
     }
     syncOpen();
     WIDE.addEventListener("change", syncOpen);
-    return { node: details, links: links };
+    return { node: details, entries: entries };
   }
 
-  function trackSection(headings, links) {
-    var active = -1;
+  // The current section is the last heading above a line a quarter of the way down the
+  // viewport, so it follows the scroll position rather than the order of observer reports.
+  function trackSection(entries) {
+    var active = -2;
+    var queued = false;
 
-    function activate(index) {
+    function update() {
+      queued = false;
+      var line = window.innerHeight * 0.25;
+      var index = -1;
+      entries.forEach(function (entry, i) {
+        if (entry.heading.getBoundingClientRect().top <= line) index = i;
+      });
       if (index === active) return;
       active = index;
-      links.forEach(function (link, i) {
-        if (i === index) link.setAttribute("aria-current", "location");
-        else link.removeAttribute("aria-current");
+      entries.forEach(function (entry, i) {
+        if (i === index) entry.link.setAttribute("aria-current", "location");
+        else entry.link.removeAttribute("aria-current");
+        entry.group.classList.toggle("current", index >= 0 && entry.group === entries[index].group);
       });
     }
 
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          var index = headings.indexOf(entry.target);
-          if (entry.isIntersecting) activate(index);
-          else if (entry.boundingClientRect.top > 0) activate(index - 1);
-        });
-      },
-      { rootMargin: "0px 0px -75% 0px" }
-    );
-    headings.forEach(function (heading) {
-      observer.observe(heading);
-    });
+    function schedule() {
+      if (queued) return;
+      queued = true;
+      window.requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.addEventListener("load", schedule);
+    update();
   }
 
   function main() {
@@ -123,13 +132,10 @@
     addCopyButtons();
 
     var rail = document.querySelector(".toc-rail");
-    var tocHeadings = headings.filter(function (heading) {
-      return !heading.classList.contains("year");
-    });
-    if (!rail || tocHeadings.length < 3 || document.body.classList.contains("home")) return;
-    var toc = buildToc(tocHeadings);
+    if (!rail || headings.length < 3 || document.body.classList.contains("home")) return;
+    var toc = buildToc(headings);
     rail.appendChild(toc.node);
-    if ("IntersectionObserver" in window) trackSection(tocHeadings, toc.links);
+    trackSection(toc.entries);
   }
 
   main();
