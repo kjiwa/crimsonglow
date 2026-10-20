@@ -32,6 +32,14 @@ server = "imaps://imap.migadu.com:993"
 
 [smtp]
 server = "smtps://smtp.migadu.com:465"
+
+[plugin.caldav]
+enabled = true
+server = "https://cdav.migadu.com"
+
+[plugin.carddav]
+enabled = true
+server = "https://cdav.migadu.com"
 EOF
 
   exec "$(dirname "$0")/alps" -config "$CONFIG"

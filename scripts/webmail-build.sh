@@ -20,8 +20,8 @@ _checkout_alps() {
   git -C "$_checkout_alps_dir" checkout -q FETCH_HEAD
 }
 
-_site_handle() {
-  ruby -ryaml -e 'puts YAML.load_file(ARGV[0]).fetch("handle")' "$ROOT/site/_config.yml"
+_site_title() {
+  ruby -ryaml -e 'puts YAML.load_file(ARGV[0]).fetch("title")' "$ROOT/site/_config.yml"
 }
 
 _build_frontend() {
@@ -49,7 +49,7 @@ main() {
 
   _checkout_alps "$_main_alps"
   node "$ROOT/webmail/theme.mjs" "$_main_alps" "$_main_tokens" \
-    "$ROOT/site/~kjiwa/assets/favicon.svg" "$(_site_handle) mail"
+    "$ROOT/site/~kjiwa/assets/favicon.svg" "Mail · $(_site_title)"
   _build_frontend "$_main_alps"
   _build_binary "$_main_alps" "$_main_stage/alps"
   cp "$ROOT/webmail/run.sh" "$_main_stage/run.sh"

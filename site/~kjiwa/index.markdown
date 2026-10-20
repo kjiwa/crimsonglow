@@ -3,6 +3,6 @@ layout: home
 title: Kamil Jiwa
 ---
 
-Software and systems engineer. Most of what I have built since 2016 is not here: I was
-busy tuning this site's headers instead of writing it up.
+Software and systems engineer. Most of what I've built never made it here: I was too
+busy tuning this site's headers to write it up.
 {:.lede}
