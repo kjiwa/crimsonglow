@@ -1,11 +1,12 @@
 {%- comment -%}
 sameAs binds the ~kjiwa handle to external profiles. jobTitle and knowsAbout provide
-topical disambiguation for name queries.
+topical disambiguation for name queries. The home page is the profile page: it nests the
+Person as its mainEntity, so Google reads one entity there; every other page carries the
+Person alone, which the posts' author field refers to by name and URL.
 {%- endcomment -%}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
+{%- assign home_url = site.home | append: "/" -%}
+{%- capture person_fields -%}
+"@type": "Person",
   "@id": {{ "/~kjiwa/#person" | absolute_url | jsonify }},
   "name": {{ site.title | jsonify }},
   "jobTitle": {{ site.job_title | jsonify }},
@@ -14,5 +15,21 @@ topical disambiguation for name queries.
   "description": {{ site.description | strip | jsonify }},
   "knowsAbout": {{ site.knows_about | jsonify }},
   "sameAs": {{ site.data.profiles | map: "url" | jsonify }}
+{%- endcapture -%}
+<script type="application/ld+json">
+{%- if page.url == home_url %}
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "url": {{ home_url | absolute_url | jsonify }},
+  "mainEntity": {
+  {{ person_fields }}
+  }
 }
+{%- else %}
+{
+  "@context": "https://schema.org",
+  {{ person_fields }}
+}
+{%- endif %}
 </script>

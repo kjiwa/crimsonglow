@@ -446,6 +446,15 @@ h4:hover .heading-anchor,
     margin-bottom: 0;
   }
 
+  .toc li > ol {
+    display: none;
+  }
+
+  .toc li.current > ol,
+  .toc li:focus-within > ol {
+    display: block;
+  }
+
   .toc summary {
     cursor: default;
     list-style: none;
@@ -457,37 +466,48 @@ h4:hover .heading-anchor,
   }
 }
 
-// Home: one list; each entry is a project with its write-up and, if any, its source.
+// Home: one row per project, like ls -l: date, name with its source, description.
 .projects {
-  display: grid;
-  gap: var(--space-3) var(--space-4);
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+.projects li {
+  border-top: 1px solid var(--color-rule);
+  display: grid;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) 0;
+}
+
 .projects time {
   color: var(--color-text-muted);
-  display: block;
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
 }
 
-.projects li > a {
+.content .projects h3 {
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  line-height: var(--line-height-tight);
+  margin: 0;
 }
 
 .projects p {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  margin: 0.15rem 0 0;
+  margin: 0;
 }
 
-.projects .source {
+.content .projects .source {
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 48rem) {
+  .projects li {
+    grid-template-columns: 5.5rem minmax(0, 5fr) minmax(0, 6fr);
+  }
 }
 
 // Contact: in the rail on wide screens, in the footer below.
