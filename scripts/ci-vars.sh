@@ -15,6 +15,7 @@ main() {
   _set_variable SITE_BUCKET site_bucket
   _set_variable DISTRIBUTION_ID distribution_id
   _set_variable AWS_ROLE_ARN deploy_role_arn
+  _set_variable WEBMAIL_FUNCTION webmail_function
 }
 
 main "$@"

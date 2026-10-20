@@ -45,6 +45,11 @@ resource "aws_iam_role_policy" "github_deploy" {
         Effect   = "Allow"
         Action   = "cloudfront:CreateInvalidation"
         Resource = aws_cloudfront_distribution.this.arn
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["lambda:UpdateFunctionCode", "lambda:GetFunctionConfiguration"]
+        Resource = aws_lambda_function.this.arn
       }
     ]
   })
@@ -148,6 +153,40 @@ resource "aws_iam_role_policy" "mail_backup_scheduler" {
         Effect   = "Allow"
         Action   = "codebuild:StartBuild"
         Resource = aws_codebuild_project.mail_backup.arn
+      }
+    ]
+  })
+}
+
+# -- webmail: the Lambda function writes only to its own log group.
+
+data "aws_iam_policy_document" "webmail_trust" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "webmail" {
+  name               = "webmail"
+  assume_role_policy = data.aws_iam_policy_document.webmail_trust.json
+}
+
+resource "aws_iam_role_policy" "webmail" {
+  name = "log-webmail"
+  role = aws_iam_role.webmail.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+        Resource = "${aws_cloudwatch_log_group.webmail.arn}:*"
       }
     ]
   })
