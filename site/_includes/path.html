@@ -1,5 +1,5 @@
 {%- comment -%}
-Breadcrumb for navigation, not a literal URL: a post sits under projects/ by its slug,
+Breadcrumb for navigation, not a literal URL: a post sits under notes/ by its slug,
 not under the year/month directories its permalink uses.
 {%- endcomment -%}
 {%- assign home_url = site.home | append: "/" -%}
@@ -11,7 +11,7 @@ not under the year/month directories its permalink uses.
     {%- else %}
     <li><a href="{{ site.home }}/">{{ site.handle }}</a></li>
     {%- if page.collection == "posts" %}
-    <li><a href="{{ site.home }}/#projects">projects</a></li>
+    <li><a href="{{ site.home }}/#notes">notes</a></li>
     <li><span aria-current="page">{{ page.slug }}</span></li>
     {%- elsif page.noindex %}
     <li><span aria-current="page">404</span></li>

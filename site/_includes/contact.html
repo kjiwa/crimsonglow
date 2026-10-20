@@ -3,8 +3,11 @@ Mail glyph: Material Symbols "mail" (outlined, Apache-2.0). Brand glyphs come fr
 {%- endcomment -%}
 <div class="contact">
   <p class="contact-label">Contact</p>
-  <ul>
+  <ul aria-label="Contact">
     <li><a href="mailto:{{ site.email }}">{% include icon.html viewbox="0 -960 960 960" path="M140-160q-24 0-42-18t-18-42v-520q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H140Zm340-302L140-685v465h680v-465L480-462Zm0-60 336-218H145l335 218ZM140-685v-55 520-465Z" %}{{ site.email }}</a></li>
+  </ul>
+  <p class="contact-label">Elsewhere</p>
+  <ul aria-label="Elsewhere">
     {%- for profile in site.data.profiles %}
     <li><a href="{{ profile.url }}" rel="me">{% include icon.html path=profile.icon %}{{ profile.name }}</a></li>
     {%- endfor %}
