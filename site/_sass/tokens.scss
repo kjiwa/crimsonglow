@@ -1,14 +1,17 @@
 :root {
   color-scheme: light dark;
 
-  --color-canvas: #ffffff;
-  --color-surface: #f8fafc;
-  --color-code-bg: #f1f5f9;
-  --color-text-primary: #0f172a;
-  --color-text-muted: #475569;
+  --color-canvas: #fcfcfd;
+  --color-surface: #f2f3f8;
+  --color-code-bg: #f1f3f8;
+  --color-rule: #d5d9e6;
+  --color-text-primary: #12141f;
+  --color-text-muted: #4d5468;
   --color-link: #000077;
   --color-link-hover: #1d4ed8;
+  --color-accent: #b0122f;
   --color-header-bg: #000077;
+  --color-header-text: #ffffff;
   --color-grid-line: #000077;
   --color-grid-reserved: #333399;
   --color-grid-partially-reserved: #8a9fe0;
@@ -27,22 +30,33 @@
   --hl-inserted: #116329;
   --hl-inserted-bg: #dafbe1;
 
-  --font-sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
 
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.3125rem;
-  --font-size-2xl: 1.625rem;
+  --font-size-xs: 0.8125rem;
+  --font-size-sm: 0.9375rem;
+  --font-size-md: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: clamp(1.75rem, 1.5rem + 1vw, 2.25rem);
 
-  --line-height: 1.5;
+  --line-height: 1.6;
+  --line-height-tight: 1.25;
 
-  --space-1: 8px;
-  --space-2: 16px;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
 
-  --content-max-width: 50rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --rail-width: 14rem;
+  --toc-width: 15rem;
+  --measure: 42rem;
+  --measure-wide: calc(var(--measure) * 1.618);
+  --code-max-width: 100ch;
   --figure-max-width: 640px;
+  --breakpoint-rail: 70rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -50,10 +64,12 @@
     --color-canvas: #0a0e17;
     --color-surface: #111827;
     --color-code-bg: #0d1322;
-    --color-text-primary: #f1f5f9;
-    --color-text-muted: #94a3b8;
+    --color-rule: #252d42;
+    --color-text-primary: #eceff6;
+    --color-text-muted: #9aa3b8;
     --color-link: #7ea2ff;
     --color-link-hover: #b2cbff;
+    --color-accent: #ff6b86;
     --color-header-bg: #000066;
     --color-grid-line: #94a3b8;
     --color-grid-reserved: #3b82f6;

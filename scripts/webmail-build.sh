@@ -41,7 +41,7 @@ main() {
   _main_tokens="$ROOT/site/_site/~kjiwa/assets/site-tokens.css"
   [ -f "$_main_tokens" ] || die "build the site first: make build"
 
-  _main_work="$(mktemp -d)"
+  _main_work="$(mktemp -d "${TMPDIR:-/tmp}/webmail.XXXXXX")"
   trap 'rm -rf "$_main_work"' EXIT
   _main_alps="$_main_work/alps"
   _main_stage="$_main_work/stage"

@@ -1,0 +1,23 @@
+{%- comment -%}
+Breadcrumb for navigation, not a literal URL: a post sits under projects/ by its slug,
+not under the year/month directories its permalink uses.
+{%- endcomment -%}
+{%- assign home_url = site.home | append: "/" -%}
+<nav aria-label="Path">
+  <ol class="path">
+    <li><span class="path-host">{{ site.url | remove: "https://" }}</span></li>
+    {%- if page.url == home_url %}
+    <li><span aria-current="page">{{ site.handle }}</span></li>
+    {%- else %}
+    <li><a href="{{ site.home }}/">{{ site.handle }}</a></li>
+    {%- if page.collection == "posts" %}
+    <li><a href="{{ site.home }}/#projects">projects</a></li>
+    <li><span aria-current="page">{{ page.slug }}</span></li>
+    {%- elsif page.noindex %}
+    <li><span aria-current="page">404</span></li>
+    {%- else %}
+    <li><span aria-current="page">{{ page.title | downcase }}</span></li>
+    {%- endif %}
+    {%- endif %}
+  </ol>
+</nav>

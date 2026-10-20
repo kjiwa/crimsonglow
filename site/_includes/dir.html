@@ -1,0 +1,7 @@
+{%- assign home_url = site.home | append: "/" -%}
+<nav class="dir" aria-label="Home directory">
+  <ul>
+    <li><a href="{{ home_url }}"{% if page.url == home_url %} aria-current="page"{% endif %}>./</a></li>
+    <li><a href="{{ home_url }}#projects">projects/</a></li>
+  </ul>
+</nav>

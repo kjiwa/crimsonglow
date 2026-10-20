@@ -7,9 +7,10 @@ Jekyll source for [crimsonglow.ca](https://crimsonglow.ca), served from AWS (S3 
 ```
 site/                  Jekyll source; _site/ is the built output
 ├── _config.yml  _data/  _includes/  _layouts/  _posts/  _sass/
+├── _sass/tokens.scss    # design tokens: the one source for the site's and webmail's colours and font stacks
 ├── _data/redirects.yml  # legacy path -> target; single source for the JS fallback and the edge router
 ├── robots.txt           # must live at the host root to be honoured by crawlers
-└── ~kjiwa/              # page and asset content, served at /~kjiwa/
+└── ~kjiwa/              # page and asset content, served at /~kjiwa/ (assets/fonts/ holds IBM Plex)
 terraform/             # AWS infrastructure (S3, CloudFront, Route 53, IAM, webmail, mail backup)
 webmail/               # Alps webmail: pinned upstream ref, theme patch, Lambda launcher
 scripts/               # POSIX sh checks and tooling
@@ -56,6 +57,14 @@ make build   # bundle exec jekyll build
 make lint    # shellcheck scripts/*.sh
 make webmail # build webmail/dist/alps.zip (run make build first: it reads the built design tokens)
 make check   # build, then validate redirect targets and internal links/images
+```
+
+To screenshot every page at phone and desktop widths in light and dark under the
+production CSP (needs [Playwright](https://playwright.dev) and a built site):
+
+```sh
+PLAYWRIGHT_MODULE=/path/to/node_modules/playwright/index.mjs \
+  node scripts/screenshots.mjs site/_site <out-dir>
 ```
 
 `make lint check` is exactly what [CI](.github/workflows/ci.yml) runs on every push
@@ -119,10 +128,10 @@ state beyond the login key (Terraform-generated, in state).
 
 Alps has no theme layer. [`scripts/webmail-build.sh`](scripts/webmail-build.sh)
 checks out the commit in [`webmail/alps.ref`](webmail/alps.ref) and
-[`webmail/theme.mjs`](webmail/theme.mjs) rewrites its colours, font, title and logo
-from the site's design tokens ([`site/_sass/tokens.scss`](site/_sass/tokens.scss),
-published as `site-tokens.css`), so a token change reaches the webmail on the next
-deploy. To update Alps, change `alps.ref` and run `make webmail`; the patch fails
+[`webmail/theme.mjs`](webmail/theme.mjs) rewrites its colours, fonts, title and logo
+from the site's design tokens ([`site/_sass/tokens.scss`](site/_sass/tokens.scss)) and
+font faces ([`site/_sass/fonts.scss`](site/_sass/fonts.scss)), published together as
+`site-tokens.css`, so a token or font change reaches the webmail on the next deploy. To update Alps, change `alps.ref` and run `make webmail`; the patch fails
 loudly if upstream moved something it edits.
 
 - A request over about 4.5 MB in total (attachments are base64-encoded on upload, and

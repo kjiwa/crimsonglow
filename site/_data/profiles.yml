@@ -1,5 +1,5 @@
 # External profiles for the same person. Drives three things from one list:
-# the home page icon row, the JSON-LD Person's sameAs, and rel="me" discovery.
+# the contact list, the JSON-LD Person's sameAs, and rel="me" discovery.
 # Icon paths are 24x24 viewBox glyphs from simple-icons (CC0).
 - name: GitHub
   url: https://github.com/kjiwa
