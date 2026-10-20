@@ -38,7 +38,7 @@ main() {
     echo "check-mail: https://mail.$MAIL_DOMAIN/ expected 200" >&2
     _main_status=1
   fi
-  if ! printf '%s\n' "$_main_page" | grep -q '<title>~kjiwa mail</title>'; then
+  if ! printf '%s\n' "$_main_page" | grep -qF '<title>Mail · Kamil Jiwa</title>'; then
     echo "check-mail: https://mail.$MAIL_DOMAIN/ is not the webmail login page" >&2
     _main_status=1
   fi
