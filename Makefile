@@ -36,10 +36,13 @@ link-check: build
 lint:
 	shellcheck -x -P SCRIPTDIR scripts/*.sh
 
+webmail: build
+	scripts/webmail-build.sh
+
 serve: build
 	python3 -m http.server -d $(SITE)/_site 8000
 
 og-card:
 	scripts/og-card.sh
 
-.PHONY: build check check-live link-check lint serve og-card
+.PHONY: build check check-live link-check lint serve og-card webmail
