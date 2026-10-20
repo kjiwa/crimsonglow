@@ -90,7 +90,7 @@
   // viewport, so it follows the scroll position rather than the order of observer reports.
   // A click on an entry makes it current at once and holds it through the smooth scroll,
   // so the sections passed on the way do not open and close their sublists; the hold ends
-  // when the reader scrolls, types or presses elsewhere.
+  // when the scroll settles or the reader takes over with the wheel or a touch.
   function trackSection(entries) {
     var active = -2;
     var queued = false;
@@ -130,12 +130,14 @@
     }
 
     entries.forEach(function (entry, i) {
-      entry.link.addEventListener("click", function () {
+      entry.link.addEventListener("click", function (event) {
+        if (event.defaultPrevented || event.button !== 0) return;
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
         pinned = true;
         setActive(i);
       });
     });
-    ["wheel", "touchstart", "keydown", "pointerdown"].forEach(function (type) {
+    ["scrollend", "wheel", "touchstart"].forEach(function (type) {
       window.addEventListener(type, release, { passive: true });
     });
 
