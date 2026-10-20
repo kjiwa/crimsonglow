@@ -1,80 +1,6 @@
 @use "avatar";
 @use "highlight";
-
-:root {
-  color-scheme: light dark;
-
-  --color-canvas: #ffffff;
-  --color-surface: #f8fafc;
-  --color-code-bg: #f1f5f9;
-  --color-text-primary: #0f172a;
-  --color-text-muted: #475569;
-  --color-link: #000077;
-  --color-link-hover: #1d4ed8;
-  --color-header-bg: #000077;
-  --color-grid-line: #000077;
-  --color-grid-reserved: #333399;
-  --color-grid-partially-reserved: #8a9fe0;
-  --color-table-head-bg: #000077;
-
-  --hl-comment: #57606a;
-  --hl-preproc: #6e40c9;
-  --hl-keyword: #cf222e;
-  --hl-number: #953800;
-  --hl-string: #0a3069;
-  --hl-entity: #6639ba;
-  --hl-error: #cf222e;
-  --hl-error-bg: #ffebe9;
-  --hl-deleted: #82071e;
-  --hl-deleted-bg: #ffebe9;
-  --hl-inserted: #116329;
-  --hl-inserted-bg: #dafbe1;
-
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.3125rem;
-  --font-size-2xl: 1.625rem;
-
-  --line-height: 1.5;
-
-  --space-1: 8px;
-  --space-2: 16px;
-
-  --content-max-width: 50rem;
-  --figure-max-width: 640px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: #0a0e17;
-    --color-surface: #111827;
-    --color-code-bg: #0d1322;
-    --color-text-primary: #f1f5f9;
-    --color-text-muted: #94a3b8;
-    --color-link: #7ea2ff;
-    --color-link-hover: #b2cbff;
-    --color-header-bg: #000066;
-    --color-grid-line: #94a3b8;
-    --color-grid-reserved: #3b82f6;
-    --color-grid-partially-reserved: #1e3a8a;
-    --color-table-head-bg: #1e293b;
-
-    --hl-comment: #8b949e;
-    --hl-preproc: #ffa657;
-    --hl-keyword: #ff7b72;
-    --hl-number: #79c0ff;
-    --hl-string: #7ee787;
-    --hl-entity: #d2a8ff;
-    --hl-error: #f85149;
-    --hl-error-bg: #490202;
-    --hl-deleted: #ffdcd7;
-    --hl-deleted-bg: #490202;
-    --hl-inserted: #aff5b4;
-    --hl-inserted-bg: #033a16;
-  }
-}
+@use "tokens";
 
 *,
 *::before,
@@ -90,7 +16,7 @@
 body {
   background-color: var(--color-canvas);
   color: var(--color-text-primary);
-  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   line-height: var(--line-height);
   margin: 0;

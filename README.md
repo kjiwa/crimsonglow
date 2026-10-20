@@ -10,7 +10,8 @@ site/                  Jekyll source; _site/ is the built output
 ├── _data/redirects.yml  # legacy path -> target; single source for the JS fallback and the edge router
 ├── robots.txt           # must live at the host root to be honoured by crawlers
 └── ~kjiwa/              # page and asset content, served at /~kjiwa/
-terraform/             # AWS infrastructure (S3, CloudFront, Route 53, IAM, mail backup)
+terraform/             # AWS infrastructure (S3, CloudFront, Route 53, IAM, webmail, mail backup)
+webmail/               # Alps webmail: pinned upstream ref, theme patch, Lambda launcher
 scripts/               # POSIX sh checks and tooling
 ```
 
@@ -43,6 +44,8 @@ its source root, which is why they sit beside `~kjiwa/` inside `site/`.
   sudo pacman -S imagemagick ttf-liberation
   ```
 
+- To build the webmail bundle only: Go and Node, matching the versions in
+  [`ci.yml`](.github/workflows/ci.yml), plus `git` and `zip`.
 - To lint scripts: [`shellcheck`](https://www.shellcheck.net/).
 - For live checks: `curl`, `dig`.
 
@@ -51,6 +54,7 @@ its source root, which is why they sit beside `~kjiwa/` inside `site/`.
 ```sh
 make build   # bundle exec jekyll build
 make lint    # shellcheck scripts/*.sh
+make webmail # build webmail/dist/alps.zip (run make build first: it reads the built design tokens)
 make check   # build, then validate redirect targets and internal links/images
 ```
 
@@ -61,7 +65,7 @@ To verify headers and routing (status and `Location` of every redirect, the 404
 page) on the live site:
 
 ```sh
-make check-live   # scripts/check-headers.sh, scripts/check-routes.sh
+make check-live   # scripts/check-headers.sh, scripts/check-routes.sh, scripts/check-mail.sh
 ```
 
 Set `CHECK_CONNECT_TO=<host>` to probe a different origin (for example a
@@ -93,7 +97,8 @@ make serve   # python3 -m http.server -d site/_site 8000, http://localhost:8000/
 
 Pushes to `main` deploy through the `deploy` job in
 [`ci.yml`](.github/workflows/ci.yml), which assumes an AWS role by GitHub OIDC,
-syncs `site/_site` to S3, and invalidates CloudFront. The infrastructure lives
+syncs `site/_site` to S3, invalidates CloudFront, and uploads the webmail bundle
+to its Lambda function. The infrastructure lives
 in [`terraform/`](terraform/). The AWS account ID in `terraform.tfvars` is
 committed on purpose: AWS does not treat it as secret, and the only role's trust
 policy admits just this repository's `main` branch through GitHub OIDC.
@@ -101,6 +106,31 @@ policy admits just this repository's `main` branch through GitHub OIDC.
 Note: `~kjiwa` needs quoting or a `./` prefix in the shell (e.g. `cd "./~kjiwa"`)
 -- a bare `~kjiwa` is tilde-expanded to a home directory, not treated as a
 relative path. This only matters if you're poking around `site/` by hand.
+
+## Webmail
+
+`mail.crimsonglow.ca` serves [Alps](https://github.com/migadu/alps), Migadu's own
+webmail, from a Lambda function behind an API Gateway HTTP API (CloudFront cannot
+front it: its origin access control needs a body hash on every POST). The Lambda
+Web Adapter runs the Alps binary; [`webmail/run.sh`](webmail/run.sh) writes its
+config from the function's environment. Sign-in goes to Migadu's IMAP and SMTP
+servers; Alps stores a user's settings in IMAP metadata, so the function holds no
+state beyond the login key (Terraform-generated, in state).
+
+Alps has no theme layer. [`scripts/webmail-build.sh`](scripts/webmail-build.sh)
+checks out the commit in [`webmail/alps.ref`](webmail/alps.ref) and
+[`webmail/theme.mjs`](webmail/theme.mjs) rewrites its colours, font, title and logo
+from the site's design tokens ([`site/_sass/tokens.scss`](site/_sass/tokens.scss),
+published as `site-tokens.css`), so a token change reaches the webmail on the next
+deploy. To update Alps, change `alps.ref` and run `make webmail`; the patch fails
+loudly if upstream moved something it edits.
+
+- Attachments are limited by Lambda's 6 MB request and response payload, about 4 MB
+  of file once encoded.
+- Rate limits and sessions are per Lambda environment; the stage throttles total
+  load, and the login cookie rebuilds a session on any environment.
+- Rotate the login key (signs everyone out) with
+  `scripts/tf.sh apply -replace=random_bytes.login_key`.
 
 ## Mail backup and restore
 

@@ -24,3 +24,6 @@ __pycache__/
 *.tfstate
 *.tfstate.*
 *.tfplan
+
+# Webmail build output
+webmail/dist/

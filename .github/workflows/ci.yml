@@ -28,8 +28,19 @@ jobs:
           bundler-cache: true
           working-directory: site
 
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27.3"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
       - name: Lint and check
         run: make lint check
+
+      - name: Build webmail
+        run: make webmail
 
       - name: Upload site
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -37,6 +48,14 @@ jobs:
         with:
           name: site
           path: site/_site
+          if-no-files-found: error
+
+      - name: Upload webmail
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: webmail
+          path: webmail/dist/alps.zip
           if-no-files-found: error
 
   deploy:
@@ -56,6 +75,11 @@ jobs:
           name: site
           path: site/_site
 
+      - uses: actions/download-artifact@v8
+        with:
+          name: webmail
+          path: webmail/dist
+
       - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -66,6 +90,11 @@ jobs:
           SITE_BUCKET: ${{ vars.SITE_BUCKET }}
           DISTRIBUTION_ID: ${{ vars.DISTRIBUTION_ID }}
         run: scripts/deploy.sh
+
+      - name: Deploy webmail
+        env:
+          WEBMAIL_FUNCTION: ${{ vars.WEBMAIL_FUNCTION }}
+        run: scripts/webmail-deploy.sh
 
   privacy:
     uses: kjiwa/.github/.github/workflows/privacy.yml@main

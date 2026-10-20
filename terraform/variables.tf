@@ -43,12 +43,6 @@ variable "default_tags" {
   default     = { ManagedBy = "terraform" }
 }
 
-variable "webmail_url" {
-  description = "Where mail.<domain> redirects; Migadu's webmail has no custom hostname."
-  type        = string
-  default     = "https://webmail.migadu.com/"
-}
-
 variable "mailboxes" {
   description = "Migadu mailboxes backed up nightly, keyed by address. Each password lives in SSM at /mail/<address with @ as _at_>/password, set by scripts/mail-password.sh."
   type        = map(object({}))

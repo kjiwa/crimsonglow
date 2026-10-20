@@ -23,7 +23,12 @@ output "deploy_role_arn" {
   value       = aws_iam_role.github_deploy.arn
 }
 
-output "webmail_distribution_domain" {
-  description = "CloudFront domain name of the mail redirect, for probing before DNS points at it."
-  value       = aws_cloudfront_distribution.webmail.domain_name
+output "webmail_function" {
+  description = "Lambda function the CI deploy job updates with the built webmail bundle."
+  value       = aws_lambda_function.this.function_name
+}
+
+output "webmail_api_domain" {
+  description = "API Gateway regional domain of the webmail, for probing before DNS points at it."
+  value       = aws_apigatewayv2_domain_name.this.domain_name_configuration[0].target_domain_name
 }

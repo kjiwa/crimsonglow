@@ -1,6 +1,6 @@
 #!/bin/sh
 # Asserts the mail DNS records that point the domain at Migadu, and that
-# mail.<domain> redirects to webmail with a certificate that validates.
+# mail.<domain> serves the webmail login page with a certificate that validates.
 
 set -eu
 
@@ -8,7 +8,6 @@ set -eu
 . "$(dirname "$0")/common.sh"
 
 readonly MAIL_DOMAIN="crimsonglow.ca"
-readonly WEBMAIL_URL="https://webmail.migadu.com/"
 
 assert_dns() {
   _assert_dns_type="$1"
@@ -34,10 +33,13 @@ main() {
       "^$_main_key\\.$MAIL_DOMAIN\\._domainkey\\.migadu\\.com\\.\$" || _main_status=1
   done
 
-  _main_headers=$(curl_site -I "https://mail.$MAIL_DOMAIN/" -w '\nhttp_status: %{http_code}\n')
-  if ! printf '%s\n' "$_main_headers" | grep -q '^http_status: 301$' ||
-    ! printf '%s\n' "$_main_headers" | tr -d '\r' | grep -qi "^location: $WEBMAIL_URL\$"; then
-    echo "check-mail: https://mail.$MAIL_DOMAIN/ expected 301 to $WEBMAIL_URL" >&2
+  _main_page=$(curl_site "https://mail.$MAIL_DOMAIN/" -w '\nhttp_status: %{http_code}\n')
+  if ! printf '%s\n' "$_main_page" | grep -q '^http_status: 200$'; then
+    echo "check-mail: https://mail.$MAIL_DOMAIN/ expected 200" >&2
+    _main_status=1
+  fi
+  if ! printf '%s\n' "$_main_page" | grep -q '<title>~kjiwa mail</title>'; then
+    echo "check-mail: https://mail.$MAIL_DOMAIN/ is not the webmail login page" >&2
     _main_status=1
   fi
 
