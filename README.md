@@ -9,7 +9,7 @@ mailbox backup, and the Terraform that runs them on AWS.
 |---|---|
 | [`site/`](site/) | Jekyll source; `_site/` is the built output |
 | [`terraform/`](terraform/) | AWS infrastructure: S3, CloudFront, Route 53, IAM, webmail, mail backup |
-| [`webmail/`](webmail/) | Alps webmail: pinned upstream ref, theme patch, Lambda launcher |
+| [`webmail/`](webmail/) | Alps webmail: pinned upstream ref, theme and path patches, Lambda launcher |
 | [`scripts/`](scripts/) | POSIX `sh` checks and tooling |
 | [`docs/`](docs/) | [`ARCHITECTURE.md`](docs/ARCHITECTURE.md): what is deployed. [`MAIL.md`](docs/MAIL.md): webmail, backup, restore |
 | [`.github/`](.github/) | CI, deploy, weekly link check, Terraform checks, Dependabot |

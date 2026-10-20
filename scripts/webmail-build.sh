@@ -1,7 +1,7 @@
 #!/bin/sh
 # Builds webmail/dist/alps.zip: the pinned Alps tree, restyled with the site's
-# tokens, compiled for Lambda (linux/arm64) beside webmail/run.sh. Needs the built
-# site (make build), go, node, git and zip.
+# tokens and patched for API Gateway's path decoding, compiled for Lambda (linux/arm64)
+# beside webmail/run.sh. Needs the built site (make build), go, node, git and zip.
 
 set -eu
 
@@ -50,6 +50,7 @@ main() {
   _checkout_alps "$_main_alps"
   node "$ROOT/webmail/theme.mjs" "$_main_alps" "$_main_tokens" \
     "$ROOT/site/~kjiwa/assets/favicon.svg" "Mail · $(_site_title)"
+  node "$ROOT/webmail/paths.mjs" "$_main_alps"
   _build_frontend "$_main_alps"
   _build_binary "$_main_alps" "$_main_stage/alps"
   cp "$ROOT/webmail/run.sh" "$_main_stage/run.sh"
