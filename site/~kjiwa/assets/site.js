@@ -88,17 +88,15 @@
 
   // The current section is the last heading above a line a quarter of the way down the
   // viewport, so it follows the scroll position rather than the order of observer reports.
+  // A click on an entry makes it current at once and holds it through the smooth scroll,
+  // so the sections passed on the way do not open and close their sublists; the hold ends
+  // when the scroll settles or the reader takes over with the wheel or a touch.
   function trackSection(entries) {
     var active = -2;
     var queued = false;
+    var pinned = false;
 
-    function update() {
-      queued = false;
-      var line = window.innerHeight * 0.25;
-      var index = -1;
-      entries.forEach(function (entry, i) {
-        if (entry.heading.getBoundingClientRect().top <= line) index = i;
-      });
+    function setActive(index) {
       if (index === active) return;
       active = index;
       entries.forEach(function (entry, i) {
@@ -108,11 +106,40 @@
       });
     }
 
+    function update() {
+      queued = false;
+      if (pinned) return;
+      var line = window.innerHeight * 0.25;
+      var index = -1;
+      entries.forEach(function (entry, i) {
+        if (entry.heading.getBoundingClientRect().top <= line) index = i;
+      });
+      setActive(index);
+    }
+
     function schedule() {
       if (queued) return;
       queued = true;
       window.requestAnimationFrame(update);
     }
+
+    function release() {
+      if (!pinned) return;
+      pinned = false;
+      schedule();
+    }
+
+    entries.forEach(function (entry, i) {
+      entry.link.addEventListener("click", function (event) {
+        if (event.defaultPrevented || event.button !== 0) return;
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        pinned = true;
+        setActive(i);
+      });
+    });
+    ["scrollend", "wheel", "touchstart"].forEach(function (type) {
+      window.addEventListener(type, release, { passive: true });
+    });
 
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);

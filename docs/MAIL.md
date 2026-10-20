@@ -29,7 +29,8 @@ Limits:
   base64-encoded on upload and Lambda caps payloads at 6 MB. Send larger files from Migadu's
   webmail or any IMAP client.
 - Two-factor sign-in is WebAuthn only (passkey or security key); Alps has no TOTP. Keys are
-  stored in the mailbox's IMAP metadata.
+  stored in the mailbox's IMAP metadata. Alps asks for it at its own login; IMAP and SMTP
+  clients are never asked.
 - Rate limits and sessions are per Lambda environment. The stage throttles total load, and the
   login cookie rebuilds a session on any environment.
 
