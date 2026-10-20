@@ -125,8 +125,11 @@ published as `site-tokens.css`), so a token change reaches the webmail on the ne
 deploy. To update Alps, change `alps.ref` and run `make webmail`; the patch fails
 loudly if upstream moved something it edits.
 
-- Attachments are limited by Lambda's 6 MB request and response payload, about 4 MB
-  of file once encoded.
+- A request over about 4.5 MB in total (attachments are base64-encoded on upload, and
+  Lambda caps payloads at 6 MB) is rejected by API Gateway with a 413. Send larger
+  files from Migadu's webmail or any IMAP client.
+- Two-factor sign-in is WebAuthn only (passkey or security key); Alps has no TOTP.
+  Keys are stored in the mailbox's IMAP metadata.
 - Rate limits and sessions are per Lambda environment; the stage throttles total
   load, and the login cookie rebuilds a session on any environment.
 - Rotate the login key (signs everyone out) with
