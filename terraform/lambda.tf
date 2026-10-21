@@ -46,8 +46,6 @@ resource "aws_lambda_function" "this" {
       AWS_LAMBDA_EXEC_WRAPPER    = "/opt/bootstrap"
       AWS_LWA_PORT               = local.webmail_port
       AWS_LWA_ENABLE_COMPRESSION = "true"
-      ALPS_HOST                  = local.webmail_host
-      LOGIN_KEY                  = local.login_key
       ALPS_CONFIG = templatefile("${path.module}/webmail/alps.toml.tftpl", {
         host      = local.webmail_host
         port      = local.webmail_port
