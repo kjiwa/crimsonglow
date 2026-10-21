@@ -34,7 +34,7 @@ link-check: build
 	cd $(SITE) && bundle exec htmlproofer ./_site $(PROOFER_FLAGS) --ignore-status-codes "429,999"
 
 lint:
-	shellcheck -x -P SCRIPTDIR scripts/*.sh
+	shellcheck -x -P SCRIPTDIR scripts/*.sh webmail/*.sh
 
 webmail:
 	scripts/webmail-build.sh

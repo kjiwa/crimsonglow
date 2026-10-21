@@ -8,7 +8,7 @@ webmail at `mail.crimsonglow.ca`, and a nightly backup. How they fit into AWS:
 
 `mail.crimsonglow.ca` serves [Alps](https://github.com/migadu/alps), Migadu's own webmail, from
 a Lambda function behind an API Gateway HTTP API. The Lambda Web Adapter runs the Alps binary;
-[`webmail/run.sh`](../webmail/run.sh) writes its config from the function's environment. Sign-in
+Its config is [`alps.toml.tftpl`](../terraform/webmail/alps.toml.tftpl), rendered by Terraform; [`webmail/run.sh`](../webmail/run.sh) writes it at start. Sign-in
 goes to Migadu's IMAP and SMTP servers, calendars and contacts to Migadu's CalDAV and CardDAV
 server; Alps stores a user's settings in IMAP metadata, so the function holds no state beyond the
 login key (Terraform-generated, in state).
