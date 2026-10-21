@@ -24,14 +24,6 @@ jobs:
           bundler-cache: true
           working-directory: site
 
-      - name: Ensure link-rot label exists
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh label create link-rot --color d73a4a \
-            --description "External link rot found by the weekly link-check workflow" \
-            --force
-
       - name: Check external links
         id: check
         continue-on-error: true
@@ -47,30 +39,11 @@ jobs:
         if: steps.check.outcome == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          body="Weekly link check found broken external links as of $(date -u +%Y-%m-%d).
-
-          \`\`\`
-          $(cat link-check-output.txt)
-          \`\`\`
-
-          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-          existing=$(gh issue list --label link-rot --state open --json number --jq '.[0].number // empty')
-          if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "$body"
-          else
-            gh issue create --title "Link check: broken external links" \
-              --label link-rot --body "$body"
-          fi
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: scripts/link-rot-issue.sh open link-check-output.txt "$RUN_URL"
 
       - name: Close stale tracking issue
         if: steps.check.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          existing=$(gh issue list --label link-rot --state open --json number --jq '.[0].number // empty')
-          if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "Link check passed on $(date -u +%Y-%m-%d) -- closing."
-            gh issue close "$existing"
-          fi
+        run: scripts/link-rot-issue.sh close

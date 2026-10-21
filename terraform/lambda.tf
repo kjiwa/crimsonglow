@@ -3,6 +3,8 @@
 
 locals {
   webmail_host = "mail.${var.domain}"
+  webmail_port = 1323
+  login_key    = replace(replace(random_bytes.login_key.base64, "+", "-"), "/", "_")
 }
 
 # -- Alps wants a Fernet key: 32 random bytes in URL-safe base64.
@@ -42,10 +44,15 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = {
       AWS_LAMBDA_EXEC_WRAPPER    = "/opt/bootstrap"
-      AWS_LWA_PORT               = "1323"
+      AWS_LWA_PORT               = local.webmail_port
       AWS_LWA_ENABLE_COMPRESSION = "true"
       ALPS_HOST                  = local.webmail_host
-      LOGIN_KEY                  = replace(replace(random_bytes.login_key.base64, "+", "-"), "/", "_")
+      LOGIN_KEY                  = local.login_key
+      ALPS_CONFIG = templatefile("${path.module}/webmail/alps.toml.tftpl", {
+        host      = local.webmail_host
+        port      = local.webmail_port
+        login_key = local.login_key
+      })
     }
   }
 

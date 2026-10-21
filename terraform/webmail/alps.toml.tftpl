@@ -1,0 +1,38 @@
+[server]
+addr = "127.0.0.1:${port}"
+login_key = "${login_key}"
+trusted_origins = ["https://${host}"]
+trusted_proxies = ["127.0.0.1/32"]
+temp_dir = "/tmp"
+
+[webauthn]
+rpid = "${host}"
+origins = ["https://${host}"]
+
+[provider]
+type = "imap"
+
+[provider.imap]
+server = "imaps://imap.migadu.com:993"
+
+[smtp]
+server = "smtps://smtp.migadu.com:465"
+
+# Any [plugin.*] section turns the rest into an allowlist, so every plugin that
+# should run is listed, the core one (base) included.
+[plugin.base]
+enabled = true
+
+[plugin.gpg]
+enabled = true
+
+[plugin.password]
+enabled = true
+
+[plugin.caldav]
+enabled = true
+server = "https://cdav.migadu.com"
+
+[plugin.carddav]
+enabled = true
+server = "https://cdav.migadu.com"
