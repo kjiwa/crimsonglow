@@ -10,6 +10,7 @@ readonly CONFIG
 main() {
   : "${ALPS_CONFIG:?ALPS_CONFIG is required}"
 
+  umask 077
   printf '%s\n' "$ALPS_CONFIG" >"$CONFIG"
 
   exec "$(dirname "$0")/alps" -config "$CONFIG"
