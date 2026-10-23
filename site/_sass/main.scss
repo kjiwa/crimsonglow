@@ -130,7 +130,7 @@ body > header {
   opacity: 0.75;
 }
 
-// Page: rail | article. The article is itself a two-track grid (text | margin).
+// Page: rail | article.
 .page {
   display: grid;
   gap: 0 var(--space-4);
@@ -183,12 +183,8 @@ article > h1 {
 // nothing floats away from the text on very wide screens.
 @media (min-width: 70rem) {
   .page {
-    grid-template-columns: var(--rail-width) minmax(0, var(--measure-wide));
+    grid-template-columns: var(--rail-width) minmax(0, var(--measure));
     justify-content: start;
-  }
-
-  article {
-    grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
   }
 
   .rail {
@@ -218,7 +214,7 @@ article > h1 {
 
 @media (min-width: 80rem) {
   .page {
-    grid-template-columns: var(--rail-width) minmax(0, var(--measure-wide)) var(--toc-width);
+    grid-template-columns: var(--rail-width) minmax(0, var(--measure)) var(--toc-width);
   }
 
   .rail {
@@ -355,19 +351,9 @@ h4:hover .heading-anchor,
 .content > .highlight,
 .content > pre,
 .content > .code,
-.content > .wide,
 .content > .software-job-search-div {
   margin: 0 0 var(--space-2);
-  max-width: var(--code-max-width);
   min-width: 0;
-}
-
-@media (min-width: 70rem) {
-  .content > .wide,
-  .content > .span,
-  .content > .software-job-search-div {
-    grid-column: 1 / -1;
-  }
 }
 
 .code {
@@ -682,22 +668,9 @@ table.dos-boot-sector-parameters tbody tr td:first-child {
   }
 }
 
-@media (min-width: 70rem) {
-  .home .content h2,
-  .home .content > p {
-    grid-column: 1 / -1;
-  }
-}
-
 // Home intro: large type lets the statement span the collection width at a readable line length.
 .lede {
   font-size: clamp(1.25rem, calc(100cqw / 34), 2rem);
   line-height: 1.35;
   margin: 0 0 var(--space-2);
-}
-
-@media (min-width: 70rem) {
-  .lede {
-    grid-column: 1 / -1;
-  }
 }
