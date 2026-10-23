@@ -24,6 +24,7 @@ const VIEWPORTS = {
   phone: { width: 393, height: 852 },
   laptop: { width: 1280, height: 640 },
   desktop: { width: 1440, height: 900 },
+  wide: { width: 1920, height: 1080 },
 };
 const SCHEMES = ["light", "dark"];
 const MIME = {
@@ -140,15 +141,15 @@ for (const [name, path] of Object.entries(PAGES)) {
         return [...lines.values()].filter((c) => Math.max(...c) - Math.min(...c) > 1).length;
       });
       if (misaligned) messages.push(`breadcrumb misaligned on ${misaligned} line(s)`);
-      const wideCode = await page.evaluate(() => {
+      const pastEdge = await page.evaluate(() => {
         const prose = document.querySelector(".content > p");
         if (!prose) return 0;
         const edge = prose.getBoundingClientRect().right;
-        return [...document.querySelectorAll(".content pre")].filter(
-          (pre) => pre.getBoundingClientRect().right > edge + 1
+        return [...document.querySelectorAll("article > *, .content > *")].filter(
+          (el) => el.getBoundingClientRect().right > edge + 1
         ).length;
       });
-      if (wideCode) messages.push(`${wideCode} code block(s) end past the text column`);
+      if (pastEdge) messages.push(`${pastEdge} block(s) end past the text column`);
       await page.screenshot({ path: join(outDir, `${name}-${vpName}-${scheme}.png`), fullPage: true });
       if (messages.length || overflow > 0) {
         problems += 1;

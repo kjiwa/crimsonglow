@@ -4,7 +4,7 @@ layout: default
 {{ content }}
 
 <h2 id="notes">notes/</h2>
-<ul class="notes span">
+<ul class="notes">
   {%- for post in site.posts %}
   <li>
     <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
