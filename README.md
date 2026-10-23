@@ -66,7 +66,7 @@ starting with `~` by design (`NondisclosureName => [".ht*", "~*"]` in
 [`serve.rb`](https://github.com/jekyll/jekyll/blob/main/lib/jekyll/commands/serve.rb)), so
 `/~kjiwa/` would always 404.
 
-To screenshot every page at phone, laptop and desktop widths in light and dark under the
+To screenshot every page at phone, laptop, desktop and wide (1920px) widths in light and dark under the
 production CSP, with [Playwright](https://playwright.dev) and a built site:
 
 ```sh
