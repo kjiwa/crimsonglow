@@ -100,10 +100,12 @@ flowchart LR
 ```
 
 Migadu does not promise to keep a terminated account's mail, so a copy lives where this account
-controls it. The pull never deletes; the archive bucket is versioned and keeps replaced and
-deleted objects for 365 days. The alarm treats missing data as failure, so a job that stopped
-running alerts the same as one that fails. Alert addresses must not use this domain, because a
-mail outage would silence the alert. Setup and restore: [`MAIL.md`](MAIL.md).
+controls it. The pull never expunges, and a folder deleted on the server keeps its archived copy
+(only an empty one is dropped); the archive bucket is versioned and keeps replaced and deleted
+objects for 365 days. The alarm treats missing data as failure, so a job that stopped running
+alerts the same as one that fails, and it emails again on recovery. Alert addresses must not use
+this domain, because a mail outage would silence the alert. Setup and restore:
+[`MAIL.md`](MAIL.md).
 
 ## What is deployed
 
