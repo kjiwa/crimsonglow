@@ -20,4 +20,5 @@ resource "aws_cloudwatch_metric_alarm" "mail_backup" {
   comparison_operator = "LessThanThreshold"
   treat_missing_data  = "breaching"
   alarm_actions       = [aws_sns_topic.this.arn]
+  ok_actions          = [aws_sns_topic.this.arn]
 }

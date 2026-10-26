@@ -44,9 +44,10 @@ scripts/tf.sh apply -replace=random_bytes.login_key
 
 A nightly CodeBuild job (`mail-backup`, started by EventBridge Scheduler) pulls each mailbox in
 `mailboxes` ([`terraform.tfvars`](../terraform/terraform.tfvars)) with `mbsync` into the
-`crimsonglow-archive` bucket under `migadu/<address>/`, as a Maildir. The pull never expunges or
-removes; history lives in S3 versions. The rendered `mbsyncrc` sits at the bucket root. A
-CloudWatch alarm emails `alert_emails` when the backup stops succeeding; retention and alarm
+`crimsonglow-archive` bucket under `migadu/<address>/`, as a Maildir. The pull never expunges, and a
+folder deleted on the server keeps its archived copy (only an empty one is dropped); history
+lives in S3 versions. The rendered `mbsyncrc` sits at the bucket root. A CloudWatch alarm emails
+`alert_emails` when the backup stops succeeding and again when it recovers; retention and alarm
 timing are in [`ARCHITECTURE.md`](ARCHITECTURE.md#mail-backup).
 
 After adding a mailbox, store its IMAP password (kept in SSM, never in Terraform state), then
