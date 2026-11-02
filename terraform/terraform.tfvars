@@ -29,7 +29,7 @@ records = {
     alias = "webmail"
   }
   "_dmarc.crimsonglow.ca-TXT" = {
-    values = ["v=DMARC1; p=none;"]
+    values = ["v=DMARC1; p=none; rua=mailto:kjiwa@crimsonglow.ca;"]
   }
   "key1._domainkey.crimsonglow.ca-CNAME" = {
     values = ["key1.crimsonglow.ca._domainkey.migadu.com."]

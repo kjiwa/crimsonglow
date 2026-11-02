@@ -33,7 +33,7 @@ jobs:
         # step's exit status would be tee's, so continue-on-error /
         # steps.check.outcome below would always see "success".
         shell: bash
-        run: make link-check | tee link-check-output.txt
+        run: make link-check 2>&1 | tee link-check-output.txt
 
       - name: File or update tracking issue
         if: steps.check.outcome == 'failure'
