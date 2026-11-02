@@ -38,7 +38,7 @@ assert_not_found() {
     echo "check-routes: $_assert_not_found_url expected 404, got $_assert_not_found_status" >&2
     return 1
   fi
-  if ! fetch_body "$_assert_not_found_url" | grep -q 'Page Not Found'; then
+  if ! curl_site "$_assert_not_found_url" | grep -q 'Page Not Found'; then
     echo "check-routes: $_assert_not_found_url 404 body missing 'Page Not Found'" >&2
     return 1
   fi
@@ -54,13 +54,12 @@ main() {
   assert_route "https://www.crimsonglow.ca/~kjiwa/" 301 "$_main_home" || _main_status=1
   assert_route "http://crimsonglow.ca/~kjiwa/" 301 "$_main_home" || _main_status=1
 
-  redirect_pairs | {
-    _main_pairs_status=0
-    while read -r _main_from _main_to; do
-      assert_route "$SITE_ORIGIN$_main_from" 301 "$SITE_ORIGIN$_main_to" || _main_pairs_status=1
-    done
-    exit "$_main_pairs_status"
-  } || _main_status=1
+  _main_pairs=$(redirect_pairs)
+  while read -r _main_from _main_to; do
+    assert_route "$SITE_ORIGIN$_main_from" 301 "$SITE_ORIGIN$_main_to" || _main_status=1
+  done <<EOF
+$_main_pairs
+EOF
 
   assert_not_found "$SITE_ORIGIN/~kjiwa/no-such-page" || _main_status=1
 

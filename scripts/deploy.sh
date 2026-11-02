@@ -7,12 +7,8 @@ set -eu
 SITE_DIR="$(dirname "$0")/../site/_site"
 readonly SITE_DIR
 
-# Same lifetimes the Apache host used: HTML carries its stylesheet inline, so it
-# stays short; asset filenames are unversioned, so max-age is their propagation
-# delay.
-HTML_CACHE_CONTROL="public, max-age=600"
-ASSET_CACHE_CONTROL="public, max-age=2592000"
-readonly HTML_CACHE_CONTROL ASSET_CACHE_CONTROL
+# shellcheck source=common.sh
+. "$(dirname "$0")/common.sh"
 
 _sync_pages() {
   aws s3 sync "$SITE_DIR" "s3://$SITE_BUCKET/" --delete "$@" \
@@ -28,15 +24,17 @@ _sync_assets() {
 
 main() {
   _main_dry_run=""
-  if [ "${1:-}" = "--dry-run" ]; then
-    _main_dry_run="--dryrun"
-  fi
+  case "${1:-}" in
+    "") ;;
+    --dry-run) _main_dry_run="--dryrun" ;;
+    *) die "usage: $(basename "$0") [--dry-run]" ;;
+  esac
 
   : "${SITE_BUCKET:?SITE_BUCKET is required}"
   : "${DISTRIBUTION_ID:?DISTRIBUTION_ID is required}"
 
-  _sync_pages ${_main_dry_run:+"$_main_dry_run"}
   _sync_assets ${_main_dry_run:+"$_main_dry_run"}
+  _sync_pages ${_main_dry_run:+"$_main_dry_run"}
 
   if [ -z "$_main_dry_run" ]; then
     aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths '/*'
