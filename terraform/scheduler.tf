@@ -1,8 +1,3 @@
-moved {
-  from = aws_scheduler_schedule.mail_backup
-  to   = aws_scheduler_schedule.this
-}
-
 resource "aws_scheduler_schedule" "this" {
   name                = local.mail_backup_name
   schedule_expression = "rate(1 day)"
