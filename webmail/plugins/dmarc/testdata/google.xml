@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feedback>
+  <report_metadata>
+    <org_name>google.com</org_name>
+    <report_id>1001</report_id>
+    <date_range><begin>1790000000</begin><end>1790086399</end></date_range>
+  </report_metadata>
+  <policy_published>
+    <domain>crimsonglow.ca</domain>
+    <p>none</p>
+  </policy_published>
+  <record>
+    <row>
+      <source_ip>203.0.113.10</source_ip>
+      <count>4</count>
+      <policy_evaluated><disposition>none</disposition><dkim>pass</dkim><spf>pass</spf></policy_evaluated>
+    </row>
+    <identifiers><header_from>crimsonglow.ca</header_from></identifiers>
+  </record>
+</feedback>
