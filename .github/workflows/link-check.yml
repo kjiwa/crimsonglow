@@ -31,7 +31,8 @@ jobs:
         # GitHub only adds -o pipefail when bash is named directly; the
         # default run shell is `bash -e` without it. Without pipefail this
         # step's exit status would be tee's, so continue-on-error /
-        # steps.check.outcome below would always see "success".
+        # steps.check.outcome below would always see "success". 2>&1 is
+        # needed because htmlproofer prints its failures to stderr.
         shell: bash
         run: make link-check 2>&1 | tee link-check-output.txt
 
