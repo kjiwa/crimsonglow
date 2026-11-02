@@ -1,6 +1,6 @@
 #!/bin/sh
-# Lambda entrypoint: writes the Alps config rendered by Terraform into the function's
-# environment, then starts Alps for the Lambda Web Adapter to proxy to.
+# Lambda entrypoint: writes the Alps config from the environment, then starts Alps
+# for the Lambda Web Adapter to proxy to.
 
 set -eu
 

@@ -6,13 +6,6 @@ site/_includes/avatar.svg, carried through the same nested translate/scale
 transforms that file applies, then placed on the card canvas. See
 scripts/og-card.sh for why this indirection exists.
 
-site/_includes/avatar.svg wraps its shapes in <g transform="translate(5 5)">, so
-each shape's absolute anchor is its <use> translate plus (5, 5). The anchors
-below are those absolute positions; site/~kjiwa/assets/favicon.svg's own <use>
-translates match this same frame for the shapes it keeps (head, glasses,
-eyebrows) but drops eyes/mouth/teeth for legibility at icon sizes. The card
-has room for the full set, so it draws from avatar.svg's frame directly.
-
 Usage: og-card-glyph.py strokes|lenses|eyes
 """
 
@@ -40,9 +33,8 @@ A_MOUTH = (35, 35)  # local x additionally scaled by 0.75
 A_TOOTH_L = (25, 35)
 A_TOOTH_R = (45, 35)
 
-# favicon.svg's group transform is translate(32,30.5) scale(0.845)
-# translate(-35,-25) applied on top of avatar.svg's frame; composing the two
-# leaves a plain (scale, then translate) per shape, anchored at (35, 25):
+# favicon.svg's transform composes with avatar.svg's frame to a scale, then a
+# translate, anchored at (35, 25).
 FAV_SCALE = 0.845
 FAV_ORIGIN = (32, 30.5)
 FAV_ANCHOR = (35, 25)
