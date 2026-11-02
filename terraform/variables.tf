@@ -32,6 +32,11 @@ variable "records" {
   }
 
   validation {
+    condition     = alltrue([for k, r in var.records : can(regex("^.+-(A|AAAA|CAA|CNAME|MX|NS|SRV|TXT)$", k))])
+    error_message = "Each record key must be <fqdn>-<TYPE> with a type of A, AAAA, CAA, CNAME, MX, NS, SRV or TXT, because locals.tf splits the key at its last dash."
+  }
+
+  validation {
     condition     = alltrue([for r in var.records : r.alias == null || contains(["site", "webmail"], r.alias)])
     error_message = "Each record alias must be \"site\" or \"webmail\", the alias targets defined in locals.tf."
   }

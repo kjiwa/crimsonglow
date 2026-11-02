@@ -1,32 +1,6 @@
 # -- Alps (Migadu's webmail) runs as a plain HTTP server behind the Lambda Web Adapter.
 # -- CI replaces the code on every push to main, so Terraform owns only the placeholder.
 
-locals {
-  webmail_host = "mail.${var.domain}"
-  webmail_port = 1323
-  login_key    = replace(replace(random_bytes.login_key.base64, "+", "-"), "/", "_")
-}
-
-# -- Alps wants a Fernet key: 32 random bytes in URL-safe base64.
-resource "random_bytes" "login_key" {
-  length = 32
-}
-
-data "archive_file" "webmail_placeholder" {
-  type        = "zip"
-  output_path = "${path.module}/.terraform/webmail-placeholder.zip"
-
-  source {
-    filename = "run.sh"
-    content  = "#!/bin/sh\nexit 1\n"
-  }
-}
-
-resource "aws_cloudwatch_log_group" "webmail" {
-  name              = "/aws/lambda/webmail"
-  retention_in_days = 30
-}
-
 resource "aws_lambda_function" "this" {
   function_name = "webmail"
   role          = aws_iam_role.webmail.arn

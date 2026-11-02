@@ -29,3 +29,45 @@ resource "aws_acm_certificate_validation" "this" {
   certificate_arn         = aws_acm_certificate.this.arn
   validation_record_fqdns = [for r in aws_route53_record.validation : r.fqdn]
 }
+
+moved {
+  from = aws_acm_certificate.api
+  to   = aws_acm_certificate.webmail
+}
+
+resource "aws_acm_certificate" "webmail" {
+  domain_name       = local.webmail_host
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+moved {
+  from = aws_route53_record.api_validation
+  to   = aws_route53_record.webmail_validation
+}
+
+resource "aws_route53_record" "webmail_validation" {
+  for_each = {
+    for o in aws_acm_certificate.webmail.domain_validation_options : o.domain_name => o
+  }
+
+  zone_id         = aws_route53_zone.this.zone_id
+  name            = each.value.resource_record_name
+  type            = each.value.resource_record_type
+  records         = [each.value.resource_record_value]
+  ttl             = 60
+  allow_overwrite = true
+}
+
+moved {
+  from = aws_acm_certificate_validation.api
+  to   = aws_acm_certificate_validation.webmail
+}
+
+resource "aws_acm_certificate_validation" "webmail" {
+  certificate_arn         = aws_acm_certificate.webmail.arn
+  validation_record_fqdns = [for r in aws_route53_record.webmail_validation : r.fqdn]
+}

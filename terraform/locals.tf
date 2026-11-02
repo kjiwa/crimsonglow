@@ -28,4 +28,8 @@ locals {
       zone_id = aws_apigatewayv2_domain_name.this.domain_name_configuration[0].hosted_zone_id
     }
   }
+
+  webmail_host = "mail.${var.domain}"
+  webmail_port = 1323
+  login_key    = replace(replace(random_bytes.login_key.base64, "+", "-"), "/", "_")
 }

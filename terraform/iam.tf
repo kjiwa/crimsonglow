@@ -64,10 +64,6 @@ check "deploy_role_trust_has_no_wildcard_principal" {
 
 # -- mail backup: CodeBuild writes the archive's migadu/ prefix; Scheduler starts the build.
 
-data "aws_kms_alias" "ssm" {
-  name = "alias/aws/ssm"
-}
-
 data "aws_iam_policy_document" "mail_backup_trust" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -75,6 +71,12 @@ data "aws_iam_policy_document" "mail_backup_trust" {
     principals {
       type        = "Service"
       identifiers = ["codebuild.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [var.account_id]
     }
   }
 }
@@ -116,6 +118,11 @@ resource "aws_iam_role_policy" "mail_backup" {
         Effect   = "Allow"
         Action   = "kms:Decrypt"
         Resource = data.aws_kms_alias.ssm.target_key_arn
+        Condition = {
+          StringEquals = {
+            "kms:ViaService" = "ssm.${data.aws_region.default.region}.amazonaws.com"
+          }
+        }
       },
       {
         Effect   = "Allow"
@@ -133,6 +140,12 @@ data "aws_iam_policy_document" "mail_backup_scheduler_trust" {
     principals {
       type        = "Service"
       identifiers = ["scheduler.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [var.account_id]
     }
   }
 }
@@ -152,7 +165,7 @@ resource "aws_iam_role_policy" "mail_backup_scheduler" {
       {
         Effect   = "Allow"
         Action   = "codebuild:StartBuild"
-        Resource = aws_codebuild_project.mail_backup.arn
+        Resource = aws_codebuild_project.this.arn
       }
     ]
   })
