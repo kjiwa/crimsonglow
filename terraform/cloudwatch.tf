@@ -1,5 +1,3 @@
-data "aws_region" "default" {}
-
 resource "aws_cloudwatch_log_group" "mail_backup" {
   name              = "/aws/codebuild/${local.mail_backup_name}"
   retention_in_days = 30
@@ -11,7 +9,7 @@ resource "aws_cloudwatch_metric_alarm" "mail_backup" {
   alarm_description   = "No successful mail backup build in a day, two days running."
   namespace           = "AWS/CodeBuild"
   metric_name         = "SucceededBuilds"
-  dimensions          = { ProjectName = aws_codebuild_project.mail_backup.name }
+  dimensions          = { ProjectName = aws_codebuild_project.this.name }
   statistic           = "Sum"
   period              = 86400
   evaluation_periods  = 2
@@ -21,4 +19,9 @@ resource "aws_cloudwatch_metric_alarm" "mail_backup" {
   treat_missing_data  = "breaching"
   alarm_actions       = [aws_sns_topic.this.arn]
   ok_actions          = [aws_sns_topic.this.arn]
+}
+
+resource "aws_cloudwatch_log_group" "webmail" {
+  name              = "/aws/lambda/webmail"
+  retention_in_days = 30
 }

@@ -30,3 +30,5 @@ provider "aws" {
   allowed_account_ids = [var.account_id]
   default_tags { tags = var.default_tags }
 }
+
+data "aws_region" "default" {}

@@ -1,4 +1,9 @@
-resource "aws_scheduler_schedule" "mail_backup" {
+moved {
+  from = aws_scheduler_schedule.mail_backup
+  to   = aws_scheduler_schedule.this
+}
+
+resource "aws_scheduler_schedule" "this" {
   name                = local.mail_backup_name
   schedule_expression = "rate(1 day)"
 
@@ -9,6 +14,6 @@ resource "aws_scheduler_schedule" "mail_backup" {
   target {
     arn      = "arn:aws:scheduler:::aws-sdk:codebuild:startBuild"
     role_arn = aws_iam_role.mail_backup_scheduler.arn
-    input    = jsonencode({ ProjectName = aws_codebuild_project.mail_backup.name })
+    input    = jsonencode({ ProjectName = aws_codebuild_project.this.name })
   }
 }

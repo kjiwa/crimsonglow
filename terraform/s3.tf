@@ -1,11 +1,5 @@
 # -- tfstate: this repo's own Terraform state.
 
-# Import addresses must be static literals.
-import {
-  to = aws_s3_bucket.tfstate
-  id = "crimsonglow-tfstate"
-}
-
 resource "aws_s3_bucket" "tfstate" {
   bucket = "crimsonglow-tfstate"
 
@@ -141,6 +135,21 @@ resource "aws_s3_bucket_policy" "this" {
             "AWS:SourceArn" = aws_cloudfront_distribution.this.arn
           }
         }
+      },
+      {
+        Sid       = "DenyInsecureTransport"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.this.arn,
+          "${aws_s3_bucket.this.arn}/*",
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
       }
     ]
   })
@@ -203,6 +212,17 @@ resource "aws_s3_bucket_lifecycle_configuration" "archive" {
 
     noncurrent_version_expiration {
       noncurrent_days = 365
+    }
+  }
+
+  rule {
+    id     = "expire-delete-markers"
+    status = "Enabled"
+
+    filter {}
+
+    expiration {
+      expired_object_delete_marker = true
     }
   }
 

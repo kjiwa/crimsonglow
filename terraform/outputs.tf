@@ -14,7 +14,7 @@ output "distribution_id" {
 }
 
 output "distribution_domain" {
-  description = "CloudFront domain name, for probing before DNS points at it."
+  description = "CloudFront domain name; probe an origin directly with CHECK_CONNECT_TO."
   value       = aws_cloudfront_distribution.this.domain_name
 }
 
@@ -29,6 +29,6 @@ output "webmail_function" {
 }
 
 output "webmail_api_domain" {
-  description = "API Gateway regional domain of the webmail, for probing before DNS points at it."
+  description = "API Gateway regional domain of the webmail; probe an origin directly with CHECK_CONNECT_TO."
   value       = aws_apigatewayv2_domain_name.this.domain_name_configuration[0].target_domain_name
 }

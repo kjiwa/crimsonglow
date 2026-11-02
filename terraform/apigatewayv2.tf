@@ -1,34 +1,6 @@
 # -- CloudFront cannot front this: OAC on a Lambda origin needs the viewer to send a body
 # -- hash on POST, which a browser cannot. The execute-api endpoint is disabled so the
 # -- custom domain is the only way in.
-
-resource "aws_acm_certificate" "api" {
-  domain_name       = local.webmail_host
-  validation_method = "DNS"
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_record" "api_validation" {
-  for_each = {
-    for o in aws_acm_certificate.api.domain_validation_options : o.domain_name => o
-  }
-
-  zone_id         = aws_route53_zone.this.zone_id
-  name            = each.value.resource_record_name
-  type            = each.value.resource_record_type
-  records         = [each.value.resource_record_value]
-  ttl             = 60
-  allow_overwrite = true
-}
-
-resource "aws_acm_certificate_validation" "api" {
-  certificate_arn         = aws_acm_certificate.api.arn
-  validation_record_fqdns = [for r in aws_route53_record.api_validation : r.fqdn]
-}
-
 resource "aws_apigatewayv2_api" "this" {
   name                         = "webmail"
   protocol_type                = "HTTP"
@@ -65,7 +37,7 @@ resource "aws_apigatewayv2_domain_name" "this" {
   domain_name = local.webmail_host
 
   domain_name_configuration {
-    certificate_arn = aws_acm_certificate_validation.api.certificate_arn
+    certificate_arn = aws_acm_certificate_validation.webmail.certificate_arn
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
     ip_address_type = "dualstack"
