@@ -33,11 +33,13 @@ func folderExists(p provider.MailProvider) (bool, error) {
 func messageIDs(p provider.MailProvider) ([]provider.MessageID, error) {
 	var ids []provider.MessageID
 	seen := map[string]bool{}
-	add := func(id provider.MessageID) {
-		if !seen[id.String()] && len(ids) < maxMessages {
-			seen[id.String()] = true
-			ids = append(ids, id)
+	add := func(id provider.MessageID) bool {
+		if seen[id.String()] || len(ids) >= maxMessages {
+			return false
 		}
+		seen[id.String()] = true
+		ids = append(ids, id)
+		return true
 	}
 
 	for page := 0; len(ids) < maxMessages; page++ {
@@ -45,18 +47,20 @@ func messageIDs(p provider.MailProvider) ([]provider.MessageID, error) {
 		if err != nil {
 			return nil, err
 		}
-		if len(rows) == 0 {
-			break
-		}
+		added := false
 		for _, row := range rows {
 			if len(row.ThreadUIDs) == 0 {
-				add(row.ID)
+				added = add(row.ID) || added
 			}
 			for _, uid := range row.ThreadUIDs {
 				if id, err := p.ParseMessageID(uid); err == nil {
-					add(id)
+					added = add(id) || added
 				}
 			}
+		}
+		// A page past the end may come back empty or repeat the last one.
+		if !added {
+			break
 		}
 	}
 	return ids, nil
