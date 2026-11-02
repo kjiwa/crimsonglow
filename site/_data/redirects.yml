@@ -1,6 +1,4 @@
-# Legacy path -> target. Four predate the /year/month/ permalink scheme; one is an
-# old slug for a post since retitled. Also feeds legacy-redirect.js and the
-# CloudFront router.
+# Legacy path -> target. The single source for legacy-redirect.js and the CloudFront router.
 /~kjiwa/x86-dos-boot-sector-in-c.html: /~kjiwa/2010/09/dos-boot-sector.html
 /~kjiwa/adding-namespaces-to-java-properties.html: /~kjiwa/2012/02/namespaces-in-java-properties.html
 /~kjiwa/java-skip-list.html: /~kjiwa/2011/06/skip-list.html

@@ -1,9 +1,8 @@
 ---
 layout: null
 ---
-// Pre-2024 the site routed in JS as /~kjiwa/#/slug, and old inbound links (e.g. a gist
-// linking to #/exploiting-apache-james) still use that form. Fragments never reach the
-// server, so a 301 can't fix this — this recovers the reader, not the link equity.
+// Inbound links of the form /~kjiwa/#/slug still exist. Fragments never reach the
+// server, so a 301 can't fix them — this recovers the reader, not the link equity.
 (function () {
   var slug = location.hash.replace(/^#\/?/, "").replace(/\/$/, "");
   if (!slug) return;
