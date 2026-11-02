@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feedback>
+  <report_metadata>
+    <org_name>yahoo.com</org_name>
+    <report_id>3003</report_id>
+    <date_range><begin>1700000000</begin><end>1700086399</end></date_range>
+  </report_metadata>
+  <policy_published><domain>crimsonglow.ca</domain><p>none</p></policy_published>
+  <record>
+    <row>
+      <source_ip>192.0.2.1</source_ip>
+      <count>9</count>
+      <policy_evaluated><disposition>none</disposition><dkim>fail</dkim><spf>fail</spf></policy_evaluated>
+    </row>
+  </record>
+</feedback>

@@ -10,8 +10,8 @@ webmail at `mail.crimsonglow.ca`, and a daily backup. How they fit into AWS:
 config is [`alps.toml.tftpl`](../terraform/webmail/alps.toml.tftpl), rendered by Terraform;
 [`webmail/run.sh`](../webmail/run.sh) writes it at start and starts Alps, and the Lambda Web
 Adapter proxies requests to it. Sign-in goes to Migadu's IMAP and SMTP servers, calendars and
-contacts to Migadu's CalDAV and CardDAV server. Alps stores a user's settings in IMAP metadata,
-so the function holds no state beyond the login key.
+contacts to Migadu's CalDAV and CardDAV server, and filters to its ManageSieve server. Alps stores
+a user's settings in IMAP metadata, so the function holds no state beyond the login key.
 
 Alps has no theme layer. [`scripts/webmail-build.sh`](../scripts/webmail-build.sh) checks out the
 commit in [`webmail/alps.ref`](../webmail/alps.ref), and [`webmail/theme.mjs`](../webmail/theme.mjs)
@@ -21,6 +21,10 @@ rewrites its colours, fonts, title and logo from the site's design tokens
 [`webmail/paths.mjs`](../webmail/paths.mjs) adds a layer of URL encoding to mailbox and DAV path
 segments, because API Gateway decodes the path once more than Alps expects and names containing
 `/`, such as `[Gmail]/All Mail`, would otherwise 404.
+
+[`webmail/plugins.mjs`](../webmail/plugins.mjs) copies [`webmail/plugins/`](../webmail/plugins), the
+DMARC plugin (see [DMARC](#dmarc)), into the tree and registers it; the build runs its Go tests
+before compiling.
 
 A token or font change reaches the webmail on the next deploy. To update Alps, change `alps.ref`
 and run `make webmail`; the patches fail loudly if upstream moved something they edit.
@@ -41,6 +45,30 @@ Rotate the login key (signs everyone out):
 ```sh
 scripts/tf.sh apply -replace=random_bytes.login_key
 ```
+
+## DMARC
+
+The `_dmarc` record in [`terraform.tfvars`](../terraform/terraform.tfvars) publishes `p=none` and
+sends aggregate reports to the mailbox. Providers mail one XML report a day, so the inbox fills
+with them unless a filter files them away. In Settings > Filters, add this rule to the existing
+script (a second script would replace it):
+
+```sieve
+require ["fileinto", "mailbox"];
+if header :contains "subject" "Report Domain: crimsonglow.ca" {
+  fileinto :create "DMARC";
+  stop;
+}
+```
+
+The DMARC tab reads that folder: the last 30 days of reports by report date, the newest 200
+messages at most. It totals messages that passed DMARC, lists each sending IP with its DKIM, SPF and
+DMARC results, and ends in a verdict. Attachments it cannot read (malformed, over 5 MiB, or
+decompressing past 10 MiB) are skipped and counted at the foot of the page.
+
+Move the record to `p=quarantine` once the verdict reads ready in at least two weekly views, and
+Migadu is the only source listed. A source that fails DMARC must be fixed or retired first; at
+`quarantine` its mail goes to spam.
 
 ## Mailboxes
 
