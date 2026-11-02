@@ -49,7 +49,7 @@ variable "default_tags" {
 }
 
 variable "mailboxes" {
-  description = "Migadu mailboxes backed up nightly, keyed by address. Each password lives in SSM at /mail/<address with @ as _at_>/password, set by scripts/mail-password.sh."
+  description = "Migadu mailboxes backed up daily, keyed by address. Each password lives in SSM at /mail/<address with @ as _at_>/password, set by scripts/mail-password.sh."
   type        = map(object({}))
   default     = {}
 }
