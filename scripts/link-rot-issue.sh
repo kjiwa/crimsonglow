@@ -51,6 +51,7 @@ main() {
   case "${1:-}" in
     open)
       [ "$#" -eq 3 ] || die "usage: open <output-file> <run-url>"
+      [ -f "$2" ] || die "$2 does not exist"
       _open "$2" "$3"
       ;;
     close)
