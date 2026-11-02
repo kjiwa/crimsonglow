@@ -1,8 +1,5 @@
 #!/bin/sh
-# Asserts compression, cache, and security headers on the live site. Nothing
-# else checks what the server returns -- `make check` validates the build and
-# stays offline-clean, so missing server-side compression, caching, or security
-# headers can go unnoticed. This script closes that gap.
+# Asserts compression, cache, and security headers on the live site.
 
 set -eu
 
@@ -30,9 +27,9 @@ main() {
 
   assert_header "$_main_html_url" "$_main_html_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^content-encoding:' "content-encoding header" || _main_status=1
-  assert_header "$_main_html_url" "$_main_html_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" "^cache-control:.*$HTML_CACHE_CONTROL" "cache-control $HTML_CACHE_CONTROL" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^strict-transport-security:.*max-age=31536000[^0-9]' "strict-transport-security" || _main_status=1
-  assert_header "$_main_html_url" "$_main_html_headers" '^permissions-policy:.*geolocation=\(\)' "permissions-policy" || _main_status=1
+  assert_header "$_main_html_url" "$_main_html_headers" '^permissions-policy:.*geolocation=()' "permissions-policy" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^x-content-type-options:.*nosniff' "x-content-type-options nosniff" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^referrer-policy:.*strict-origin-when-cross-origin' "referrer-policy strict-origin-when-cross-origin" || _main_status=1
   assert_header "$_main_html_url" "$_main_html_headers" '^cross-origin-opener-policy:.*same-origin' "cross-origin-opener-policy same-origin" || _main_status=1
@@ -43,18 +40,18 @@ main() {
   _main_feed_url="$SITE_ORIGIN/~kjiwa/feed.xml"
   _main_feed_headers=$(fetch_headers "$_main_feed_url")
   assert_header "$_main_feed_url" "$_main_feed_headers" '^http_status: 200' "HTTP 200" || _main_status=1
-  assert_header "$_main_feed_url" "$_main_feed_headers" '^cache-control:.*max-age=600' "cache-control max-age=600" || _main_status=1
+  assert_header "$_main_feed_url" "$_main_feed_headers" "^cache-control:.*$HTML_CACHE_CONTROL" "cache-control $HTML_CACHE_CONTROL" || _main_status=1
 
   _main_asset_url="$SITE_ORIGIN/~kjiwa/assets/og-card.png"
   _main_asset_headers=$(fetch_headers "$_main_asset_url")
   assert_header "$_main_asset_url" "$_main_asset_headers" '^http_status: 200' "HTTP 200" || _main_status=1
-  assert_header "$_main_asset_url" "$_main_asset_headers" '^cache-control:.*max-age=2592000' "cache-control max-age=2592000" || _main_status=1
+  assert_header "$_main_asset_url" "$_main_asset_headers" "^cache-control:.*$ASSET_CACHE_CONTROL" "cache-control $ASSET_CACHE_CONTROL" || _main_status=1
 
   _main_js_url="$SITE_ORIGIN/~kjiwa/assets/legacy-redirect.js"
   _main_js_headers=$(fetch_headers "$_main_js_url")
   assert_header "$_main_js_url" "$_main_js_headers" '^http_status: 200' "HTTP 200" || _main_status=1
   assert_header "$_main_js_url" "$_main_js_headers" '^content-encoding:' "content-encoding header" || _main_status=1
-  assert_header "$_main_js_url" "$_main_js_headers" '^cache-control:.*max-age=2592000' "cache-control max-age=2592000" || _main_status=1
+  assert_header "$_main_js_url" "$_main_js_headers" "^cache-control:.*$ASSET_CACHE_CONTROL" "cache-control $ASSET_CACHE_CONTROL" || _main_status=1
 
   return "$_main_status"
 }

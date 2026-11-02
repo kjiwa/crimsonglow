@@ -18,13 +18,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: ruby/setup-ruby@v1
         with:
-          # Reads site/.ruby-version. If ruby-build has no prebuilt binary yet
-          # for this exact patch release, setup-ruby falls back to compiling
-          # from source, which is slower but still correct -- no action needed
-          # unless the build step itself fails.
           bundler-cache: true
           working-directory: site
 
@@ -97,4 +95,6 @@ jobs:
         run: scripts/webmail-deploy.sh
 
   privacy:
+    permissions:
+      contents: read
     uses: kjiwa/.github/.github/workflows/privacy.yml@main

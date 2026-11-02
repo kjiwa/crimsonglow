@@ -12,6 +12,14 @@ export AWS_REGION
 TFVARS="$(dirname "$0")/../terraform/terraform.tfvars"
 readonly TFVARS
 
+# HTML carries its stylesheet inline, so it stays short; asset filenames are
+# unversioned, so max-age is their propagation delay.
+# shellcheck disable=SC2034  # used by the sourcing scripts
+HTML_CACHE_CONTROL="public, max-age=600"
+# shellcheck disable=SC2034  # used by the sourcing scripts
+ASSET_CACHE_CONTROL="public, max-age=2592000"
+readonly HTML_CACHE_CONTROL ASSET_CACHE_CONTROL
+
 die() {
   echo "$(basename "$0"): $*" >&2
   exit 1
@@ -39,10 +47,6 @@ fetch_headers() {
     -w '\nhttp_status: %{http_code}\n' "$1"
 }
 
-fetch_body() {
-  curl_site "$1"
-}
-
 account_id() {
   sed -n 's/^account_id *= *"\([0-9]*\)".*/\1/p' "$TFVARS"
 }
@@ -51,4 +55,13 @@ ensure_login() {
   if ! aws sts get-caller-identity >/dev/null 2>&1; then
     aws sso login
   fi
+}
+
+# Exports AWS_PROFILE as <role>-<account> unless already set, then logs in.
+use_profile() {
+  _use_profile_account=$(account_id)
+  [ -n "$_use_profile_account" ] || die "account_id not found in $TFVARS"
+  AWS_PROFILE="${AWS_PROFILE:-$1-$_use_profile_account}"
+  export AWS_PROFILE
+  ensure_login
 }

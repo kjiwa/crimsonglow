@@ -1,4 +1,4 @@
-// Screenshots every key page at phone and desktop widths in light and dark,
+// Screenshots every key page at four viewports in light and dark,
 // enforcing the production CSP so script/style regressions surface as console errors.
 //
 // usage: PLAYWRIGHT_MODULE=/path/to/playwright/index.mjs \

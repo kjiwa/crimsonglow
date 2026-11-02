@@ -1,7 +1,7 @@
 #!/bin/sh
 # Builds webmail/dist/alps.zip: the pinned Alps tree, restyled with the site's
 # tokens and patched for API Gateway's path decoding, compiled for Lambda (linux/arm64)
-# beside webmail/run.sh. Needs the built site (make build), go, node, git and zip.
+# beside webmail/run.sh. Needs the built site (make build), go, node, npm, ruby, git and zip.
 
 set -eu
 
@@ -16,7 +16,8 @@ readonly ALPS_URL
 _checkout_alps() {
   _checkout_alps_dir="$1"
   git -C "$_checkout_alps_dir" init -q
-  git -C "$_checkout_alps_dir" fetch -q --depth 1 "$ALPS_URL" "$(cat "$ROOT/webmail/alps.ref")"
+  _checkout_alps_ref=$(cat "$ROOT/webmail/alps.ref")
+  git -C "$_checkout_alps_dir" fetch -q --depth 1 "$ALPS_URL" "$_checkout_alps_ref"
   git -C "$_checkout_alps_dir" checkout -q FETCH_HEAD
 }
 
@@ -47,9 +48,10 @@ main() {
   _main_stage="$_main_work/stage"
   mkdir -p "$_main_alps" "$_main_stage"
 
+  _main_title=$(_site_title)
   _checkout_alps "$_main_alps"
   node "$ROOT/webmail/theme.mjs" "$_main_alps" "$_main_tokens" \
-    "$ROOT/site/~kjiwa/assets/favicon.svg" "Mail · $(_site_title)"
+    "$ROOT/site/~kjiwa/assets/favicon.svg" "Mail · $_main_title"
   node "$ROOT/webmail/paths.mjs" "$_main_alps"
   _build_frontend "$_main_alps"
   _build_binary "$_main_alps" "$_main_stage/alps"

@@ -5,10 +5,8 @@ on:
     - cron: "0 9 * * 1" # Mondays, 09:00 UTC
   workflow_dispatch:
 
-# permissions: is an exhaustive declaration -- any scope not named here is set
-# to none, overriding the repository default. contents: read is required for
-# actions/checkout to clone this private repo; without it the clone fails with
-# a misleading "Repository not found".
+# Least privilege: issues: write files the tracking issue, contents: read lets
+# checkout clone.
 permissions:
   contents: read
   issues: write
@@ -18,21 +16,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
           working-directory: site
 
+      - name: Build site
+        run: make build
+
       - name: Check external links
         id: check
         continue-on-error: true
-        # shell: bash is explicit here (not just the runner default) because
-        # GitHub only adds -o pipefail when bash is named directly; the
-        # default run shell is `bash -e` without it. Without pipefail this
-        # step's exit status would be tee's, so continue-on-error /
-        # steps.check.outcome below would always see "success". 2>&1 is
-        # needed because htmlproofer prints its failures to stderr.
+        # Naming bash adds pipefail; without it tee's status hides the failure.
+        # htmlproofer writes failures to stderr.
         shell: bash
         run: make link-check 2>&1 | tee link-check-output.txt
 

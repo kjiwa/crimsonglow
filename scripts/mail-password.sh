@@ -1,8 +1,8 @@
 #!/bin/sh
 # Stores a mailbox's IMAP password in SSM at /mail/<address>/password, with @
 # written as _at_ because parameter names disallow it (mbsyncrc.tftpl applies
-# the same mapping), for the nightly backup. Terraform never sees the password, so it stays out of state.
-# Uses AdministratorAccess unless AWS_PROFILE is set.
+# the same mapping), for the daily backup. Terraform never sees the password, so
+# it stays out of state. Uses AdministratorAccess unless AWS_PROFILE is set.
 
 set -eu
 
@@ -34,20 +34,15 @@ _read_password() {
 }
 
 main() {
-  if [ "$#" -ne 1 ]; then
-    echo "usage: $(basename "$0") <address>" >&2
-    exit 1
-  fi
+  [ "$#" -eq 1 ] || die "usage: $(basename "$0") <address>"
   _main_address="$1"
 
-  _main_account=$(account_id)
-  [ -n "$_main_account" ] || die "account_id not found in $TFVARS"
-  AWS_PROFILE="${AWS_PROFILE:-AdministratorAccess-$_main_account}"
-  export AWS_PROFILE
-  ensure_login
+  use_profile AdministratorAccess
 
   umask 077
-  trap _cleanup EXIT INT TERM
+  trap _cleanup EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
   TMPFILE=$(mktemp)
   _read_password "$_main_address"
 

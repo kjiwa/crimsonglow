@@ -1,34 +1,24 @@
 #!/bin/sh
 # Regenerates site/~kjiwa/assets/og-card.png, the site's social share image.
-#
-# The face glyph can't be rendered from site/_includes/avatar.svg directly: the
-# installed ImageMagick only has the MSVG renderer, which silently drops
-# <defs>/<use> and produces a blank glyph. Instead scripts/og-card-glyph.py
-# transforms avatar.svg's shapes by hand into the absolute "-draw" coordinates
-# used below (see that file for the coordinate math).
-#
-# Requires: ImageMagick 6 or 7 (`convert`/`identify`, or `magick`), python3,
-# and a bold + regular Arial-metric-compatible font (Arial itself, or
-# Liberation Sans / Arimo, which share Arial's advance widths -- DejaVu Sans
-# and Helvetica do not, and will shift the text). resolve_font() below
-# searches common install locations and finally fontconfig; set OG_FONT_BOLD
-# / OG_FONT_REGULAR to override.
+# Needs ImageMagick 6 or 7, python3, and bold and regular Arial-metric fonts
+# (Arial, Liberation Sans or Arimo; DejaVu Sans and Helvetica shift the text).
+# OG_FONT_BOLD / OG_FONT_REGULAR override the font search.
 
 set -eu
 
-# 2.0 SVG units (matching site/_sass/avatar.scss's 2px stroke in the 70-unit
-# header viewBox), scaled by the same SCALE * FAV_SCALE factor the glyph
-# coordinates use.
+# shellcheck source=common.sh
+. "$(dirname "$0")/common.sh"
+
+# 2.0 SVG units (site/_sass/avatar.scss's 2px stroke in the 70-unit viewBox),
+# scaled by the glyph coordinates' SCALE * FAV_SCALE.
 STROKE=10.14
 readonly STROKE
 
 OUT_FILE="site/~kjiwa/assets/og-card.png"
 readonly OUT_FILE
 
-# Tries each candidate in order, printing the first that resolves. "fc:"
-# entries are fontconfig patterns; plain entries are literal paths. fc-list is
-# used rather than fc-match because fc-match always falls back to *some* font,
-# which would silently substitute a non-metric-compatible face.
+# "fc:" candidates are fontconfig patterns, the rest literal paths. fc-list, not
+# fc-match, because fc-match falls back to a non-metric-compatible font.
 resolve_font() {
   for _resolve_font_candidate in "$@"; do
     case "$_resolve_font_candidate" in
@@ -45,24 +35,14 @@ resolve_font() {
   return 1
 }
 
-# $1 = weight label for the message, $2 = override variable to suggest.
 font_error() {
-  _font_error_weight="$1"
-  _font_error_override="$2"
-
-  echo "og-card: no Arial-metric $_font_error_weight font found. Install Liberation Sans" >&2
-  echo "  (apt install fonts-liberation / dnf install liberation-sans-fonts /" >&2
-  echo "   pacman -S ttf-liberation) or set $_font_error_override to a font file." >&2
-  exit 1
+  die "no Arial-metric $1 font found. Install Liberation Sans or set $2 to a font file."
 }
 
 main() {
   _main_dir="$(dirname "$0")/.."
   cd "$_main_dir"
 
-  # ImageMagick 7 ships `magick`; ImageMagick 6 -- still the default on Debian 12
-  # and Ubuntu 22.04/24.04 -- ships only `convert`/`identify`. The MVG `-draw`
-  # syntax and `png:` define used below are identical across both.
   if command -v magick >/dev/null 2>&1; then
     _main_im_convert="magick"
     _main_im_identify="magick identify"
@@ -70,9 +50,7 @@ main() {
     _main_im_convert="convert"
     _main_im_identify="identify"
   else
-    echo "og-card: ImageMagick not found. Install it (apt install imagemagick /" >&2
-    echo "  dnf install ImageMagick / pacman -S imagemagick / brew install imagemagick)." >&2
-    return 1
+    die "ImageMagick not found"
   fi
 
   _main_font_bold="${OG_FONT_BOLD:-}"
@@ -104,8 +82,8 @@ main() {
   echo "og-card: bold font:    $_main_font_bold" >&2
   echo "og-card: regular font: $_main_font_regular" >&2
 
-  # Absolute coordinates for the face glyph, computed by scripts/og-card-glyph.py
-  # from the shapes in avatar.svg.
+  # ImageMagick's MSVG renderer drops <defs>/<use>, so avatar.svg cannot be
+  # rendered directly; the glyph script emits its shapes as -draw coordinates.
   _main_strokes=$(python3 scripts/og-card-glyph.py strokes)
   _main_lenses=$(python3 scripts/og-card-glyph.py lenses)
   _main_eyes=$(python3 scripts/og-card-glyph.py eyes)
@@ -125,8 +103,7 @@ main() {
     -colors 128 -define png:color-type=3 \
     "$OUT_FILE"
 
-  # Deliberately unquoted: on ImageMagick 7, _main_im_identify is "magick identify"
-  # and must word-split into two arguments.
+  # Unquoted: "magick identify" must word-split.
   $_main_im_identify "$OUT_FILE"
 }
 

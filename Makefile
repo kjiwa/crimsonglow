@@ -4,8 +4,6 @@ SITE = site
 build:
 	cd $(SITE) && JEKYLL_ENV=$(JEKYLL_ENV) bundle exec jekyll build
 
-# Shared with the weekly link-check workflow, which also needs --disable-external
-# off and --ignore-status-codes 429,999 on top -- see link-check below.
 PROOFER_FLAGS = --no-enforce-https \
   --swap-urls '^https\://crimsonglow\.ca:' \
   --ignore-urls '/^\/$$/'
