@@ -80,7 +80,8 @@ PLAYWRIGHT_MODULE=/path/to/node_modules/playwright/index.mjs \
   node scripts/screenshots.mjs site/_site <out-dir>
 ```
 
-A post's front matter holds `title`, `description` and, optionally, `repo` (a GitHub `owner/name` that the post links as its source).
+A post's front matter holds `title`, `description` and, optionally, `repo`: a GitHub `owner/name`
+that the post links as its source.
 
 ## Infrastructure
 
@@ -93,8 +94,8 @@ scripts/tf.sh apply
 ```
 
 [`scripts/tf.sh`](scripts/tf.sh) runs `terraform` in `terraform/` with the
-`AdministratorAccess-<account>` profile for state-changing subcommands and `ReadOnlyAccess-<account>`
-for the rest, which plans without taking the state lock. `AWS_PROFILE` overrides the choice. After
+`AdministratorAccess-<account>` profile for state-changing subcommands and
+`ReadOnlyAccess-<account>` for the rest, which plans without taking the state lock. `AWS_PROFILE` overrides the choice. After
 an `apply` it runs [`scripts/ci-vars.sh`](scripts/ci-vars.sh), which publishes the outputs CI
 reads as GitHub variables.
 

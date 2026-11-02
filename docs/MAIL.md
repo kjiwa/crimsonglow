@@ -63,7 +63,7 @@ A daily CodeBuild job (`mail-backup`, started by EventBridge Scheduler) pulls ea
 `mailboxes` with `mbsync` into the `crimsonglow-archive` bucket under `migadu/<address>/`, as a
 Maildir. The rendered `mbsyncrc` sits at the bucket root. The pull never expunges, and a folder
 deleted on the server keeps its archived copy (only an empty one is dropped); history lives in
-S3 versions. Retention, alarm timing and alert rules: [`ARCHITECTURE.md`](ARCHITECTURE.md#mail-backup).
+S3 versions. Retention and alarm timing: [`ARCHITECTURE.md`](ARCHITECTURE.md#mail-backup).
 
 ## Alerts
 
