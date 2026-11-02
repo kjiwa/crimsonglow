@@ -224,3 +224,20 @@ func TestSummarizeEmptyAndSkipped(t *testing.T) {
 		t.Errorf("summary: %+v", s)
 	}
 }
+
+func TestSummarizeCountsAReportOnceWhenItArrivesTwice(t *testing.T) {
+	once := summarize(decodeFixtures(t, "google.xml"), 0, now)
+	twice := summarize(decodeFixtures(t, "google.xml", "google.xml"), 0, now)
+	if len(twice.Reports) != 1 || twice.Totals.Messages != once.Totals.Messages {
+		t.Errorf("reports: %d totals: %+v, want one report and %+v", len(twice.Reports), twice.Totals, once.Totals)
+	}
+}
+
+func TestSummarizeSkipsAReportWithoutADateRange(t *testing.T) {
+	reports := decodeFixtures(t, "google.xml")
+	reports[0].End = time.Time{}
+	s := summarize(reports, 0, now)
+	if len(s.Reports) != 0 || s.Skipped != 1 {
+		t.Errorf("reports: %d skipped: %d", len(s.Reports), s.Skipped)
+	}
+}

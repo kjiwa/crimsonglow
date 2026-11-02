@@ -28,9 +28,9 @@ func folderExists(p provider.MailProvider) (bool, error) {
 	return false, nil
 }
 
-// messageIDs lists the newest messages. A threaded listing returns one row per
-// conversation and names its members in ThreadUIDs.
-func messageIDs(p provider.MailProvider) ([]provider.MessageID, error) {
+// messageIDs lists the newest messages received since the cutoff. A threaded
+// listing returns one row per conversation and names its members in ThreadUIDs.
+func messageIDs(p provider.MailProvider, since time.Time) ([]provider.MessageID, error) {
 	var ids []provider.MessageID
 	seen := map[string]bool{}
 	add := func(id provider.MessageID) bool {
@@ -49,6 +49,9 @@ func messageIDs(p provider.MailProvider) ([]provider.MessageID, error) {
 		}
 		added := false
 		for _, row := range rows {
+			if row.Envelope != nil && row.Envelope.Date.Before(since) {
+				continue
+			}
 			if len(row.ThreadUIDs) == 0 {
 				added = add(row.ID) || added
 			}
@@ -66,12 +69,12 @@ func messageIDs(p provider.MailProvider) ([]provider.MessageID, error) {
 	return ids, nil
 }
 
-func collect(p provider.MailProvider) ([]Report, int, error) {
+func collect(p provider.MailProvider, now time.Time) ([]Report, int, error) {
 	ok, err := folderExists(p)
 	if err != nil || !ok {
 		return nil, 0, err
 	}
-	ids, err := messageIDs(p)
+	ids, err := messageIDs(p, now.AddDate(0, 0, -windowDays))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -96,7 +99,7 @@ func handleReports(ctx *alps.Context) error {
 	var skipped int
 	err := ctx.Session.DoMailWithContext(ctx.Request.Context(), func(p provider.MailProvider) error {
 		var err error
-		reports, skipped, err = collect(p)
+		reports, skipped, err = collect(p, time.Now())
 		return err
 	})
 	if err != nil {

@@ -279,10 +279,21 @@ func summarize(reports []Report, skipped int, now time.Time) Summary {
 	s := Summary{Days: windowDays, Reports: []ReportRow{}, Sources: []Source{}, Skipped: skipped}
 	cutoff := now.AddDate(0, 0, -windowDays)
 	bySource := map[string]*Source{}
+	seen := map[string]bool{}
 
 	for _, r := range reports {
+		if r.End.IsZero() || r.End.Unix() == 0 {
+			s.Skipped++
+			continue
+		}
 		if r.End.Before(cutoff) {
 			continue
+		}
+		if key := r.Org + "\x00" + r.ID; r.ID != "" {
+			if seen[key] {
+				continue
+			}
+			seen[key] = true
 		}
 		row := ReportRow{Org: r.Org, ID: r.ID, Domain: r.Domain, Policy: r.Policy, Begin: r.Begin, End: r.End}
 		for _, rec := range r.Records {

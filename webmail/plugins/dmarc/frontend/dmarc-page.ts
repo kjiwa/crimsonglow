@@ -195,7 +195,8 @@ export class DmarcPage extends LitElement {
   }
 
   private renderStats(s: DmarcSummary) {
-    const percent = Math.round((s.totals.dmarc / s.totals.messages) * 100);
+    // Floor, so a few failures never read as 100%.
+    const percent = Math.floor((s.totals.dmarc / s.totals.messages) * 100);
     return html`
       <div class="stats">
         <div class="stat">
