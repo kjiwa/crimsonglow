@@ -41,7 +41,8 @@ main() {
 
   umask 077
   trap _cleanup EXIT
-  trap '_cleanup; exit 130' INT TERM
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
   TMPFILE=$(mktemp)
   _read_password "$_main_address"
 

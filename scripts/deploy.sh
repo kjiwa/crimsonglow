@@ -33,6 +33,7 @@ main() {
   : "${SITE_BUCKET:?SITE_BUCKET is required}"
   : "${DISTRIBUTION_ID:?DISTRIBUTION_ID is required}"
 
+  # Assets first, so new pages never reference an asset that is not there yet.
   _sync_assets ${_main_dry_run:+"$_main_dry_run"}
   _sync_pages ${_main_dry_run:+"$_main_dry_run"}
 
