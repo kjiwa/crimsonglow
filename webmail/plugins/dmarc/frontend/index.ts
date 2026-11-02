@@ -11,6 +11,6 @@ registry.registerNavTab({
     id: 'dmarc',
     pluginId: 'dmarc',
     labelKey: 'navigation.dmarc',
-    icon: 'verifiedBadge',
+    icon: 'dmarc',
     order: 40
 });
