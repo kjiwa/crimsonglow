@@ -1,7 +1,8 @@
 #!/bin/sh
-# Builds webmail/dist/alps.zip: the pinned Alps tree, restyled with the site's
-# tokens and patched for API Gateway's path decoding, compiled for Lambda (linux/arm64)
-# beside webmail/run.sh. Needs the built site (make build), go, node, npm, ruby, git and zip.
+# Builds webmail/dist/alps.zip: the pinned Alps tree, restyled with the site's tokens,
+# patched for API Gateway's path decoding and extended with the DMARC plugin, compiled for
+# Lambda (linux/arm64) beside webmail/run.sh. Needs the built site (make build), go, node,
+# npm, ruby, git and zip.
 
 set -eu
 
@@ -29,6 +30,10 @@ _build_frontend() {
   (cd "$1/frontend" && npm ci --silent && npm run build --silent)
 }
 
+_test_plugins() {
+  (cd "$1" && go test ./plugins/dmarc/)
+}
+
 _build_binary() {
   (cd "$1" && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 \
     go build -trimpath -ldflags "-s -w" -o "$2" ./cmd/alps)
@@ -53,7 +58,9 @@ main() {
   node "$ROOT/webmail/theme.mjs" "$_main_alps" "$_main_tokens" \
     "$ROOT/site/~kjiwa/assets/favicon.svg" "Mail · $_main_title"
   node "$ROOT/webmail/paths.mjs" "$_main_alps"
+  node "$ROOT/webmail/plugins.mjs" "$_main_alps"
   _build_frontend "$_main_alps"
+  _test_plugins "$_main_alps"
   _build_binary "$_main_alps" "$_main_stage/alps"
   cp "$ROOT/webmail/run.sh" "$_main_stage/run.sh"
 
