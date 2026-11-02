@@ -133,4 +133,4 @@ Copyright (c) 2026 Kamil Jiwa; see [LICENSE](LICENSE). Written content (posts an
 `site/_posts/` and `site/~kjiwa/`) is CC BY 4.0, Copyright (c) 2004-2026 Kamil Jiwa; see
 [LICENSE-CONTENT](LICENSE-CONTENT). Third-party assets keep their own licenses: IBM Plex fonts
 (OFL, [text](site/~kjiwa/assets/fonts/LICENSE-IBM-Plex.txt)) and the Material Symbols mail glyph
-(Apache-2.0).
+(Apache-2.0), and the Phosphor shield icon in `webmail/plugins/dmarc/icons.svg` (MIT).
