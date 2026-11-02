@@ -8,36 +8,25 @@ set -eu
 # shellcheck source=common.sh
 . "$(dirname "$0")/common.sh"
 
-_profile_for() {
-  _profile_for_account="$1"
-  case "$2" in
+_role_for() {
+  case "$1" in
     apply | import | state | force-unlock | taint | untaint | destroy | refresh | workspace)
-      echo "AdministratorAccess-$_profile_for_account"
+      echo AdministratorAccess
       ;;
     *)
-      echo "ReadOnlyAccess-$_profile_for_account"
+      echo ReadOnlyAccess
       ;;
   esac
 }
 
 main() {
-  if [ "$#" -lt 1 ]; then
-    echo "usage: $(basename "$0") <terraform subcommand> [args]" >&2
-    exit 1
-  fi
+  [ "$#" -ge 1 ] || die "usage: $(basename "$0") <terraform subcommand> [args]"
   _main_subcommand="$1"
   shift
 
-  _main_account=$(account_id)
-  if [ -z "$_main_account" ]; then
-    die "account_id not found in $TFVARS"
-  fi
+  use_profile "$(_role_for "$_main_subcommand")"
 
-  AWS_PROFILE="${AWS_PROFILE:-$(_profile_for "$_main_account" "$_main_subcommand")}"
-  export AWS_PROFILE
-  ensure_login
-
-  if [ "$_main_subcommand" = plan ] && [ "$AWS_PROFILE" = "ReadOnlyAccess-$_main_account" ]; then
+  if [ "$_main_subcommand" = plan ] && [ "$AWS_PROFILE" = "ReadOnlyAccess-$(account_id)" ]; then
     set -- -lock=false "$@"
   fi
 

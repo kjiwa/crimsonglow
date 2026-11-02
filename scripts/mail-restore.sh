@@ -17,12 +17,12 @@ _download() {
   mkdir -p "$MAIL_DIR/$1"
   aws s3 cp --only-show-errors "s3://$ARCHIVE_BUCKET/mbsyncrc" "$MAIL_DIR/mbsyncrc"
   aws s3 sync --only-show-errors --delete "s3://$ARCHIVE_BUCKET/migadu/$1" "$MAIL_DIR/$1"
-  # -- S3 holds no empty directories, so mailboxes with no messages lose cur/new/tmp.
-  find "$MAIL_DIR/$1" -name .uidvalidity -execdir mkdir -p cur new tmp \;
+  # S3 holds no empty directories, so mailboxes with no messages lose cur/new/tmp.
+  find "$MAIL_DIR/$1" -name .uidvalidity -exec sh -c 'cd "$(dirname "$1")" && mkdir -p cur new tmp' sh {} \;
 }
 
-# -- mbsync does not de-duplicate against the server: pushing into a mailbox that already
-# -- holds the mail doubles it. Verified by pushing twice into an empty mailbox.
+# mbsync does not de-duplicate against the server: pushing into a mailbox that already
+# holds the mail doubles it.
 _confirm_empty_target() {
   printf 'Pushing into a mailbox that already has this mail duplicates every message.\n' >&2
   printf 'Type %s to confirm the target is empty or new: ' "$1" >&2
@@ -30,10 +30,10 @@ _confirm_empty_target() {
   [ "$_confirm_empty_target_answer" = "$1" ] || die "not confirmed; nothing pushed"
 }
 
-# -- The backup's sync state records every message as already on the server, so a push
-# -- that trusts it would not re-create mail or folders that were later deleted there.
+# The backup's sync state records every message as already on the server, so a push
+# that trusts it would not re-create mail or folders that were later deleted there.
 _drop_sync_state() {
-  find "$MAIL_DIR/$1" \( -name .mbsyncstate -o -name .uidvalidity \) -delete
+  find "$MAIL_DIR/$1" \( -name .mbsyncstate -o -name .uidvalidity \) -exec rm -f {} +
 }
 
 _print_counts() {
@@ -50,22 +50,14 @@ main() {
     _main_push=1
     shift
   fi
-  if [ "$#" -ne 1 ]; then
-    echo "usage: $(basename "$0") [--push] <address>" >&2
-    exit 1
-  fi
+  [ "$#" -eq 1 ] || die "usage: $(basename "$0") [--push] <address>"
   _main_address="$1"
 
-  _main_account=$(account_id)
-  [ -n "$_main_account" ] || die "account_id not found in $TFVARS"
   if [ "$_main_push" -eq 1 ]; then
-    _main_role=AdministratorAccess
+    use_profile AdministratorAccess
   else
-    _main_role=ReadOnlyAccess
+    use_profile ReadOnlyAccess
   fi
-  AWS_PROFILE="${AWS_PROFILE:-$_main_role-$_main_account}"
-  export AWS_PROFILE
-  ensure_login
 
   _download "$_main_address"
   _print_counts "$_main_address"
